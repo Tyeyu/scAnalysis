@@ -1,85 +1,44 @@
 <template>
   <div id="app">
-    <div id="upper">
-       <div id="left">
-        <madeup id="pie"></madeup>
-        <groupbar id="bar"></groupbar>
-
-       </div>
-
-        <div id="right">
-          <mapview id='map'></mapview>
-        </div>
-    </div>
+    <madeup></madeup>
+    <groupbar></groupbar>
+    <mapview></mapview>
 
     <!--放下面的三幅图-->
-    <div id="bottom">
-
-    </div>
-
-
+    <AddedDaily />
+    <Relationship />
+    <PCooordinates />
   </div>
-
-
 </template>
 
 <script>
-import mapview from './components/MapView';
-import madeup from './components/MadeUp';
-import groupbar from './components/GroupBar';
+import mapview from "./components/MapView";
+import madeup from "./components/MadeUp";
+import groupbar from "./components/GroupBar";
+import AddedDaily from "./components/AddedDaily";
+import Relationship from "./components/Relationship";
+import PCooordinates from "./components/ParallelCoordinates";
 
 export default {
-  name: 'App',
-  components:{
+  name: "App",
+  components: {
     mapview,
     madeup,
-    groupbar
+    groupbar,
+    AddedDaily,
+    Relationship,
+    PCooordinates
   }
-}
+};
 </script>
 
 <style>
-	*{
-		padding: 0;
-		margin: 0;
-	}
-  #app{
-    width: 100%;
-    height: 100%;
-  }
-  #upper{
-    width: 100%;
-    height: 60%;
-  }
-  #bottom{
-    width: 100%;
-    height: 40%;
-  }
- #left{
-    width: 35%;
-    height: 100%;
-    float: left;
-  }
-  #right{
-    width: 65%;
-    height: 100%;
-    float: left;
-  }
-  #map{
-    width: 100%;
-    height: 100%;
-  }
-  #pie{
-    width: 100%;
-    height: 40%;
-    border: 1px solid black;
-  }
-  #bar{
-    width: 100%;
-    height: 60%;
-    border: 1px solid darkorange;
-  }
+body {
+  background-color: #f5f5f6;
+}
 
-
-
+#app {
+  width: 100%;
+  height: 100%;
+}
 </style>
