@@ -10,7 +10,8 @@ export default {
     return {
       chartdata: null,
       chartSvgwidth: null,
-      chartSvgheight: null
+      chartSvgheight: null,
+      xaxiesdata: null
       // chartXscale: null,
       // chartYscal: null,
       // chartXaxies: null,
@@ -20,19 +21,40 @@ export default {
   methods: {
     Readdata: function() {
       let that = this;
-      d3.csv("../../static/countries.csv")
+      d3.csv("../../static/testdata.csv")
         .then(function(data) {
-          // that.chartdata = data;
-          // console.log(that.chartdata);
+          that.chartdata = data;
+          that.setXaxisdata();
           that.initchartSet();
           that.initchart(data);
         })
         .catch(function(error) {});
     },
+    setXaxisdata: function() {
+      let that = this;
+      var xdmap = d3.map();
+      for (var i = 0; i < this.chartdata.length; i++) {
+        xdmap.set(that.chartdata[i].startdate, 0);
+        xdmap.set(that.chartdata[i].enddate, 0);
+      }
+      this.xaxiesdata = xdmap.keys();
+      this.xaxiesdata = this.xaxiesdata.sort(function(a, b) {
+        var da = parseInt(a.split("月")[0]);
+        var daa = parseInt(a.split("月")[1].split("日")[0]);
+        var db = parseInt(b.split("月")[0]);
+        var dbb = parseInt(b.split("月")[1].split("日")[0]);
+
+        return da < db ? -1 : da > db ? 1 : daa < dbb ? -1 : 1;
+      });
+    },
     //初始化图表基础配置
     initchartSet: function() {
       let that = this;
-
+      // //序数比例尺
+      var s = d3.scaleBand(["2月1日", "2月2日", "2月3日"], d3.range(3));
+      // .domain(d3.range(3))
+      // .range(["2月1日", "2月2日", "2月3日"]);
+      console.log(s("2月2日"));
       this.chartSvgwidth = document.getElementById("Relation").clientWidth - 10;
       this.chartSVgheight =
         document.getElementById("Relation").clientHeight - 10;
@@ -42,31 +64,18 @@ export default {
     //初始化图表
     initchart: function(data) {
       let that = this;
-      console.log(d3.range(data.length));
-      var chartXscale = d3
-        .scaleLinear()
-        .domain([
-          0,
-          d3.max(data, function(d) {
-            return parseInt(d.high);
-          })
-        ])
-        .range([0, that.chartSvgwidth - 30]);
+      var chartXscale = d3.scaleBand(that.xaxiesdata, [
+        0,
+        that.chartSvgwidth - 30
+      ]);
 
       var chartYscal = d3
         .scaleLinear()
-        .domain([
-          d3.min(data, function(d) {
-            return parseInt(d.value);
-          }),
-          d3.max(data, function(d) {
-            return parseInt(d.value);
-          })
-        ])
-        .range([0, this.chartSVgheight - 30]);
+        .domain([0, that.chartdata.length])
+        .range([this.chartSVgheight - 30, 0]);
       // console.log(that.chartdata[0].value);
       // console.log(chartYscal(10));
-      var chartXaxies = d3.axisTop(chartXscale).ticks(5);
+      var chartXaxies = d3.axisBottom(chartXscale).ticks(5);
       var chartYaxies = d3.axisLeft(chartYscal).ticks(5);
 
       var mode = "light";
@@ -78,29 +87,48 @@ export default {
       //坐标轴
       svg
         .append("g")
-        .call(chartYaxies)
-        .attr("transform", "translate(30,20)")
-        .attr("class", "axis");
+
+        .attr("transform", "translate(30," + (that.chartSVgheight - 20) + ")")
+        .attr("class", "axis")
+        .call(chartXaxies);
       svg
         .append("g")
-        .call(chartXaxies)
-        .attr("transform", "translate(30,20)")
-        .attr("class", "axis");
+        .attr("transform", "translate(30,10)")
+        .attr("class", "axis")
+        .call(chartYaxies);
+
       svg
         .selectAll("circle")
-        .data(data)
+        .data(that.chartdata)
         .enter()
         .append("circle")
         .attr("r", 10)
-        .attr("transform", "translate(30,20)")
+        .attr("transform", "translate(30,10)")
         .style("fill", "#a6cee3")
         .style("cursor", "pointer")
         .attr("cy", function(d, i) {
-          return chartYscal(parseInt(d.value));
+          return chartYscal(i);
         })
         .attr("cx", function(d) {
-          return chartXscale(parseInt(d.high));
+          return chartXscale(d.enddate);
         });
+      svg
+        .selectAll("bar")
+        .data(that.chartdata)
+        .enter()
+        .append("rect")
+        .attr("transform", "translate(30,10)")
+        .style("fill", "#a6cee3")
+        .attr("x", function(d) {
+          return chartXscale(d.startdate);
+        })
+        .attr("y", function(d, i) {
+          return chartYscal(i);
+        })
+        .attr("width", function(d) {
+          return chartXscale(d.enddate) - chartXscale(d.startdate);
+        })
+        .attr("height", 4);
     },
     redrawchart: function() {}
   },
