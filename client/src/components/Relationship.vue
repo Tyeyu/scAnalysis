@@ -72,7 +72,7 @@ export default {
       var chartYscal = d3
         .scaleLinear()
         .domain([0, that.chartdata.length])
-        .range([this.chartSVgheight - 30, 0]);
+        .range([this.chartSVgheight - 30, 1]);
       // console.log(that.chartdata[0].value);
       // console.log(chartYscal(10));
       var chartXaxies = d3.axisBottom(chartXscale).ticks(5);
@@ -107,7 +107,7 @@ export default {
         .style("fill", "#a6cee3")
         .style("cursor", "pointer")
         .attr("cy", function(d, i) {
-          return chartYscal(i);
+          return chartYscal(i + 1);
         })
         .attr("cx", function(d) {
           return chartXscale(d.enddate);
@@ -123,7 +123,7 @@ export default {
           return chartXscale(d.startdate);
         })
         .attr("y", function(d, i) {
-          return chartYscal(i);
+          return chartYscal(i + 1);
         })
         .attr("width", function(d) {
           return chartXscale(d.enddate) - chartXscale(d.startdate);
