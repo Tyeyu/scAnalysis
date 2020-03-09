@@ -73,7 +73,7 @@ export default {
       };
 
       var option = {
-        backgroundColor: "#333",
+        backgroundColor: "gray",
         legend: {
           bottom: 30,
           data: ["北京", "湖北", "四川"],
@@ -228,6 +228,6 @@ export default {
   left: 50%;
   width: 49.2%;
   height: 39%;
-  border: 1px solid #ccc;
+  border: 1px solid white;
 }
 </style>

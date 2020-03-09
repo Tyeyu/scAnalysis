@@ -280,6 +280,6 @@ export default {
   left: 0.1%;
   width: 24.8%;
   height: 39%;
-  border: 1px solid #ccc;
+  border: 1px solid white;
 }
 </style>

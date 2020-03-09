@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <headers></headers>
     <madeup></madeup>
     <groupbar></groupbar>
     <mapview></mapview>
@@ -18,7 +19,7 @@ import groupbar from "./components/GroupBar";
 import AddedDaily from "./components/AddedDaily";
 import Relationship from "./components/Relationship";
 import PCooordinates from "./components/ParallelCoordinates";
-
+import headers from "./components/Header";
 export default {
   name: "App",
   components: {
@@ -27,14 +28,15 @@ export default {
     groupbar,
     AddedDaily,
     Relationship,
-    PCooordinates
+    PCooordinates,
+    headers
   }
 };
 </script>
 
 <style>
 body {
-  background-color: #f5f5f6;
+  background-color: gray;
 }
 
 #app {

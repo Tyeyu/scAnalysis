@@ -144,6 +144,6 @@ export default {
   left: 24.9%;
   width: 24.9%;
   height: 39%;
-  border: 1px solid #ccc;
+  border: 1px solid white;
 }
 </style>

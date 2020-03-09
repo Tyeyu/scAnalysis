@@ -13,10 +13,10 @@ export default {
 <style>
 #bar {
   position: absolute;
-  top: 30.1%;
+  top: 32.6%;
   left: 0.1%;
   width: 30%;
-  height: 30%;
-  border: 1px solid #ccc;
+  height: 27.5%;
+  border: 1px solid white;
 }
 </style>

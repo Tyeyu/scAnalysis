@@ -134,10 +134,10 @@ export default {
 <style>
 #map {
   position: absolute;
-  top: 0.1%;
+  top: 5.1%;
   left: 30.2%;
   width: 69%;
-  height: 60%;
-  border: 1px solid #ccc;
+  height: 55%;
+  border: 1px solid white;
 }
 </style>

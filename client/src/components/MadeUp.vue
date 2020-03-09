@@ -14,10 +14,10 @@ export default {
 <style>
 #pie {
   position: absolute;
-  top: 0.1%;
+  top: 5.1%;
   left: 0.1%;
   width: 30%;
-  height: 30%;
-  border: 1px solid #ccc;
+  height: 27.5%;
+  border: 1px solid white;
 }
 </style>
