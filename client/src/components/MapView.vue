@@ -16,11 +16,11 @@ export default {
 
     this.map.on("load", function() {
       let res2 = axios.get("./api/sc_city.json").then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         that.addcity2Map(res.data);
       });
       let res = axios.get("/api/merge_sichuan.json").then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         that.addtown2Map(res.data);
       });
     });
@@ -136,7 +136,7 @@ export default {
   position: absolute;
   top: 5.1%;
   left: 30.2%;
-  width: 69%;
+  width: 69.68%;
   height: 55%;
   border: 1px solid white;
 }

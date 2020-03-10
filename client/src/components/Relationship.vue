@@ -71,7 +71,12 @@ export default {
 
       var chartYscal = d3
         .scaleLinear()
-        .domain([0, that.chartdata.length])
+        .domain([
+          0,
+          d3.max(this.chartdata, function(d) {
+            return d.ID;
+          })
+        ])
         .range([this.chartSVgheight - 30, 1]);
       // console.log(that.chartdata[0].value);
       // console.log(chartYscal(10));
@@ -107,7 +112,7 @@ export default {
         .style("fill", "#a6cee3")
         .style("cursor", "pointer")
         .attr("cy", function(d, i) {
-          return chartYscal(i + 1);
+          return chartYscal(d.ID);
         })
         .attr("cx", function(d) {
           return chartXscale(d.enddate);
