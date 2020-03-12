@@ -5,9 +5,36 @@
 <script>
 import * as mapboxgl from "mapbox-gl";
 let axios = require("axios");
+import * as d3 from "d3";
 export default {
   name: "mapview",
-
+  data() {
+    return {
+      quezheng: [
+        { name: "成都", value: 144 },
+        { name: "自贡", value: 9 },
+        { name: "攀枝花", value: 16 },
+        { name: "泸州", value: 24 },
+        { name: "德阳", value: 18 },
+        { name: "绵阳", value: 22 },
+        { name: "广元", value: 6 },
+        { name: "遂宁", value: 17 },
+        { name: "内江", value: 22 },
+        { name: "乐山", value: 3 },
+        { name: "南充", value: 39 },
+        { name: "宜宾", value: 12 },
+        { name: "广安", value: 30 },
+        { name: "达州", value: 42 },
+        { name: "巴中", value: 24 },
+        { name: "雅安", value: 7 },
+        { name: "眉山", value: 8 },
+        { name: "资阳", value: 4 },
+        { name: "阿坝", value: 1 },
+        { name: "甘孜", value: 78 },
+        { name: "凉山", value: 13 }
+      ]
+    };
+  },
   mounted() {
     this.map = "";
     this.mapInit();
@@ -16,6 +43,38 @@ export default {
 
     this.map.on("load", function() {
       let res2 = axios.get("./api/sc_city.json").then(res => {
+        console.log(res.data);
+
+        var optscale = d3
+          .scaleLinear()
+          .domain([
+            d3.min(that.quezheng, function(d) {
+              return d.value;
+            }),
+            d3.max(that.quezheng, function(d) {
+              return d.value;
+            })
+          ])
+          .range([0, 1]);
+        var qznest = d3
+          .nest()
+          .key(function(d) {
+            return d.name;
+          })
+          .map(that.quezheng);
+
+        for (var i = 0; i < res.data.features.length; i++) {
+          var rename = res.data.features[i].properties.name;
+          // console.log();
+          var cname = rename.substring(0, 2);
+          if (cname == "攀枝") {
+            cname = cname + "花";
+          }
+          // console.log(cname);
+
+          var reopt = optscale(qznest.get(cname)[0].value);
+          res.data.features[i].properties["opt"] = reopt;
+        }
         // console.log(res.data);
         that.addcity2Map(res.data);
       });
@@ -96,8 +155,8 @@ export default {
         type: "fill",
         source: "city_json",
         paint: {
-          "fill-color": "#aca",
-          "fill-opacity": 0.1
+          "fill-color": "red",
+          "fill-opacity": ["get", "opt"]
         },
         maxzoom: 8.5
       });
