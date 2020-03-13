@@ -145,10 +145,10 @@ export default {
 <style>
 #Relation {
   position: absolute;
-  top: 60.1%;
-  left: 24.9%;
-  width: 24.9%;
-  height: 39%;
-  border: 1px solid white;
+  top: 65.1%;
+  left: 33.4%;
+  width: 33.2%;
+  height: 34%;
+  border: 1px solid solid #DEDEDD;
 }
 </style>

@@ -276,10 +276,10 @@ export default {
 <style>
 #Daily {
   position: absolute;
-  top: 60.1%;
+  top: 65.1%;
   left: 0.1%;
-  width: 24.8%;
-  height: 39%;
-  border: 1px solid white;
+  width: 33.2%;
+  height: 34%;
+  border: 1px solid  #DEDEDD;
 }
 </style>

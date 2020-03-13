@@ -73,7 +73,7 @@ export default {
       };
 
       var option = {
-        backgroundColor: "#F0F0EF",
+        //backgroundColor: "#F0F0EF",
         legend: {
           bottom: 30,
           data: ["北京", "湖北", "四川"],
@@ -224,10 +224,10 @@ export default {
 <style>
 #Coordinates {
   position: absolute;
-  top: 60.1%;
-  left: 50%;
-  width: 49.8%;
-  height: 39%;
-  border: 1px solid white;
+  top: 65.1%;
+  right: 0.1%;
+  width: 33.2%;
+  height: 34%;
+  border: 1pt solid #DEDEDD;
 }
 </style>

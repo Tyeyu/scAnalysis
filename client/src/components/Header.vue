@@ -10,8 +10,8 @@ export default {};
 #headers {
   position: absolute;
   top: 0.1%;
-  left: 0%;
-  width: 99.8%;
+  left: 0.1%;
+  width: 99.7%;
   height: 5%;
   border: 1px solid white;
   background-color: #30313a;

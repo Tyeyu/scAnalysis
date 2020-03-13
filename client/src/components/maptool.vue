@@ -33,11 +33,14 @@ export default {
 <style>
 #mapcontrl {
   position: absolute;
-  left: 88%;
-  top: 10%;
-  width: 10%;
+  left: 91%;
+  padding-left: 5pt;
+  padding-top: 10pt;
+  top: 5.5%;
+  width: 8.2%;
   height: 20%;
   border: 1px solid white;
+  background-color: #30313a;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: sans-serif;

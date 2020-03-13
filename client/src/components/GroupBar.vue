@@ -131,9 +131,9 @@
     position: absolute;
     top: 32.6%;
     left: 0.1%;
-    width: 30%;
-    height: 27.5%;
-    border: 1px solid white;
+    width: 24.8%;
+    height: 32.5%;
+    border: 1px solid  #DEDEDD;
   }
   #facet{
     width: 50%;

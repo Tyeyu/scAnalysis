@@ -111,15 +111,14 @@
   position: absolute;
   top: 5.1%;
   left: 0.1%;
-  width: 30%;
+  width: 24.8%;
   height: 27.5%;
-  border: 1px solid white;
+  border: 1px solid  #DEDEDD;
 }
 
 #in-pie{
   height: 75%;
   width: 90%;
-
 }
 #in-bar{
   bottom: 5%;

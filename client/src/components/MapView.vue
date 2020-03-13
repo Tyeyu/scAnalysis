@@ -194,9 +194,9 @@ export default {
 #map {
   position: absolute;
   top: 5.1%;
-  left: 30.2%;
-  width: 69.68%;
-  height: 55%;
-  border: 1px solid white;
+  left: 24.9%;
+  width: 74.9%;
+  height: 60%;
+  border: 1px #7a7a7a;
 }
 </style>
