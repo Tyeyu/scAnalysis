@@ -186,6 +186,17 @@ export default {
         maxzoom: 8.5
       });
     }
+  },
+  computed: {
+    mapdata() {
+      return this.$store.getters.getmapdata;
+    }
+  },
+  watch: {
+    //监听dailydata数据变化
+    mapdata: function(newval, oldval) {
+      //图表数据变化后该执行的操作
+    }
   }
 };
 </script>

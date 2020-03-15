@@ -270,6 +270,17 @@ export default {
       };
       myChart.setOption(option);
     }
+  },
+  computed: {
+    dailydata() {
+      return this.$store.getters.getDailydata;
+    }
+  },
+  watch: {
+    //监听dailydata数据变化
+    dailydata: function(newval, oldval) {
+      //图表数据变化后该执行的操作
+    }
   }
 };
 </script>
@@ -280,6 +291,6 @@ export default {
   left: 0.1%;
   width: 33.2%;
   height: 34%;
-  border: 1px solid  #DEDEDD;
+  border: 1px solid #dededd;
 }
 </style>

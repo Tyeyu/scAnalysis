@@ -139,6 +139,17 @@ export default {
   },
   mounted: function() {
     this.Readdata();
+  },
+  computed: {
+    Relationdata() {
+      return this.$store.getters.getRelationdata;
+    }
+  },
+  watch: {
+    //监听dailydata数据变化
+    Relationdata: function(newval, oldval) {
+      //图表数据变化后该执行的操作
+    }
   }
 };
 </script>
@@ -149,6 +160,6 @@ export default {
   left: 33.4%;
   width: 33.2%;
   height: 34%;
-  border: 1px solid solid #DEDEDD;
+  border: 1px solid solid #dededd;
 }
 </style>

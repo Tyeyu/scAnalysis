@@ -218,6 +218,17 @@ export default {
   },
   mounted() {
     this.initchart();
+  },
+  computed: {
+    Coordinatesdata() {
+      return this.$store.getters.getCoordinatesdata;
+    }
+  },
+  watch: {
+    //监听dailydata数据变化
+    Coordinatesdata: function(newval, oldval) {
+      //图表数据变化后该执行的操作
+    }
   }
 };
 </script>
@@ -228,6 +239,6 @@ export default {
   right: 0.1%;
   width: 33.2%;
   height: 34%;
-  border: 1pt solid #DEDEDD;
+  border: 1pt solid #dededd;
 }
 </style>
