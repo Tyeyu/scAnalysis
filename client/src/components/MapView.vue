@@ -78,7 +78,11 @@ export default {
         // console.log(res.data);
         that.addcity2Map(res.data);
       });
-      let res = axios.get("/api/merge_sichuan.json").then(res => {
+      let res = axios.get("/api/sichuan_district.json").then(res => {
+        console.log(res.data);
+        that.adddistrict2Map(res.data);
+      });
+      let res3 = axios.get("/api/merge_sichuan.json").then(res => {
         // console.log(res.data);
         that.addtown2Map(res.data);
       });
@@ -183,6 +187,53 @@ export default {
         paint: {
           "text-color": "#333"
         },
+        maxzoom: 8.5
+      });
+    },
+    adddistrict2Map(features) {
+      this.map.addSource("dstrc_json", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: features.features
+        }
+      });
+      this.map.addLayer({
+        id: "dstrc-overlay",
+        type: "fill",
+        source: "dstrc_json",
+        paint: {
+          "fill-color": "#aca",
+          "fill-opacity": 0.1
+        },
+        minzoom: 7,
+        maxzoom: 8.5
+      });
+
+      this.map.addLayer({
+        id: "dstrc-outline",
+        type: "line",
+        source: "dstrc_json",
+        paint: {
+          "line-width": 1,
+          "line-color": "#000",
+          "line-opacity": 1
+        },
+        minzoom: 7,
+        maxzoom: 8.5
+      });
+      this.map.addLayer({
+        id: "dstrc-label",
+        type: "symbol",
+        source: "dstrc_json",
+        layout: {
+          "text-field": "{name}",
+          "text-size": 10
+        },
+        paint: {
+          "text-color": "#333"
+        },
+        minzoom: 7,
         maxzoom: 8.5
       });
     }
