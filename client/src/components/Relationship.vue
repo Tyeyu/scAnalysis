@@ -138,7 +138,11 @@ export default {
     redrawchart: function() {}
   },
   mounted: function() {
-    this.Readdata();
+    /*示例
+    /当通过commit提交数据时，relationData发生变化,watch监听到变化后改变状态
+    /*/
+
+    this.$store.commit("setRelationdata", "data");
   },
   computed: {
     Relationdata() {
@@ -149,6 +153,7 @@ export default {
     //监听dailydata数据变化
     Relationdata: function(newval, oldval) {
       //图表数据变化后该执行的操作
+      this.Readdata();
     }
   }
 };

@@ -4,64 +4,64 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     //存储地图数据
-    mapdata: null,
+    mapData: null,
     //每日新增图数据
-    Dailydata: null,
+    dailyData: null,
     //groupbar数据
-    groupbardata: null,
+    groupBarData: null,
     //madeup数据
-    madeupdata: null,
+    madeupData: null,
     //平行坐标数据
-    Coordinatesdata: null,
+    coordinatesData: null,
     //关系图数据
-    Relationdata: null,
+    relationData: null,
     //maptool选择数据
-    maptooldata: null
+    mapToolData: null
   },
   mutations: {
     setmapdata: function(state, data) {
-      state.mapdata = data;
+      state.mapData = data;
     },
     setDailydata: function(state, data) {
-      state.Dailydata = data;
+      state.dailyData = data;
     },
     setgroupbardata: function(state, data) {
-      state.groupbardata = data;
+      state.groupBarData = data;
     },
     setmadeupdata: function(state, data) {
-      state.madeupdata = data;
+      state.madeupData = data;
     },
     setCoordinatesdata: function(state, data) {
-      state.Coordinatesdata = data;
+      state.coordinatesData = data;
     },
     setRelationdata: function(state, data) {
-      state.Relationdata = datta;
+      state.relationData = data;
     },
     setmaptooldata: function(state, data) {
-      state.maptooldata = data;
+      state.mapToolData = data;
     }
   },
   getters: {
     getmapdata: state => {
-      return state.mapdata;
+      return state.mapData;
     },
     getDailydata: state => {
-      return state.Dailydata;
+      return state.dailyData;
     },
     getgroupbardata: state => {
-      return state.groupbardata;
+      return state.groupBarData;
     },
     getmadeupdata: state => {
-      return state.madeupdata;
+      return state.madeupData;
     },
     getCoordinatesdata: state => {
-      return state.Coordinatesdata;
+      return state.coordinatesData;
     },
     getRelationdata: state => {
-      return state.Relationdata;
+      return state.relationData;
     },
     getmaptooldata: state => {
-      return state.maptooldata;
+      return state.mapToolData;
     }
   }
 });
