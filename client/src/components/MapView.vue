@@ -1,5 +1,7 @@
 <template>
-  <div id="map"></div>
+  <div id="map">
+    <div id="menu"></div>
+  </div>
 </template>
 
 <script>
@@ -38,7 +40,7 @@ export default {
   mounted() {
     this.map = "";
     this.mapInit();
-
+    this.loadData();
     let that = this;
 
     this.map.on("load", function() {
@@ -87,8 +89,8 @@ export default {
         that.addtown2Map(res.data);
       });
     });
+    this.visLayer();
   },
-
   methods: {
     mapInit() {
       mapboxgl.accessToken =
@@ -99,6 +101,58 @@ export default {
         style: "mapbox://styles/mapbox/light-v9",
         center: [101.9199, 30.1904],
         zoom: 5
+      });
+    },
+    loadData() {
+      axios.get("../static/latlon.json").then(response => {
+        let _data = response.data;
+        // console.log(_data);
+        this.addArrestPoint(_data);
+      });
+    },
+    addArrestPoint(data) {
+      let drawPoints = [];
+      let mapData = data.RECORDS;
+      //   console.log(mapData);
+      mapData.forEach(d => {
+        // console.log(d.lon,d.lat)
+        drawPoints.push({
+          type: "Feature",
+          properties: {
+            color: "red",
+            opacity: 0.8,
+            radius: 10
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [d.lon, d.lat]
+          }
+        });
+      });
+      //   console.log(drawPoints)
+      this.map.on("load", () => {
+        //load：在所有必要数据源下载完毕、且首个可见的地图渲染完毕后立即触发
+        this.map.addSource("points_source", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: drawPoints
+          }
+        });
+        this.map.addLayer({
+          id: "points_layer",
+          source: "points_source",
+          type: "circle",
+          layout: {
+            visibility: "visible"
+          }, //指渲染位置和可见性
+          paint: {
+            //指更精细的渲染样式，如不透明度、颜色和翻译等
+            "circle-color": ["get", "color"],
+            "circle-opacity": ["get", "opacity"],
+            "circle-radius": ["get", "radius"]
+          }
+        });
       });
     },
     addtown2Map(features) {
@@ -236,6 +290,89 @@ export default {
         minzoom: 7,
         maxzoom: 8.5
       });
+    },
+    visLayer() {
+      // this.map = "";
+      let that = this;
+      // console.log(this.map);
+      // console.log(this.map.getLayoutProperty("points_layer","visibility"));
+      //   var toggleableLayerIds = ["points_layer","region-label","city-outline", "county-outline"];
+      var toggleableLayerIds = [
+        "region-label",
+        "city-outline",
+        "county-outline"
+      ];
+      //   for (var i = 0; i < toggleableLayerIds.length; i++) {
+      // var id = toggleableLayerIds[i];
+
+      var link1 = document.createElement("a"); /* 创建a标签 */
+      var link2 = document.createElement("a"); /* 创建a标签 */
+      link1.href = "#";
+      link1.className = "active";
+      link1.textContent = "POA";
+      link2.href = "#";
+      link2.className = "active";
+      link2.textContent = "contours";
+
+      link1.onclick = function(e) {
+        /* 设置onclick事件回调函数 */
+        var clickedLayer = this
+          .textContent; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
+        var clickedLayer = "points_layer";
+        e.preventDefault();
+        e.stopPropagation();
+        //   console.log(that.map.getLayoutProperty(clickedLayer,"visibility"));
+        var visibility = that.map.getLayoutProperty(
+          clickedLayer,
+          "visibility"
+        ); /* getLayoutProperty(layer, name) 返回指定style layer上名为name的layout属性的值*/
+        console.log(visibility);
+        if (visibility === "visible") {
+          that.map.setLayoutProperty(clickedLayer, "visibility", "none");
+          // this.map.setLayoutProperty(
+          //   clickedLayer,
+          //   "visibility",
+          //   "none"
+          // ); /* setLayoutProperty(layer, name, value)设置指定layer上名为name的layou属性的值 */
+          this.className = "";
+        } else {
+          this.className = "active";
+          that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
+        }
+      };
+
+      link2.onclick = function(e) {
+        for (var i = 0; i < toggleableLayerIds.length; i++) {
+          /* 设置onclick事件回调函数 */
+          var clickedLayer = toggleableLayerIds[i]; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
+          e.preventDefault();
+          e.stopPropagation();
+          //   console.log(that.map.getLayoutProperty(clickedLayer,"visibility"));
+          var visibility = that.map.getLayoutProperty(
+            clickedLayer,
+            "visibility"
+          ); /* getLayoutProperty(layer, name) 返回指定style layer上名为name的layout属性的值*/
+          console.log(visibility);
+          if (visibility === "visible") {
+            that.map.setLayoutProperty(clickedLayer, "visibility", "none");
+            // this.map.setLayoutProperty(
+            //   clickedLayer,
+            //   "visibility",
+            //   "none"
+            // ); /* setLayoutProperty(layer, name, value)设置指定layer上名为name的layou属性的值 */
+            this.className = "";
+          } else {
+            this.className = "active";
+            that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
+          }
+        }
+      };
+
+      var layers = document.getElementById("menu");
+
+      layers.appendChild(link1);
+      layers.appendChild(link2); /* appendChild() 方法向节点添加最后一个子节点,此处即向menu后面添加link节点 */
+      //   }
     }
   },
   computed: {
@@ -261,4 +398,44 @@ export default {
   height: 60%;
   border: 1px #7a7a7a;
 }
+#menu {
+        background: #fff;
+        position: absolute;
+        z-index: 1;
+        top: 10px;
+        left: 10px;
+        border-radius: 3px;
+        width: 120px;
+        border: 1px solid rgba(0,0,0,0.4);
+        font-family: 'Open Sans', sans-serif;
+    }
+ 
+    #menu a {
+        font-size: 13px;
+        color: #404040;
+        display: block;
+        margin: 0;
+        padding: 0;
+        padding: 10px;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(0,0,0,0.25);
+        text-align: center;
+    }
+     #menu a:hover {
+        background-color: #f8f8f8;
+        color: #404040;
+    }
+ 
+    #menu a.active {
+        background-color: #3887be;
+        color: #ffffff;
+    }
+ 
+    #menu a.active:hover {
+        background: #3074a4;
+    }
+    #menu a:last-child {
+        border: none;
+    }
+
 </style>
