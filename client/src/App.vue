@@ -5,6 +5,7 @@
     <groupbar></groupbar>
     <mapview></mapview>
     <maptool></maptool>
+    <timeline></timeline>
     <!--放下面的三幅图-->
     <AddedDaily />
     <Relationship />
@@ -21,6 +22,7 @@ import Relationship from "./components/Relationship";
 import PCooordinates from "./components/ParallelCoordinates";
 import headers from "./components/Header";
 import maptool from "./components/maptool";
+import timeline from "./components/TimeLine";
 export default {
   name: "App",
   components: {
@@ -31,7 +33,8 @@ export default {
     Relationship,
     PCooordinates,
     headers,
-    maptool
+    maptool,
+    timeline
   }
 };
 </script>
