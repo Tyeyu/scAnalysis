@@ -84,10 +84,10 @@ export default {
         console.log(res.data);
         that.adddistrict2Map(res.data);
       });
-      let res3 = axios.get("/api/merge_sichuan.json").then(res => {
-        // console.log(res.data);
-        that.addtown2Map(res.data);
-      });
+      // let res3 = axios.get("/api/merge_sichuan.json").then(res => {
+      //   // console.log(res.data);
+      //   that.addtown2Map(res.data);
+      // });
     });
     this.visLayer();
   },
@@ -344,7 +344,10 @@ export default {
       link2.onclick = function(e) {
         for (var i = 0; i < toggleableLayerIds.length; i++) {
           /* 设置onclick事件回调函数 */
-          var clickedLayer = toggleableLayerIds[i]; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
+          var clickedLayer =
+            toggleableLayerIds[
+              i
+            ]; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
           e.preventDefault();
           e.stopPropagation();
           //   console.log(that.map.getLayoutProperty(clickedLayer,"visibility"));
@@ -371,7 +374,9 @@ export default {
       var layers = document.getElementById("menu");
 
       layers.appendChild(link1);
-      layers.appendChild(link2); /* appendChild() 方法向节点添加最后一个子节点,此处即向menu后面添加link节点 */
+      layers.appendChild(
+        link2
+      ); /* appendChild() 方法向节点添加最后一个子节点,此处即向menu后面添加link节点 */
       //   }
     }
   },
@@ -399,43 +404,42 @@ export default {
   border: 1px #7a7a7a;
 }
 #menu {
-        background: #fff;
-        position: absolute;
-        z-index: 1;
-        top: 10px;
-        left: 10px;
-        border-radius: 3px;
-        width: 120px;
-        border: 1px solid rgba(0,0,0,0.4);
-        font-family: 'Open Sans', sans-serif;
-    }
- 
-    #menu a {
-        font-size: 13px;
-        color: #404040;
-        display: block;
-        margin: 0;
-        padding: 0;
-        padding: 10px;
-        text-decoration: none;
-        border-bottom: 1px solid rgba(0,0,0,0.25);
-        text-align: center;
-    }
-     #menu a:hover {
-        background-color: #f8f8f8;
-        color: #404040;
-    }
- 
-    #menu a.active {
-        background-color: #3887be;
-        color: #ffffff;
-    }
- 
-    #menu a.active:hover {
-        background: #3074a4;
-    }
-    #menu a:last-child {
-        border: none;
-    }
+  background: #fff;
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  left: 10px;
+  border-radius: 3px;
+  width: 120px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  font-family: "Open Sans", sans-serif;
+}
 
+#menu a {
+  font-size: 13px;
+  color: #404040;
+  display: block;
+  margin: 0;
+  padding: 0;
+  padding: 10px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+#menu a:hover {
+  background-color: #f8f8f8;
+  color: #404040;
+}
+
+#menu a.active {
+  background-color: #3887be;
+  color: #ffffff;
+}
+
+#menu a.active:hover {
+  background: #3074a4;
+}
+#menu a:last-child {
+  border: none;
+}
 </style>
