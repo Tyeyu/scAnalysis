@@ -1,10 +1,12 @@
 <template>
   <div id="app">
+    <headers></headers>
     <madeup></madeup>
     <groupbar></groupbar>
-    <!-- <mapview></mapview> -->
     <voronoichart></voronoichart>
-
+    <mapview></mapview>
+    <maptool></maptool>
+    <timeline></timeline>
     <!--放下面的三幅图-->
     <AddedDaily />
     <Relationship />
@@ -19,8 +21,10 @@ import groupbar from "./components/GroupBar";
 import AddedDaily from "./components/AddedDaily";
 import Relationship from "./components/Relationship";
 import PCooordinates from "./components/ParallelCoordinates";
-import voronoichart from "./components/voronoiChart";
-
+import voronoichart from"./components/voronoiChart";
+import headers from "./components/Header";
+import maptool from "./components/maptool";
+import timeline from "./components/TimeLine";
 export default {
   name: "App",
   components: {
@@ -28,16 +32,19 @@ export default {
     madeup,
     groupbar,
     AddedDaily,
+    voronoichart,
     Relationship,
     PCooordinates,
-    voronoichart
+    headers,
+    maptool,
+    timeline
   }
 };
 </script>
 
 <style>
 body {
-  background-color: #f5f5f6;
+  background-color: #f0f0ef;
 }
 
 #app {

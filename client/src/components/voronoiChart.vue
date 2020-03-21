@@ -105,9 +105,9 @@ export default{
           HosData.forEach(function(d,p,q){
             d.lng = parseFloat(d.lng);
             d.lat = parseFloat(d.lat);
-            console.log("number",d.number)
-            positions[p].number = d.number;        
+            console.log("number",d.number)        
             positions.push(projection([d.lng,d.lat])); 
+            positions[p].number = d.number;
           })
           //console.log("positions",positions)
 
