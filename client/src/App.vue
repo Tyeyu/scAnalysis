@@ -2,7 +2,8 @@
   <div id="app">
     <madeup></madeup>
     <groupbar></groupbar>
-    <mapview></mapview>
+    <!-- <mapview></mapview> -->
+    <voronoichart></voronoichart>
 
     <!--放下面的三幅图-->
     <AddedDaily />
@@ -12,22 +13,24 @@
 </template>
 
 <script>
-import mapview from "./components/MapView";
+// import mapview from "./components/MapView";
 import madeup from "./components/MadeUp";
 import groupbar from "./components/GroupBar";
 import AddedDaily from "./components/AddedDaily";
 import Relationship from "./components/Relationship";
 import PCooordinates from "./components/ParallelCoordinates";
+import voronoichart from "./components/voronoiChart";
 
 export default {
   name: "App",
   components: {
-    mapview,
+    // mapview,
     madeup,
     groupbar,
     AddedDaily,
     Relationship,
-    PCooordinates
+    PCooordinates,
+    voronoichart
   }
 };
 </script>

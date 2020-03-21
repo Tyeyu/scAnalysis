@@ -4,6 +4,9 @@
 
 <script>
 import * as mapboxgl from "mapbox-gl";
+import * as d3 from "d3";
+import * as d3geoVoronoi from "d3-geo-voronoi";
+
 let axios = require("axios");
 export default {
   name: "mapview",
@@ -17,12 +20,17 @@ export default {
     this.map.on("load", function() {
       let res2 = axios.get("./api/sc_city.json").then(res => {
         console.log(res.data);
-        that.addcity2Map(res.data);
+        that.addcity2Map(res.data); 
       });
       let res = axios.get("/api/merge_sichuan.json").then(res => {
         console.log(res.data);
         that.addtown2Map(res.data);
       });
+      let res3 = axios.get("/api/asshole.csv").then(res=>{
+        console.log(res.data);
+        res.data.forEach
+        that.addVoronoi(res.data);
+      })
     });
   },
 
@@ -126,7 +134,20 @@ export default {
         },
         maxzoom: 8.5
       });
+    },
+    addVoronoi(points){
+      var v = d3geoVoronoi.geoVoronoi()
+    .x(function(row) {
+        return +row.lng + 1e-9 * Math.random();
+    })
+    .y(function(row) {
+        return +row.lat;
+    })
+    (points);
+    console.log(v.polygons().features)
     }
+
+    
   }
 };
 </script>
