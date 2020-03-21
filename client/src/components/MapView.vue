@@ -97,10 +97,10 @@ export default {
         console.log(res.data);
         that.adddistrict2Map(res.data);
       });
-      let res3 = axios.get("/api/merge_sichuan.json").then(res => {
-        // console.log(res.data);
-        that.addtown2Map(res.data);
-      });
+      // let res3 = axios.get("/api/merge_sichuan.json").then(res => {
+      //   // console.log(res.data);
+      //   that.addtown2Map(res.data);
+      // });
     });
     this.visLayer();
   },
@@ -343,7 +343,10 @@ export default {
         counter2 = counter2 + 1;
         for (var i = 0; i < toggleableLayerIds.length; i++) {
           /* 设置onclick事件回调函数 */
-          var clickedLayer = toggleableLayerIds[i]; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
+          var clickedLayer =
+            toggleableLayerIds[
+              i
+            ]; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
           e.preventDefault();
           e.stopPropagation();
           console.log(clickedLayer);
@@ -370,7 +373,9 @@ export default {
       var layers = document.getElementById("menu");
 
       layers.appendChild(link1);
-      layers.appendChild(link2); /* appendChild() 方法向节点添加最后一个子节点,此处即向menu后面添加link节点 */
+      layers.appendChild(
+        link2
+      ); /* appendChild() 方法向节点添加最后一个子节点,此处即向menu后面添加link节点 */
       //   }
     }
   },
@@ -440,5 +445,4 @@ export default {
     #menu a:last-child {
         border: none;
     }
-
 </style>

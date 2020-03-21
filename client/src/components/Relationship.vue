@@ -51,10 +51,10 @@ export default {
     initchartSet: function() {
       let that = this;
       // //序数比例尺
-      var s = d3.scaleBand(["2月1日", "2月2日", "2月3日"], d3.range(3));
-      // .domain(d3.range(3))
-      // .range(["2月1日", "2月2日", "2月3日"]);
-      console.log(s("2月2日"));
+      // var s = d3.scaleBand(["2月1日", "2月2日", "2月3日"], d3.range(3));
+      // // .domain(d3.range(3))
+      // // .range(["2月1日", "2月2日", "2月3日"]);
+      // console.log(s("2月2日"));
       this.chartSvgwidth = document.getElementById("Relation").clientWidth - 10;
       this.chartSVgheight =
         document.getElementById("Relation").clientHeight - 10;
