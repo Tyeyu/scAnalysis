@@ -21,10 +21,11 @@ import groupbar from "./components/GroupBar";
 import AddedDaily from "./components/AddedDaily";
 import Relationship from "./components/Relationship";
 import PCooordinates from "./components/ParallelCoordinates";
-import voronoichart from"./components/voronoiChart";
+import voronoichart from "./components/voronoiChart";
 import headers from "./components/Header";
 import maptool from "./components/maptool";
 import timeline from "./components/TimeLine";
+import mapview from "./components/MapView";
 export default {
   name: "App",
   components: {
@@ -37,7 +38,8 @@ export default {
     PCooordinates,
     headers,
     maptool,
-    timeline
+    timeline,
+    mapview
   }
 };
 </script>

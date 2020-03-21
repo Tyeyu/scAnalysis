@@ -24,6 +24,7 @@ export default {
       d3.csv("../../static/testdata.csv")
         .then(function(data) {
           that.chartdata = data;
+          console.log(data);
           that.setXaxisdata();
           that.initchartSet();
           that.initchart(data);

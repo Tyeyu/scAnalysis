@@ -1,5 +1,8 @@
 <template>
-  <div id="timeLine"></div>
+  <div>
+    <div id="timeLine"></div>
+    <div id="timeLineText"></div>
+  </div>
 </template>
 <script>
 import * as d3 from "d3";
@@ -93,5 +96,29 @@ export default {
   width: 70%;
   height: 5%;
   /* border: 1px solid black; */
+}
+#timeLineText {
+  position: absolute;
+  /* display: none; */
+  border-style: solid;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  white-space: nowrap;
+  z-index: 9999999;
+  transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s,
+    top 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  background-color: rgba(50, 50, 50, 0.7);
+  border-width: 0px;
+  border-color: rgb(51, 51, 51);
+  border-radius: 4px;
+  color: rgb(255, 255, 255);
+  font: 14px / 21px "Microsoft YaHei";
+  padding: 5px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
 }
 </style>
