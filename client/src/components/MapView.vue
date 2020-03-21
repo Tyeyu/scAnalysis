@@ -37,7 +37,20 @@ export default {
         { name: "阿坝", value: 1 },
         { name: "甘孜", value: 78 },
         { name: "凉山", value: 13 }
-      ]
+      ],
+      toggleableLayerIds:[
+         "region-label",
+        "city-outline",
+        "county-outline",
+        "county-overlay",
+        "county-label",
+        "city-overlay",
+        "region-label",
+        "dstrc-overlay",
+        "dstrc-outline",
+        "dstrc-label",
+      ],
+      counter:0,
     };
   },
   mounted() {
@@ -146,9 +159,9 @@ export default {
           id: "points_layer",
           source: "points_source",
           type: "circle",
-          layout: {
-            visibility: "visible"
-          }, //指渲染位置和可见性
+          // layout: {
+          //   visibility: "visible"
+          // }, //指渲染位置和可见性
           paint: {
             //指更精细的渲染样式，如不透明度、颜色和翻译等
             "circle-color": ["get", "color"],
@@ -295,19 +308,7 @@ export default {
       });
     },
     visLayer() {
-      // this.map = "";
       let that = this;
-      // console.log(this.map);
-      // console.log(this.map.getLayoutProperty("points_layer","visibility"));
-      //   var toggleableLayerIds = ["points_layer","region-label","city-outline", "county-outline"];
-      var toggleableLayerIds = [
-        "region-label",
-        "city-outline",
-        "county-outline"
-      ];
-      //   for (var i = 0; i < toggleableLayerIds.length; i++) {
-      // var id = toggleableLayerIds[i];
-
       var link1 = document.createElement("a"); /* 创建a标签 */
       var link2 = document.createElement("a"); /* 创建a标签 */
       link1.href = "#";
@@ -316,35 +317,33 @@ export default {
       link2.href = "#";
       link2.className = "active";
       link2.textContent = "contours";
-
+      let counter1 = that.counter
+      let counter2 = that.counter
       link1.onclick = function(e) {
         /* 设置onclick事件回调函数 */
-        var clickedLayer = this
-          .textContent; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
+        counter1 = counter1 + 1;
+        var clickedLayer = this.textContent; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
         var clickedLayer = "points_layer";
         e.preventDefault();
         e.stopPropagation();
-        //   console.log(that.map.getLayoutProperty(clickedLayer,"visibility"));
-        var visibility = that.map.getLayoutProperty(
-          clickedLayer,
-          "visibility"
-        ); /* getLayoutProperty(layer, name) 返回指定style layer上名为name的layout属性的值*/
+        if(counter1 == 1){
+          that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
+        }
+        var visibility = that.map.getLayoutProperty(clickedLayer,"visibility"); /* getLayoutProperty(layer, name) 返回指定style layer上名为name的layout属性的值*/
         console.log(visibility);
         if (visibility === "visible") {
-          that.map.setLayoutProperty(clickedLayer, "visibility", "none");
-          // this.map.setLayoutProperty(
-          //   clickedLayer,
-          //   "visibility",
-          //   "none"
-          // ); /* setLayoutProperty(layer, name, value)设置指定layer上名为name的layou属性的值 */
+          that.map.setLayoutProperty(clickedLayer, "visibility", "none");// 设置指定layer上名为name的layou属性的值
+          console.log("ghdkjhgdkjhfkj")
           this.className = "";
         } else {
           this.className = "active";
+          console.log("jinlaimy")
           that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
         }
       };
-
+      let toggleableLayerIds =  that.toggleableLayerIds;
       link2.onclick = function(e) {
+        counter2 = counter2 + 1;
         for (var i = 0; i < toggleableLayerIds.length; i++) {
           /* 设置onclick事件回调函数 */
           var clickedLayer =
@@ -353,7 +352,10 @@ export default {
             ]; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
           e.preventDefault();
           e.stopPropagation();
-          //   console.log(that.map.getLayoutProperty(clickedLayer,"visibility"));
+          console.log(clickedLayer);
+          if(counter2 == 1){
+          that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
+        }
           var visibility = that.map.getLayoutProperty(
             clickedLayer,
             "visibility"
@@ -361,14 +363,11 @@ export default {
           console.log(visibility);
           if (visibility === "visible") {
             that.map.setLayoutProperty(clickedLayer, "visibility", "none");
-            // this.map.setLayoutProperty(
-            //   clickedLayer,
-            //   "visibility",
-            //   "none"
-            // ); /* setLayoutProperty(layer, name, value)设置指定layer上名为name的layou属性的值 */
+             /* setLayoutProperty(layer, name, value)设置指定layer上名为name的layou属性的值 */
             this.className = "";
           } else {
             this.className = "active";
+            console.log("jinlaimy")
             that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
           }
         }
@@ -409,42 +408,46 @@ export default {
   border: 1px #7a7a7a;
 }
 #menu {
-  background: #fff;
-  position: absolute;
-  z-index: 1;
-  top: 10px;
-  left: 10px;
-  border-radius: 3px;
-  width: 120px;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  font-family: "Open Sans", sans-serif;
-}
-
-#menu a {
-  font-size: 13px;
-  color: #404040;
-  display: block;
-  margin: 0;
-  padding: 0;
-  padding: 10px;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-  text-align: center;
-}
-#menu a:hover {
-  background-color: #f8f8f8;
-  color: #404040;
-}
-
-#menu a.active {
-  background-color: #3887be;
-  color: #ffffff;
-}
-
-#menu a.active:hover {
-  background: #3074a4;
-}
-#menu a:last-child {
-  border: none;
-}
+        background: #fff;
+        position: absolute;
+        z-index: 1;
+        top: 10px;
+        left: 10px;
+        border-radius: 3px;
+        width: 120px;
+        border: 1px solid rgba(0,0,0,0.4);
+        font-family: 'Open Sans', sans-serif;
+    }
+ 
+    #menu a {
+        font-size: 13px;
+        color: #404040;
+        display: block;
+        margin: 0;
+        padding: 0;
+        padding: 10px;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(0,0,0,0.25);
+        opacity: 0.5;
+        text-align: center;
+    }
+     #menu a:hover {
+        background-color: #f8f8f8;
+        opacity: 0.5;
+        color: #404040;
+    }
+ 
+    #menu a.active {
+        background-color: #30313a;
+        opacity: 0.5;
+        color: #ffffff;
+    }
+ 
+    #menu a.active:hover {
+        background: #3074a4;
+        opacity: 0.5;
+    }
+    #menu a:last-child {
+        border: none;
+    }
 </style>
