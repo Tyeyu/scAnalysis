@@ -22,13 +22,7 @@ export default {
     Readdata: function() {
       let that = this;
       d3.csv("../../static/testdata.csv")
-        .then(function(data) {
-          that.chartdata = data;
-          console.log(data);
-          that.setXaxisdata();
-          that.initchartSet();
-          that.initchart(data);
-        })
+        .then(function(data) {})
         .catch(function(error) {});
     },
     setXaxisdata: function() {
@@ -40,10 +34,10 @@ export default {
       }
       this.xaxiesdata = xdmap.keys();
       this.xaxiesdata = this.xaxiesdata.sort(function(a, b) {
-        var da = parseInt(a.split("月")[0]);
-        var daa = parseInt(a.split("月")[1].split("日")[0]);
-        var db = parseInt(b.split("月")[0]);
-        var dbb = parseInt(b.split("月")[1].split("日")[0]);
+        var da = parseInt(a.split("/")[1]);
+        var daa = parseInt(a.split("/")[2]);
+        var db = parseInt(b.split("/")[1]);
+        var dbb = parseInt(b.split("/")[2]);
 
         return da < db ? -1 : da > db ? 1 : daa < dbb ? -1 : 1;
       });
@@ -51,11 +45,6 @@ export default {
     //初始化图表基础配置
     initchartSet: function() {
       let that = this;
-      // //序数比例尺
-      // var s = d3.scaleBand(["2月1日", "2月2日", "2月3日"], d3.range(3));
-      // // .domain(d3.range(3))
-      // // .range(["2月1日", "2月2日", "2月3日"]);
-      // console.log(s("2月2日"));
       this.chartSvgwidth = document.getElementById("Relation").clientWidth - 10;
       this.chartSVgheight =
         document.getElementById("Relation").clientHeight - 10;
@@ -65,11 +54,13 @@ export default {
     //初始化图表
     initchart: function(data) {
       let that = this;
-      var chartXscale = d3.scaleBand(that.xaxiesdata, [
-        0,
-        that.chartSvgwidth - 30
-      ]);
-
+      var chartXscale = d3
+        .scaleTime()
+        .domain([
+          new Date(that.xaxiesdata[0]),
+          new Date(that.xaxiesdata[that.xaxiesdata.length - 1])
+        ])
+        .range([0, that.chartSvgwidth - 30]);
       var chartYscal = d3
         .scaleLinear()
         .domain([
@@ -108,15 +99,15 @@ export default {
         .data(that.chartdata)
         .enter()
         .append("circle")
-        .attr("r", 10)
+        .attr("r", 5)
         .attr("transform", "translate(30,10)")
         .style("fill", "#a6cee3")
         .style("cursor", "pointer")
         .attr("cy", function(d, i) {
-          return chartYscal(d.ID);
+          return chartYscal(d.ID) + 2;
         })
         .attr("cx", function(d) {
-          return chartXscale(d.enddate);
+          return chartXscale(new Date(d.enddate));
         });
       svg
         .selectAll("bar")
@@ -126,35 +117,91 @@ export default {
         .attr("transform", "translate(30,10)")
         .style("fill", "#a6cee3")
         .attr("x", function(d) {
-          return chartXscale(d.startdate);
+          return chartXscale(new Date(d.startdate));
         })
         .attr("y", function(d, i) {
-          return chartYscal(i + 1);
+          return chartYscal(d.ID);
         })
         .attr("width", function(d) {
-          return chartXscale(d.enddate) - chartXscale(d.startdate);
+          return (
+            chartXscale(new Date(d.enddate)) -
+            chartXscale(new Date(d.startdate))
+          );
         })
         .attr("height", 4);
     },
-    redrawchart: function() {}
-  },
-  mounted: function() {
-    /*示例
-    /当通过commit提交数据时，relationData发生变化,watch监听到变化后改变状态
-    /*/
-
-    this.$store.commit("setRelationdata", "data");
+    redrawchart: function() {
+      d3.select("#Relation")
+        .select("svg")
+        .remove();
+      this.setXaxisdata();
+      this.initchartSet();
+      this.initchart(this.chartdata);
+    }
   },
   computed: {
     Relationdata() {
       return this.$store.getters.getRelationdata;
+    },
+    ScTrackData() {
+      return this.$store.getters.getscTrackData;
+    },
+    selectCity() {
+      return this.$store.getters.getselectCity;
     }
   },
   watch: {
-    //监听dailydata数据变化
+    //监听Relationdata数据变化
     Relationdata: function(newval, oldval) {
       //图表数据变化后该执行的操作
-      this.Readdata();
+      var cityname = this.$store.getters.getselectCity;
+      this.chartdata = [];
+      var k = 0;
+      for (var i = 0; i < newval.length; i++) {
+        if (newval[i].city == cityname) {
+          this.chartdata[k] = newval[i];
+          k++;
+        }
+      }
+      this.redrawchart();
+    },
+    //监听选中的城市
+    selectCity: function(newval, oldval) {
+      var data = this.$store.getters.getRelationdata;
+      this.chartdata = [];
+      var k = 0;
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].city == newval) {
+          this.chartdata[k] = data[i];
+          k++;
+        }
+      }
+      this.redrawchart();
+    },
+    ScTrackData: function(newval, oldval) {
+      var drawdata = [];
+      var k = 0;
+      for (var i = 0; i < newval.length; i++) {
+        if (newval[i].onsetTime == "不明" || newval[i].onsetTime == "") {
+          continue;
+        }
+        var sdate = new Date(newval[i].onsetTime);
+        var edate = new Date(newval[i].diagnosisTime);
+        // drawdata[k] = {
+        //   startdate: sdate.getMonth() + 1 + "月" + sdate.getDate() + "日",
+        //   enddate: edate.getMonth() + 1 + "月" + edate.getDate() + "日",
+        //   ID: newval[i].id,
+        //   city: newval[i].city
+        // };
+        drawdata[k] = {
+          startdate: newval[i].onsetTime,
+          enddate: newval[i].diagnosisTime,
+          ID: newval[i].id,
+          city: newval[i].city
+        };
+        k++;
+      }
+      this.$store.commit("setRelationdata", drawdata);
     }
   }
 };

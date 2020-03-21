@@ -16,7 +16,10 @@ const store = new Vuex.Store({
     //关系图数据
     relationData: null,
     //maptool选择数据
-    mapToolData: null
+    mapToolData: null,
+    //轨迹原始数据
+    scTrackData: null,
+    selectCity: "四川达州"
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -39,6 +42,12 @@ const store = new Vuex.Store({
     },
     setmaptooldata: function(state, data) {
       state.mapToolData = data;
+    },
+    setscTrackData: function(state, data) {
+      state.scTrackData = data;
+    },
+    setselectCity: function(state, cityname) {
+      state.selectCity = cityname;
     }
   },
   getters: {
@@ -62,6 +71,12 @@ const store = new Vuex.Store({
     },
     getmaptooldata: state => {
       return state.mapToolData;
+    },
+    getscTrackData: state => {
+      return state.scTrackData;
+    },
+    getselectCity: state => {
+      return state.selectCity;
     }
   }
 });

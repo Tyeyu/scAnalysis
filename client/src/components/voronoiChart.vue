@@ -162,7 +162,6 @@ export default {
         .attr("stroke", "white")
         .attr("clip-path", "url(#myclipPath)")
         .attr("d", function(d) {
-          console.log(d);
           if (d != undefined) {
             return "M" + d.join("L") + "Z";
           }

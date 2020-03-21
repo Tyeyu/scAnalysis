@@ -26,6 +26,7 @@ import headers from "./components/Header";
 import maptool from "./components/maptool";
 import timeline from "./components/TimeLine";
 import mapview from "./components/MapView";
+import readcsv from "./tool/readcsv";
 export default {
   name: "App",
   components: {
@@ -40,6 +41,12 @@ export default {
     maptool,
     timeline,
     mapview
+  },
+  mounted: function() {
+    /*
+    /读取四川轨迹数据
+    /*/
+    readcsv.readscTrack();
   }
 };
 </script>
