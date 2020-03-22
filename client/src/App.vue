@@ -47,6 +47,7 @@ export default {
     /读取四川轨迹数据
     /*/
     readcsv.readscTrack();
+    readcsv.readscMerge();
   }
 };
 </script>

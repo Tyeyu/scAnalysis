@@ -1,4 +1,4 @@
-﻿公开时间,类别,省份,城市,新增确诊病例,新增治愈出院数,新增死亡数,核减,治愈核减,死亡核减,累计确诊人数,累计治愈人数,累计死亡人数
+﻿date,type,province,city,newDiagnosis,newHealth,newDeath,writeDown,healthWriteDown,deathWriteDown,accumulativeDiagnosis,accumulativeHeath,accumulativeDeath
 1月10日,省级,四川,,,,,,,,,,
 1月11日,省级,四川,,,,,,,,,,
 1月12日,省级,四川,,,,,,,,,,

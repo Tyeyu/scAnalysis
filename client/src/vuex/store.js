@@ -19,7 +19,10 @@ const store = new Vuex.Store({
     mapToolData: null,
     //轨迹原始数据
     scTrackData: null,
-    selectCity: "四川达州"
+    selectCity: "四川达州",
+    //四川Merger原始数据
+    scMergerData: null,
+    mergerCity: ""
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -48,6 +51,12 @@ const store = new Vuex.Store({
     },
     setselectCity: function(state, cityname) {
       state.selectCity = cityname;
+    },
+    setscMergerData: function(state, data) {
+      state.scMergerData = data;
+    },
+    setmergerCity: function(state, cityname) {
+      state.mergerCity = cityname;
     }
   },
   getters: {
@@ -77,6 +86,12 @@ const store = new Vuex.Store({
     },
     getselectCity: state => {
       return state.selectCity;
+    },
+    getscMergerData: state => {
+      return state.scMergerData;
+    },
+    getmergerCity: state => {
+      return state.mergerCity;
     }
   }
 });
