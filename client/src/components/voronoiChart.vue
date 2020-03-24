@@ -1,5 +1,7 @@
 <template>
-  <div id="voronoiMap"></div>
+  <div id="voronoiMap">
+    <div class="tooltip" style="opaciyt:0"></div>
+  </div>
 </template>
 
 <script>
@@ -16,13 +18,17 @@ export default {
   mounted: function() {
     axios.get("/api/position.csv").then(PositionRes => {
       axios.get("/api/sc_city.json").then(MapRes => {
-        let HosPosition = dsv.csvParse(PositionRes.data);
-        let mapdata = MapRes.data;
-        this.map_data = mapdata;
-        this.hos_data = HosPosition;
-        // console.log(this.hos_data);
-        // console.log("features",this.map_data.features);
-        this.AddVoronoi(this.map_data, this.hos_data);
+        axios.get("/api/sichuan.json").then(CordRes => {
+          let HosPosition = dsv.csvParse(PositionRes.data);
+          let mapdata = MapRes.data;
+          let corddata = CordRes.data;
+          this.cord_data = corddata;
+          this.map_data = mapdata;
+          this.hos_data = HosPosition;
+          // console.log(this.hos_data);
+          // console.log("features",this.map_data.features);
+          this.AddVoronoi(this.map_data, this.hos_data, this.cord_data);
+        });
       });
     });
   },
@@ -30,17 +36,19 @@ export default {
   watch: {},
 
   methods: {
-    AddVoronoi(MapData, HosData) {
+    AddVoronoi(MapData, HosData, CordData) {
+      let tooltip = d3.selectAll(".tooltip");
+
       var width = window.innerWidth * 0.69;
       var height = window.innerHeight * 0.6;
       var that = this;
 
       var zoom = d3
         .zoom()
-        .scaleExtent([0.2, 200])
+        .scaleExtent([0.1, 20])
         .on("zoom", zoomed);
 
-      this.scale = 1;
+      this.scale = 0.5;
 
       function zoomed() {
         that.container.attr(
@@ -53,7 +61,6 @@ export default {
             d3.event.transform.k +
             ")"
         );
-        // console.log("123");
 
         d3.selectAll(".location").attr("r", 2 / d3.event.transform.k);
         d3.selectAll(".cell").attr("stroke-width", 1 / d3.event.transform.k);
@@ -71,8 +78,8 @@ export default {
       //定义地图投影
       var projection = d3
         .geoMercator()
-        .center([100, 29])
-        .scale(14000)
+        .center([94, 26])
+        .scale(2500)
         // .translate([this.width / 2-200 , this.height / 2 +250]);
         .translate([width / 4 - 200, height / 3 + 280]);
 
@@ -95,47 +102,47 @@ export default {
         .attr("fill-opacity", 0.6)
         .attr("d", path);
 
-      // console.log(HosData);
-
       let positions = [];
       HosData.forEach(function(d, p, q) {
         d.lng = parseFloat(d.lng);
         d.lat = parseFloat(d.lat);
-        // console.log("number", d.number);
+
         positions.push(projection([d.lng, d.lat]));
-        positions[p].number = d.number;
+        positions[p].name = d["机构名称"];
       });
-      //console.log("positions",positions)
 
       const _voronoi = d3.voronoi();
       // .extent([[-1, -1],[innerWidth+1,innerHeight+1]])
 
       const polygons = _voronoi(positions).polygons();
 
-      // console.log("polygons", polygons);
+      let AreaData = [];
+      //构造poly1 poly2计算相交的面积
+      polygons.forEach(d => {
+        if (d != undefined) {
+          let points = [];
+          for (var i = 0; i < d.length; i++) {
+            if (d[i] != undefined) {
+              points.push(projection.invert([d[i][0], d[i][1]]));
+            }
+          }
+          points[points.length] = points[0];
+          // CordData.geometry.coordinates[0][CordData.geometry.coordinates.length]=CordData.geometry.coordinates[0][0]
+          let poly1 = turf.polygon([points]);
+          // console.log("coordinates",CordData.geometry.coordinates)
+          let poly2 = turf.polygon(CordData.geometry.coordinates);
+          // console.log("ploy2",poly2)
+          var intersection = turf.intersect(poly1, poly2);
+          if (intersection) {
+            var area_intersection = turf.area(intersection);
+            d.area = area_intersection / 1000;
+            //AreaData.push({"number":d.data.number,"area":area_intersection/1000,"polyg":d})
+          } else {
+            d.area = turf.area(poly1 / 1000);
+          }
+        }
+      });
 
-      // let AreaData = []
-      // //构造poly1 poly2计算相交的面积
-      // polygons.forEach(d => {
-      //   let points = [];
-      //   points[0] = [];
-      //   for (var i = 0; i < d.length; i++) {
-      //       points[0][i] = [];
-      //       points[0][i]= projection.invert([d[i][0],d[i][1]])
-      //   }
-      //   points[0][d.length] = projection.invert([d[0][0],d[0][1]])//首尾连接
-      //   MapData.geometry.coordinates[0][MapData.geometry.coordinates.length]=MapData.geometry.coordinates[0][0]
-      //   let poly1 = turf.polygon(points)
-      //   let poly2 = turf.polygon(MapData.geometry.coordinates)
-      //   var intersection = turf.intersect(poly1, poly2);
-      //   if(intersection){
-
-      //     var area_intersection = turf.area(intersection);
-      //     AreaData.push({"key":d.data.key,"area":area_intersection/1000000,"name":d.data.name,"polyg":d})
-      //   }
-      // })
-
-      // console.log(AreaData)
       // that.$root.$emit('AreaData',AreaData)
 
       var clipPath = this.container.append("clipPath").attr("id", "myclipPath");
@@ -163,27 +170,38 @@ export default {
         .attr("clip-path", "url(#myclipPath)")
         .attr("d", function(d) {
           if (d != undefined) {
-            return "M" + d.join("L") + "Z";
+            let x = [];
+            for (var i = 0; i < d.length; i++) {
+              if (d[i] != null) {
+                x.push(d[i]);
+              }
+            }
+            return "M" + x.join("L") + "Z";
           }
+        })
+        .on("mouseover", function(d) {
+          tooltip
+            .transition()
+            .duration(200)
+            .style("opacity", 0.9);
+          tooltip
+            .html(
+              d.data.name +
+                "：" +
+                parseInt(d.area / 1000) +
+                " KM2" +
+                "<br> 兰咩舔鸡"
+            )
+            .style("left", d3.event.pageX - window.innerWidth * 0.31 + "px")
+            .style("top", d3.event.pageY - 28 + "px");
+        })
+        .on("mouseout", function(d) {
+          tooltip
+            .transition()
+            .duration(500)
+            .style("opacity", 0);
         });
     }
-
-    // highLightVoronoi(data){
-
-    //     d3.selectAll(".cell")
-    //     .attr("fill","steelblue")
-    //     .attr("fill-opacity",0.6)
-
-    //     //console.log(d3.select('#' + d))
-
-    //   data.forEach(d=>{
-    //     d3.select('#' + d)
-    //     .attr("fill","#F26101")
-    //     .attr("fill-opacity",1)
-
-    //   })
-
-    // }
   }
 };
 </script>
@@ -191,17 +209,29 @@ export default {
 #voronoiMap {
   position: absolute;
   top: 5.1%;
-  left: 24.9%;
-  width: 60%;
+  left: 30.2%;
+  width: 69%;
   height: 60%;
   border: 1px solid #ccc;
   z-index: 1;
 }
-#voronoiMap svg {
-  z-index: 99999;
-}
+
 .province {
   stroke: black;
   stroke-width: 1px;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 120px;
+  height: 28px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightcoral;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
 }
 </style>
