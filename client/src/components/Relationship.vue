@@ -66,7 +66,7 @@ export default {
         .domain([
           0,
           d3.max(this.chartdata, function(d) {
-            return d.ID;
+            return parseInt(d.ID);
           })
         ])
         .range([this.chartSVgheight - 30, 1]);
@@ -99,12 +99,12 @@ export default {
         .data(that.chartdata)
         .enter()
         .append("circle")
-        .attr("r", 5)
+        .attr("r", 3)
         .attr("transform", "translate(30,10)")
         .style("fill", "#a6cee3")
         .style("cursor", "pointer")
         .attr("cy", function(d, i) {
-          return chartYscal(d.ID) + 2;
+          return chartYscal(parseInt(d.ID)) + 1;
         })
         .attr("cx", function(d) {
           return chartXscale(new Date(d.enddate));
@@ -120,7 +120,7 @@ export default {
           return chartXscale(new Date(d.startdate));
         })
         .attr("y", function(d, i) {
-          return chartYscal(d.ID);
+          return chartYscal(parseInt(d.ID));
         })
         .attr("width", function(d) {
           return (
@@ -128,7 +128,7 @@ export default {
             chartXscale(new Date(d.startdate))
           );
         })
-        .attr("height", 4);
+        .attr("height", 2);
     },
     redrawchart: function() {
       d3.select("#Relation")

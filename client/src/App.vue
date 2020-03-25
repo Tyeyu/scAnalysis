@@ -3,7 +3,7 @@
     <headers></headers>
     <madeup></madeup>
     <groupbar></groupbar>
-    <voronoichart></voronoichart>
+    <!-- <voronoichart></voronoichart> -->
     <mapview></mapview>
     <maptool></maptool>
     <timeline></timeline>

@@ -11,17 +11,13 @@ import { Chart } from "@antv/g2";
 
 export default {
   name: "groupbar",
-  mounted() {
-    var data = [
-      { region: "成都", local: 200, input: 400, percent: 0.5 },
-      { region: "绵阳", local: 100, input: 300, percent: 0.3 },
-      { region: "德阳", local: 80, input: 200, percent: 0.4 },
-      { region: "内江", local: 50, input: 150, percent: 0.3 },
-      { region: "自贡", local: 30, input: 90, percent: 0.3 }
-    ];
-    this.chartInit(data);
-    this.chartFacet(data);
-  },
+    data(){
+      return{
+          cityData: null,
+          chart: null,
+      };
+    },
+  mounted() {},
   methods: {
     chartInit(data) {
       var _ds = new DataSet();
