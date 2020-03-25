@@ -107,13 +107,9 @@ export default {
           dailydata.diagnosis[k] =
             newval[i].newDiagnosis == "" ? "0" : newval[i].newDiagnosis;
           (dailydata.accumulativeHeath[k] =
-            newval[i].accumulativeHeath == ""
-              ? "0"
-              : newval[i].accumulativeHeath),
+            newval[i].newHealth == "" ? "0" : newval[i].newHealth),
             (dailydata.accumulativeDeath[k] =
-              newval[i].accumulativeDeath == ""
-                ? "0"
-                : newval[i].accumulativeDeath);
+              newval[i].newDeath == "" ? "0" : newval[i].newDeath);
           k++;
         }
       }

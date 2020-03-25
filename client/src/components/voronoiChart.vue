@@ -103,19 +103,22 @@ export default {
         .attr("d", path);
 
       let positions = [];
+      let pos = [];
       HosData.forEach(function(d, p, q) {
         d.lng = parseFloat(d.lng);
         d.lat = parseFloat(d.lat);
 
         positions.push(projection([d.lng, d.lat]));
         positions[p].name = d["机构名称"];
+        pos.push(projection(projection.invert([d.lng, d.lat])));
+        pos[p].name = d["机构名称"];
       });
-
+      // console.log(pos);
       const _voronoi = d3.voronoi();
       // .extent([[-1, -1],[innerWidth+1,innerHeight+1]])
-
+      // console.log(_voronoi(pos).polygons());
       const polygons = _voronoi(positions).polygons();
-
+      // console.log(polygons);
       let AreaData = [];
       //构造poly1 poly2计算相交的面积
       polygons.forEach(d => {
@@ -161,9 +164,9 @@ export default {
         .enter()
         .append("path")
         .attr("class", "cell")
-        // .attr("id",function(d){
-        //   return d.data.key
-        // })
+        .attr("id", function(d, i) {
+          return i;
+        })
         .attr("fill", "blue")
         .attr("fill-opacity", 0)
         .attr("stroke", "white")
@@ -209,9 +212,9 @@ export default {
 #voronoiMap {
   position: absolute;
   top: 5.1%;
-  left: 30.2%;
-  width: 69%;
-  height: 60%;
+  left: 34.9%;
+  width: 50%;
+  height: 59%;
   border: 1px solid #ccc;
   z-index: 1;
 }
