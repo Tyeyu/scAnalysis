@@ -55,7 +55,7 @@ export default {
       var myChart = echarts.init(echartDom);
 
       var schema = [
-        { name: "date", index: 0, text: "日期" },
+        { name: "city", index: 0, text: "城市" },
         { name: "AQIindex", index: 1, text: "疑似病例" },
         { name: "PM25", index: 2, text: "确诊病历" },
         { name: "PM10", index: 3, text: "死亡人数" },
@@ -67,64 +67,14 @@ export default {
 
       var lineStyle = {
         normal: {
-          width: 1,
-          opacity: 0.5
+          width: 0.8,
+          opacity: 1
         }
       };
 
       var option = {
         //backgroundColor: "#F0F0EF",
-        legend: {
-          bottom: 30,
-          data: ["北京", "湖北", "四川"],
-          itemGap: 20,
-          textStyle: {
-            color: "#fff",
-            fontSize: 14
-          }
-        },
-        tooltip: {
-          padding: 10,
-          backgroundColor: "#000",
-          borderColor: "#777",
-          borderWidth: 1,
-          formatter: function(obj) {
-            var value = obj[0].value;
-            return (
-              '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px">' +
-              obj[0].seriesName +
-              " " +
-              value[0] +
-              "日期：" +
-              value[7] +
-              "</div>" +
-              schema[1].text +
-              "：" +
-              value[1] +
-              "<br>" +
-              schema[2].text +
-              "：" +
-              value[2] +
-              "<br>" +
-              schema[3].text +
-              "：" +
-              value[3] +
-              "<br>" +
-              schema[4].text +
-              "：" +
-              value[4] +
-              "<br>" +
-              schema[5].text +
-              "：" +
-              value[5] +
-              "<br>" +
-              schema[6].text +
-              "：" +
-              value[6] +
-              "<br>"
-            );
-          }
-        },
+
         // dataZoom: {
         //     show: true,
         //     orient: 'vertical',
@@ -151,44 +101,37 @@ export default {
             data: ["低", "中 ", "高"]
           }
         ],
-        visualMap: {
-          show: true,
-          min: 0,
-          max: 150,
-          dimension: 2,
-          inRange: {
-            color: ["#d94e5d", "#eac736", "#50a3ba"].reverse()
-            // colorAlpha: [0, 1]
-          }
-        },
+
         parallel: {
+          top: "20%",
           left: "5%",
-          right: "18%",
+          right: "7%",
+          height: "72%",
           bottom: 100,
           parallelAxisDefault: {
             type: "value",
-            name: "AQI指数",
+            name: "疫情tu",
             nameLocation: "end",
             nameGap: 20,
             nameTextStyle: {
-              color: "#fff",
+              color: "black",
               fontSize: 12
             },
             axisLine: {
               lineStyle: {
-                color: "#aaa"
+                color: "black"
               }
             },
             axisTick: {
               lineStyle: {
-                color: "#777"
+                color: "black"
               }
             },
             splitLine: {
               show: false
             },
             axisLabel: {
-              color: "#fff"
+              color: "black"
             }
           }
         },
