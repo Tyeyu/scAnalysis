@@ -7,11 +7,11 @@ import echarts from "echarts";
 export default {
   data() {
     return {
-      dataBJ: [[1, 55, 9, 56, 100, 18, 6, "低"]],
+      dataBJ: [["凉山", 10, 9, 56, 100, 18, 6, 10]],
 
-      dataHB: [[1, 26, 37, 27, 78, 27, 13, "低"]],
+      dataHB: [["成都", 26, 37, 27, 78, 27, 13, 20]],
 
-      dataSC: [[30, 80, 55, 80, 0, 75, 24, "高"]]
+      dataSC: [["达州", 15, 55, 80, 0, 75, 24, 33]]
     };
   },
   methods: {
@@ -22,14 +22,14 @@ export default {
       var myChart = echarts.init(echartDom);
 
       var schema = [
-        { name: "city", index: 0, text: "城市" },
-        { name: "AQIindex", index: 1, text: "疑似病例" },
-        { name: "PM25", index: 2, text: "确诊病历" },
-        { name: "PM10", index: 3, text: "死亡人数" },
-        { name: "CO", index: 4, text: " 入境人数" },
-        { name: "NO2", index: 5, text: "出境人数" },
-        { name: "SO2", index: 6, text: "医疗资金（百万）" },
-        { name: "等级", index: 7, text: "风险等级" }
+        { name: "city", index: 0, text: "地区" },
+        { name: "AQIindex", index: 1, text: "确诊人数" },
+        { name: "PM25", index: 2, text: "治愈率" },
+        { name: "PM10", index: 3, text: "死亡率" },
+        { name: "CO", index: 4, text: "迁入" },
+        { name: "NO2", index: 5, text: "迁出" },
+        { name: "SO2", index: 6, text: "定点医院个数" },
+        { name: "等级", index: 7, text: "发热门诊个数" }
       ];
 
       var lineStyle = {
@@ -51,29 +51,51 @@ export default {
           {
             dim: 0,
             name: schema[0].text,
+            type: "category",
+            data: [
+              "成都",
+              "自贡 ",
+              "攀枝花",
+              "泸州",
+              "德阳",
+              "绵阳",
+              "广元",
+              "遂宁",
+              "内江",
+              "乐山",
+              "南充",
+              "宜宾",
+              "广安",
+              "达州",
+              "巴中",
+              "雅安",
+              "眉山",
+              "资阳",
+              "阿坝",
+              "甘孜",
+              "凉山"
+            ]
+          },
+          {
+            dim: 1,
+            name: schema[1].text,
             inverse: true,
-            max: 31,
+            max: 101,
             nameLocation: "start"
           },
-          { dim: 1, name: schema[1].text },
           { dim: 2, name: schema[2].text },
           { dim: 3, name: schema[3].text },
           { dim: 4, name: schema[4].text },
           { dim: 5, name: schema[5].text },
           { dim: 6, name: schema[6].text },
-          {
-            dim: 7,
-            name: schema[7].text,
-            type: "category",
-            data: ["低", "中 ", "高"]
-          }
+          { dim: 7, name: schema[7].text }
         ],
 
         parallel: {
           top: "20%",
           left: "5%",
           right: "7%",
-          height: "72%",
+          height: "76%",
           bottom: 100,
           parallelAxisDefault: {
             type: "value",
