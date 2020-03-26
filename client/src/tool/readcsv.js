@@ -10,10 +10,19 @@ const readcsv = {
   },
   readscMerge: function() {
     d3.csv("../../static/四川merger.csv")
-      .then(function(data) {
-        store.commit("setscMergerData", data);
+      .then(mergerData => {
+        d3.csv("../../static/hospitalnum.csv").then(hospitalData => {
+          d3.csv("../../static/scMigration.csv").then(scMigrationData => {
+            store.commit("setscMergerData", mergerData);
+            store.commit("setscCoordata", {
+              hospital: hospitalData,
+              Migration: scMigrationData
+            });
+          });
+        });
       })
       .catch(function(error) {});
-  }
+  },
+  readCoordata: function() {}
 };
 export default readcsv;

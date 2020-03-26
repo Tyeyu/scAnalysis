@@ -22,7 +22,9 @@ const store = new Vuex.Store({
     selectCity: "四川达州",
     //四川Merger原始数据
     scMergerData: null,
-    mergerCity: ""
+    mergerCity: "",
+    //平行坐标原始数据包括医院门诊数据，人口迁徙数据
+    scCoordata: null
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -57,6 +59,9 @@ const store = new Vuex.Store({
     },
     setmergerCity: function(state, cityname) {
       state.mergerCity = cityname;
+    },
+    setscCoordata: function(state, data) {
+      state.scCoordata = data;
     }
   },
   getters: {
@@ -92,6 +97,9 @@ const store = new Vuex.Store({
     },
     getmergerCity: state => {
       return state.mergerCity;
+    },
+    getscCoordata: state => {
+      return state.scCoordata;
     }
   }
 });
