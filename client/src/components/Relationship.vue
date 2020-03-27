@@ -1,5 +1,8 @@
 <template>
-  <div id="Relation"></div>
+  <div>
+    <div id="Relation"></div>
+    <div id="Rtooltip"></div>
+  </div>
 </template>
 <script>
 //传染关系图
@@ -29,7 +32,10 @@ export default {
       let that = this;
       var xdmap = d3.map();
       for (var i = 0; i < this.chartdata.length; i++) {
-        xdmap.set(that.chartdata[i].startdate, 0);
+        if (that.chartdata[i].startdate != "") {
+          xdmap.set(that.chartdata[i].startdate, 0);
+        }
+
         xdmap.set(that.chartdata[i].enddate, 0);
       }
       this.xaxiesdata = xdmap.keys();
@@ -57,7 +63,7 @@ export default {
       var chartXscale = d3
         .scaleTime()
         .domain([
-          new Date(that.$store.getters.gettimeRange[0]),
+          new Date(that.xaxiesdata[0]),
           new Date(that.$store.getters.gettimeRange[1])
         ])
 
@@ -109,6 +115,16 @@ export default {
         })
         .attr("cx", function(d) {
           return chartXscale(new Date(d.enddate));
+        })
+        .on("mouseover", function(d) {
+          d3.select("#Rtooltip")
+            .style("display", "inline")
+            .html("发病日期:" + d.startdate + "</br>确诊日期:" + d.enddate)
+            .style("left", d3.event.pageX + "px")
+            .style("top", d3.event.pageY - window.innerHeight * 0.07 + "px");
+        })
+        .on("mouseout", function() {
+          d3.select("#Rtooltip").style("display", "none");
         });
       svg
         .selectAll("bar")
@@ -132,6 +148,30 @@ export default {
         .attr("height", 2);
     },
     redrawchart: function() {
+      var timeRange = [
+        new Date(this.$store.getters.gettimeRange[0]),
+        new Date(this.$store.getters.gettimeRange[1])
+      ];
+      var data = this.$store.getters.getRelationdata;
+      this.chartdata = [];
+      var k = 0;
+      for (var i = 0; i < data.length; i++) {
+        var sdate = data[i].startdate;
+        if (data[i].startdate != "") {
+          sdate = new Date(sdate);
+        }
+        var edate = new Date(data[i].enddate);
+        if (
+          sdate == "" ||
+          (sdate.getTime() >= timeRange[0].getTime() &&
+            edate.getTime() <= timeRange[1].getTime())
+        ) {
+          if (data[i].city == this.$store.getters.getselectCity) {
+            this.chartdata[k] = data[i];
+            k++;
+          }
+        }
+      }
       d3.select("#Relation")
         .select("svg")
         .remove();
@@ -149,34 +189,31 @@ export default {
     },
     selectCity() {
       return this.$store.getters.getselectCity;
+    },
+    timeRange() {
+      return this.$store.getters.gettimeRange;
     }
   },
   watch: {
     //监听Relationdata数据变化
     Relationdata: function(newval, oldval) {
-      //图表数据变化后该执行的操作
-      var cityname = this.$store.getters.getselectCity;
-      this.chartdata = [];
-      var k = 0;
-      for (var i = 0; i < newval.length; i++) {
-        if (newval[i].city == cityname) {
-          this.chartdata[k] = newval[i];
-          k++;
-        }
-      }
+      // //图表数据变化后该执行的操作
+      // var cityname = this.$store.getters.getselectCity;
+      // this.chartdata = [];
+      // var k = 0;
+      // for (var i = 0; i < newval.length; i++) {
+      //   if (newval[i].city == cityname) {
+      //     this.chartdata[k] = newval[i];
+      //     k++;
+      //   }
+      // }
       this.redrawchart();
     },
     //监听选中的城市
     selectCity: function(newval, oldval) {
-      var data = this.$store.getters.getRelationdata;
-      this.chartdata = [];
-      var k = 0;
-      for (var i = 0; i < data.length; i++) {
-        if (data[i].city == newval) {
-          this.chartdata[k] = data[i];
-          k++;
-        }
-      }
+      this.redrawchart();
+    },
+    timeRange: function(newval, oldval) {
       this.redrawchart();
     },
     ScTrackData: function(newval, oldval) {
@@ -193,14 +230,7 @@ export default {
           k++;
           continue;
         }
-        var sdate = new Date(newval[i].onsetTime);
-        var edate = new Date(newval[i].diagnosisTime);
-        // drawdata[k] = {
-        //   startdate: sdate.getMonth() + 1 + "月" + sdate.getDate() + "日",
-        //   enddate: edate.getMonth() + 1 + "月" + edate.getDate() + "日",
-        //   ID: newval[i].id,
-        //   city: newval[i].city
-        // };
+
         drawdata[k] = {
           startdate: newval[i].onsetTime,
           enddate: newval[i].diagnosisTime,
@@ -222,5 +252,29 @@ export default {
   width: 33.2%;
   height: 34%;
   border: 1px solid solid #dededd;
+}
+#Rtooltip {
+  position: absolute;
+  display: none;
+  border-style: solid;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  white-space: nowrap;
+  z-index: 9999999;
+  transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s,
+    top 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  background-color: rgba(50, 50, 50, 0.7);
+  border-width: 0px;
+  border-color: rgb(51, 51, 51);
+  border-radius: 4px;
+  color: rgb(255, 255, 255);
+  font: 14px / 21px "Microsoft YaHei";
+  padding: 5px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
 }
 </style>
