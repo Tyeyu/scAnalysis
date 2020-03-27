@@ -99,9 +99,10 @@ export default {
           ];
           const chart = new G2.Chart({
               container: "facet",
+              forceFit: true,
               height: 210,
               top: '10%',
-              padding: [19, 500, 20, 50]
+              padding: [19, 50, 20, 5]
           });
           chart.source(data);
           chart.legend(false);
@@ -207,7 +208,7 @@ export default {
 #facet {
   bottom: 10%;
   height: 80%;
-  width: 30px;
+  width: 100px;
   top: 5%;
   position: absolute;
 }
