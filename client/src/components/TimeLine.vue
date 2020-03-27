@@ -26,7 +26,10 @@ export default {
       this.interval = d3.timeDay.every(1);
       this.xscale = d3
         .scaleTime()
-        .domain([new Date(2020, 0, 10), new Date(2020, 2, 20)])
+        .domain([
+          new Date(this.$store.getters.gettimeRange[0]),
+          new Date(this.$store.getters.gettimeRange[1])
+        ])
         .rangeRound([0, this.svgWidth]);
 
       this.xAxis = d3.axisBottom(this.xscale).ticks(5);
@@ -43,16 +46,38 @@ export default {
       this.brush = d3
         .brushX()
         .extent([
-          [0, 10],
+          [0, 5],
           [that.svgWidth, that.svgHeight]
         ])
         .on("end", that.brushend)
         .on("brush", that.brushmove);
       this.timeLineSvg
         .append("g")
-        .attr("transform", "translate(0," + -that.svgHeight / 2 + ")")
+        .attr("transform", "translate(0," + -that.svgHeight / 3 + ")")
         .attr("class", "brush")
-        .call(that.brush);
+        .on("mouseover", function() {
+          var selectrage = d3.brushSelection(this);
+          var selectTimerange = selectrage.map(d => that.xscale.invert(d));
+          var Sdate = that.dateFormat("YYYY-mm-dd", selectTimerange[0]);
+          var Edate = that.dateFormat("YYYY-mm-dd", selectTimerange[1]);
+
+          d3.select("#timeLineText")
+            .style("display", "inline")
+            .html(Sdate + "-" + Edate)
+            .style("left", d3.event.pageX - window.innerWidth * 0.13 + "px")
+            .style("top", d3.event.pageY - 28 + "px");
+        })
+        .on("mouseout", function() {
+          d3.select("#timeLineText").style("display", "none");
+        })
+        .call(that.brush)
+        .call(
+          that.brush.move,
+          [
+            new Date(this.$store.getters.gettimeRange[0]),
+            new Date(this.$store.getters.gettimeRange[1])
+          ].map(that.xscale)
+        );
       this.timeLineSvg
         .append("g")
         .attr("transform", "translate(0," + 10 + ")")
@@ -67,6 +92,7 @@ export default {
       const [x0, x1] = selection.map(d =>
         that.interval.round(that.xscale.invert(d))
       );
+      that.$store.commit("settimeRange", [x0, x1]);
       //确保绘制的矩形区域的最小单位为1天的宽度
       d3.select(".brush")
         .transition()
@@ -80,6 +106,28 @@ export default {
       );
 
       // console.log([x0, x1]);
+    },
+    dateFormat: function(fmt, date) {
+      let ret;
+      const opt = {
+        "Y+": date.getFullYear().toString(), // 年
+        "m+": (date.getMonth() + 1).toString(), // 月
+        "d+": date.getDate().toString(), // 日
+        "H+": date.getHours().toString(), // 时
+        "M+": date.getMinutes().toString(), // 分
+        "S+": date.getSeconds().toString() // 秒
+        // 有其他格式化字符需求可以继续添加，必须转化成字符串
+      };
+      for (let k in opt) {
+        ret = new RegExp("(" + k + ")").exec(fmt);
+        if (ret) {
+          fmt = fmt.replace(
+            ret[1],
+            ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, "0")
+          );
+        }
+      }
+      return fmt;
     }
   },
   mounted() {
@@ -97,9 +145,12 @@ export default {
   height: 5%;
   /* border: 1px solid black; */
 }
+#timeLine .selection {
+  fill: aqua;
+}
 #timeLineText {
   position: absolute;
-  /* display: none; */
+  display: none;
   border-style: solid;
   border-top-style: solid;
   border-right-style: solid;

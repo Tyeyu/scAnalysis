@@ -57,9 +57,10 @@ export default {
       var chartXscale = d3
         .scaleTime()
         .domain([
-          new Date(that.xaxiesdata[0]),
-          new Date(that.xaxiesdata[that.xaxiesdata.length - 1])
+          new Date(that.$store.getters.gettimeRange[0]),
+          new Date(that.$store.getters.gettimeRange[1])
         ])
+
         .range([0, that.chartSvgwidth - 30]);
       var chartYscal = d3
         .scaleLinear()
@@ -183,6 +184,13 @@ export default {
       var k = 0;
       for (var i = 0; i < newval.length; i++) {
         if (newval[i].onsetTime == "不明" || newval[i].onsetTime == "") {
+          drawdata[k] = {
+            startdate: "",
+            enddate: newval[i].diagnosisTime,
+            ID: newval[i].id,
+            city: newval[i].city
+          };
+          k++;
           continue;
         }
         var sdate = new Date(newval[i].onsetTime);

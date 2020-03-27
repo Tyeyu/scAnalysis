@@ -90,7 +90,10 @@ export default {
           { dim: 6, name: schema[6].text },
           { dim: 7, name: schema[7].text }
         ],
-
+        tooltip: {
+          triggerOn: "mousemove",
+          formatter: "{b0}: {c0}<br />{b1}: {c1}"
+        },
         parallel: {
           top: "20%",
           left: "5%",
