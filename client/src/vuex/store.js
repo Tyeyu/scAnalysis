@@ -16,7 +16,7 @@ const store = new Vuex.Store({
     //关系图数据
     relationData: null,
     //maptool选择数据
-    mapToolData: null,
+    mapToolData: [],
     //轨迹原始数据
     scTrackData: null,
     selectCity: "四川达州",
@@ -62,6 +62,9 @@ const store = new Vuex.Store({
     },
     setscCoordata: function(state, data) {
       state.scCoordata = data;
+    },
+    setcheckedcontrls:function(state,data){
+      state.checkedcontrls = data;
     }
   },
   getters: {
