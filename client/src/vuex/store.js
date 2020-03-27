@@ -24,7 +24,9 @@ const store = new Vuex.Store({
     scMergerData: null,
     mergerCity: "",
     //平行坐标原始数据包括医院门诊数据，人口迁徙数据
-    scCoordata: null
+    scCoordata: null,
+    //时间轴范围
+    timeRange: ["2020-01-10", "2020-03-20"]
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -65,6 +67,9 @@ const store = new Vuex.Store({
     },
     setcheckedcontrls:function(state,data){
       state.checkedcontrls = data;
+    },
+    settimeRange: function(state, timeRange) {
+      state.timeRange = timeRange;
     }
   },
   getters: {
@@ -103,6 +108,9 @@ const store = new Vuex.Store({
     },
     getscCoordata: state => {
       return state.scCoordata;
+    },
+    gettimeRange: state => {
+      return state.timeRange;
     }
   }
 });

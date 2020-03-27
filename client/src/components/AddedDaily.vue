@@ -51,26 +51,66 @@ export default {
             smooth: true,
             name: "新增确诊",
             type: "line",
-
             data: that.diagnosisData
           },
           {
             smooth: true,
             name: "死亡",
             type: "line",
-
             data: that.deathData
           },
           {
             smooth: true,
             name: "治愈",
             type: "line",
-
             data: that.heathData
           }
         ]
       };
       that.myChart.setOption(that.option, true);
+    },
+    dataManger: function(newval) {
+      var cityname = this.$store.getters.getmergerCity;
+      var dailydata = {
+        date: [],
+        diagnosis: [],
+        accumulativeHeath: [],
+        accumulativeDeath: []
+      };
+      var k = 0;
+      var timeRange = [
+        new Date(this.$store.getters.gettimeRange[0]),
+        new Date(this.$store.getters.gettimeRange[1])
+      ];
+      for (var i = 0; i < newval.length; i++) {
+        // console.log(newval[i].city);
+        var dates = newval[i].date;
+        // console.log(dates);
+        // console.log(dates.split("月")[1].split("日")[0]);
+        dates = new Date(
+          2020,
+          parseInt(dates.split("月")[0]) - 1,
+          dates.split("月")[1].split("日")[0]
+        );
+        // console.log(dates);
+        // break;
+        if (
+          timeRange[0].getTime() <= dates.getTime() &&
+          dates.getTime() <= timeRange[1].getTime()
+        ) {
+          if (newval[i].city == cityname) {
+            dailydata.date[k] = newval[i].date;
+            dailydata.diagnosis[k] =
+              newval[i].newDiagnosis == "" ? "0" : newval[i].newDiagnosis;
+            (dailydata.accumulativeHeath[k] =
+              newval[i].newHealth == "" ? "0" : newval[i].newHealth),
+              (dailydata.accumulativeDeath[k] =
+                newval[i].newDeath == "" ? "0" : newval[i].newDeath);
+            k++;
+          }
+        }
+      }
+      this.$store.commit("setDailydata", dailydata);
     }
   },
   computed: {
@@ -79,6 +119,9 @@ export default {
     },
     scMergerData() {
       return this.$store.getters.getscMergerData;
+    },
+    timeRange() {
+      return this.$store.getters.gettimeRange;
     }
   },
   watch: {
@@ -92,28 +135,10 @@ export default {
       this.ChartInit();
     },
     scMergerData: function(newval, oldval) {
-      var cityname = this.$store.getters.getmergerCity;
-      var dailydata = {
-        date: [],
-        diagnosis: [],
-        accumulativeHeath: [],
-        accumulativeDeath: []
-      };
-      var k = 0;
-      for (var i = 0; i < newval.length; i++) {
-        // console.log(newval[i].city);
-        if (newval[i].city == cityname) {
-          dailydata.date[k] = newval[i].date;
-          dailydata.diagnosis[k] =
-            newval[i].newDiagnosis == "" ? "0" : newval[i].newDiagnosis;
-          (dailydata.accumulativeHeath[k] =
-            newval[i].newHealth == "" ? "0" : newval[i].newHealth),
-            (dailydata.accumulativeDeath[k] =
-              newval[i].newDeath == "" ? "0" : newval[i].newDeath);
-          k++;
-        }
-      }
-      this.$store.commit("setDailydata", dailydata);
+      this.dataManger(newval);
+    },
+    timeRange: function(newval, oldval) {
+      this.dataManger(this.$store.getters.getscMergerData);
     }
   }
 };
