@@ -36,8 +36,8 @@ export default {
           {
             name: "感染者性别",
             type: "pie",
-            center: ["28%", "74%"],
-            radius: "50%",
+            center: ["60%", "60%"],
+            radius: "60%",
             data: that.sexData
           }
         ]
@@ -51,7 +51,7 @@ export default {
         color: ["#3398DB"],
         title: {
           text: "年龄组成",
-          left: "65%"
+          left: "40%"
         },
         tooltip: {
           trigger: "axis",
@@ -61,10 +61,10 @@ export default {
           }
         },
         grid: {
-          left: "50%",
-          right: "1%",
-          bottom: "5%",
-          top: "20%",
+          left: "15%",
+          right: "15%",
+          bottom: "1%",
+          top: "15%",
           containLabel: true
         },
         xAxis: [
@@ -176,13 +176,13 @@ export default {
 }
 
 #in-pie {
-  height: 75%;
-  width: 90%;
+  height: 95%;
+  width: 30%;
+  float: left;
 }
 #in-bar {
-  bottom: 5%;
-  height: 80%;
-  width: 90%;
-  position: absolute;
+  height: 95%;
+  width: 70%;
+  float: right;
 }
 </style>
