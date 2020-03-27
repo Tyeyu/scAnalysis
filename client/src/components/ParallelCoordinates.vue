@@ -167,7 +167,9 @@ export default {
     Coordinatesdata: function(newval, oldval) {
       //图表数据变化后该执行的操作
     },
-    ScCoordata: function(newval, oldval) {}
+    ScCoordata: function(newval, oldval) {
+      console.log(newval.hospital);
+    }
   }
 };
 </script>
