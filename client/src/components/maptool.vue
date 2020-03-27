@@ -30,23 +30,6 @@ export default {
   methods: {
     handleCheckedcontrlsChange: function(val) {
       this.$store.commit("setmaptooldata", val);
-      // for(var i = 0; i < val.length; i++){
-      //   console.log(val[i])
-      //   if(val[i]=="POA"){
-      //     console.log("POA1")
-      //   }
-      // else{
-      //   console.log("POA0")
-      // }
-      // }
-      // console.log(val.length)
-      // if(val=="POA"){
-      //   console.log("1")
-      // }
-      // // console.log(val)
-      // if(val=="contours"){
-      //   console.log("2")
-      // };
 
     }
   },
