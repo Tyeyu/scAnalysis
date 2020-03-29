@@ -55,7 +55,7 @@ export default {
             dim: 1,
             name: schema[1].text,
             inverse: true,
-            max: 101,
+            // max: 101,
             nameLocation: "start"
           },
           { dim: 2, name: schema[2].text },
