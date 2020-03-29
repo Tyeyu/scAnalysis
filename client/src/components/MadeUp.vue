@@ -2,6 +2,7 @@
   <div id="pie">
     <div id="in-pie"></div>
     <div id="in-bar"></div>
+    <div id="in-content"></div>
   </div>
 </template>
 
@@ -26,18 +27,27 @@ export default {
       that.option = {
         title: {
           text: "性别占比",
-          top: "25px",
-          left: "15%"
+          top: "15px",
+          left: "19%"
         },
         tooltip: {
-          trigger: "item"
+          trigger: "item",
+          position: 'right'
+
         },
         series: [
           {
             name: "感染者性别",
             type: "pie",
             center: ["60%", "60%"],
-            radius: "60%",
+            radius: ['40%','60%'],
+              bottom: '1%',
+            avoidLabelOverlap: false,
+            label: {
+                  show: false,
+                  position: 'center'
+            },
+
             data: that.sexData
           }
         ]
@@ -176,8 +186,10 @@ export default {
 }
 
 #in-pie {
-  height: 95%;
+  height: 70%;
   width: 30%;
+  bottom: 0.1%;
+  top: 20%;
   float: left;
 }
 #in-bar {
@@ -185,4 +197,10 @@ export default {
   width: 70%;
   float: right;
 }
+  #in-content{
+    height: 30%;
+    width: 30%;
+    top: 0.1%;
+    bottom: 10%;
+  }
 </style>

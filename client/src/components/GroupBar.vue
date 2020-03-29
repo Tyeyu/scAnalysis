@@ -49,17 +49,17 @@ export default {
           containLabel: true
         },
         xAxis: {
-          type: "value"
+          show: false,
         },
         yAxis: {
           type: "category",
 
           data: [
-            "四川达州",
-            "四川德阳",
-            "四川绵阳",
-            "四川遂宁",
-            "四川巴中",
+            "达州",
+            "德阳",
+            "绵阳",
+            "遂宁",
+            "巴中",
             "成都"
           ]
         },
