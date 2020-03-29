@@ -4,14 +4,20 @@
 <script>
 //平行坐标图
 import echarts from "echarts";
+import * as d3 from "d3";
 export default {
   data() {
     return {
-      dataBJ: [["凉山", 10, 9, 56, 100, 18, 6, 10]],
-
-      dataHB: [["成都", 26, 37, 27, 78, 27, 13, 20]],
-
-      dataSC: [["达州", 15, 55, 80, 0, 75, 24, 33]]
+      lineStyle: {
+        normal: {
+          width: 0.8,
+          opacity: 1
+        }
+      },
+      seriesdata: null,
+      hospitalmap: null,
+      migraComputmap: null,
+      mergcomputmap: null
     };
   },
   methods: {
@@ -31,14 +37,6 @@ export default {
         { name: "SO2", index: 6, text: "定点医院个数" },
         { name: "等级", index: 7, text: "发热门诊个数" }
       ];
-
-      var lineStyle = {
-        normal: {
-          width: 0.8,
-          opacity: 1
-        }
-      };
-
       var option = {
         //backgroundColor: "#F0F0EF",
 
@@ -51,30 +49,7 @@ export default {
           {
             dim: 0,
             name: schema[0].text,
-            type: "category",
-            data: [
-              "成都",
-              "自贡 ",
-              "攀枝花",
-              "泸州",
-              "德阳",
-              "绵阳",
-              "广元",
-              "遂宁",
-              "内江",
-              "乐山",
-              "南充",
-              "宜宾",
-              "广安",
-              "达州",
-              "巴中",
-              "雅安",
-              "眉山",
-              "资阳",
-              "阿坝",
-              "甘孜",
-              "凉山"
-            ]
+            type: "category"
           },
           {
             dim: 1,
@@ -90,10 +65,6 @@ export default {
           { dim: 6, name: schema[6].text },
           { dim: 7, name: schema[7].text }
         ],
-        tooltip: {
-          triggerOn: "mousemove",
-          formatter: "{b0}: {c0}<br />{b1}: {c1}"
-        },
         parallel: {
           top: "20%",
           left: "5%",
@@ -127,39 +98,147 @@ export default {
             }
           }
         },
-        series: [
-          {
-            name: "北京",
-            type: "parallel",
-            lineStyle: lineStyle,
-            data: that.dataBJ
-          },
-          {
-            name: "湖北",
-            type: "parallel",
-            lineStyle: lineStyle,
-            data: that.dataHB
-          },
-          {
-            name: "四川",
-            type: "parallel",
-            lineStyle: lineStyle,
-            data: that.dataSC
-          }
-        ]
+        series: that.seriesdata
       };
       myChart.setOption(option);
+    },
+    hospitaldata: function(newval) {
+      this.hospitalmap = d3
+        .nest()
+        .key(function(d) {
+          return d.city;
+        })
+        .map(newval.hospital);
+    },
+    migrationdata: function(newval) {
+      var migradata = newval.Migration;
+      //在给定时间范围内计算迁入迁出平均比例
+      var timeRange = [
+        new Date(this.$store.getters.gettimeRange[0]),
+        new Date(this.$store.getters.gettimeRange[1])
+      ];
+      let migrations = [];
+      for (var i = 0; i < migradata.length; i++) {
+        var mdate = new Date(migradata[i].date);
+        if (
+          mdate.getTime() >= timeRange[0].getTime() &&
+          mdate.getTime() <= timeRange[1].getTime()
+        ) {
+          migrations.push(migradata[i]);
+        }
+      }
+      var migraNetsmap = d3
+        .nest()
+        .key(function(d) {
+          return d.city;
+        })
+        .map(migrations);
+      this.migraComputmap = d3.map();
+      var migkeys = migraNetsmap.keys();
+      for (var i = 0; i < migkeys.length; i++) {
+        var Inmigration_rate = 0;
+        var Outmigration_rate = 0;
+        var kdata = migraNetsmap.get(migkeys[i]);
+        for (var j = 0; j < kdata.length; j++) {
+          Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
+          Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
+        }
+        //求平均值，保留4位小数
+        this.migraComputmap.set(migkeys[i], {
+          Inrate: parseFloat(Inmigration_rate / kdata.length).toFixed(4),
+          Outrate: parseFloat(Outmigration_rate / kdata.length).toFixed(4)
+        });
+      }
+    },
+    mergedata: function() {
+      //计算给定日期的确诊、治愈率、死亡率
+      var timeRange = [
+        new Date(this.$store.getters.gettimeRange[0]),
+        new Date(this.$store.getters.gettimeRange[1])
+      ];
+      var mergerdata = this.$store.getters.getscMergerData;
+      let TimerangeMerdata = [];
+      for (var i = 0; i < mergerdata.length; i++) {
+        var dates = mergerdata[i].date;
+        dates = new Date(
+          2020,
+          parseInt(dates.split("月")[0]) - 1,
+          dates.split("月")[1].split("日")[0]
+        );
+        if (
+          dates.getTime() <= timeRange[1].getTime() &&
+          mergerdata[i].city != ""
+        ) {
+          TimerangeMerdata.push(mergerdata[i]);
+        }
+      }
+      var mergNetsmap = d3
+        .nest()
+        .key(function(d) {
+          return d.city;
+        })
+        .map(TimerangeMerdata);
+      this.mergcomputmap = d3.map();
+      var merkeys = mergNetsmap.keys();
+      for (var i = 0; i < merkeys.length; i++) {
+        var kdata = mergNetsmap.get(merkeys[i]);
+        var Diagnosis = kdata[kdata.length - 1].accumulativeDiagnosis;
+        var healthrate = parseFloat(
+          kdata[kdata.length - 1].accumulativeHeath /
+            kdata[kdata.length - 1].accumulativeDiagnosis
+        ).toFixed(4);
+        var deathrate = parseFloat(
+          kdata[kdata.length - 1].accumulativeDeath /
+            kdata[kdata.length - 1].accumulativeDiagnosis
+        ).toFixed(4);
+        this.mergcomputmap.set(merkeys[i], {
+          Diagnosis: Diagnosis,
+          Healthrate: healthrate,
+          Deathrate: deathrate
+        });
+      }
+    },
+    setserierdata: function() {
+      //封装数据
+      this.seriesdata = [];
+      var citys = this.hospitalmap.keys();
+      for (var i = 0; i < citys.length; i++) {
+        var mergd = this.mergcomputmap.get(citys[i]);
+        var migrd = this.migraComputmap.get(citys[i]);
+
+        var hospd = this.hospitalmap.get(citys[i]);
+        var serie = {
+          name: citys[i],
+          type: "parallel",
+          lineStyle: this.lineStyle,
+          data: [
+            [
+              citys[i],
+              mergd.Diagnosis,
+              mergd.Healthrate,
+              mergd.Deathrate,
+              migrd.Inrate,
+              migrd.Outrate,
+              hospd[0].hospital,
+              hospd[0].outpatient
+            ]
+          ]
+        };
+        this.seriesdata.push(serie);
+      }
+      console.log(this.seriesdata);
     }
   },
-  mounted() {
-    this.initchart();
-  },
+  mounted() {},
   computed: {
     Coordinatesdata() {
       return this.$store.getters.getCoordinatesdata;
     },
     ScCoordata() {
       return this.$store.getters.getscCoordata;
+    },
+    timeRange() {
+      return this.$store.getters.gettimeRange;
     }
   },
   watch: {
@@ -167,8 +246,18 @@ export default {
     Coordinatesdata: function(newval, oldval) {
       //图表数据变化后该执行的操作
     },
+    timeRange: function(newval, oldval) {
+      this.migrationdata(this.$store.getters.getscCoordata);
+      this.mergedata();
+      this.setserierdata();
+      this.initchart();
+    },
     ScCoordata: function(newval, oldval) {
-      console.log(newval.hospital);
+      this.hospitaldata(newval);
+      this.migrationdata(newval);
+      this.mergedata();
+      this.setserierdata();
+      this.initchart();
     }
   }
 };
