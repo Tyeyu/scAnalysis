@@ -1,6 +1,5 @@
 <template>
-  <div id="map">
-  </div>
+  <div id="map"></div>
 </template>
 
 <script>
@@ -292,44 +291,41 @@ export default {
         maxzoom: 8.5
       });
     },
-    changeLayer(data){
+    changeLayer(data) {
       let that = this;
       let toggleableLayerIds = that.toggleableLayerIds;
       let clickedLayer1 = "points_layer";
-       let stateOfPOA = data.indexOf("POA")
-       let stateOfCon = data.indexOf("contours")
-      data.forEach(item=>{
-         var visibility1 = that.map.setLayoutProperty(
+      let stateOfPOA = data.indexOf("POA");
+      let stateOfCon = data.indexOf("contours");
+      data.forEach(item => {
+        var visibility1 = that.map.setLayoutProperty(
           clickedLayer1,
           "visibility"
         ); /* getLayoutProperty(layer, name) 返回指定style layer上名为name的layout属性的值*/
-        for(var i = 0; i < toggleableLayerIds.length; i++){
-          var clickedLayer =toggleableLayerIds[i]; 
+        for (var i = 0; i < toggleableLayerIds.length; i++) {
+          var clickedLayer = toggleableLayerIds[i];
           var visibility = that.map.setLayoutProperty(
-          clickedLayer,
-          "visibility"
-        );
+            clickedLayer,
+            "visibility"
+          );
         }
-        if(stateOfPOA == 0){
-        that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
+        if (stateOfPOA == 0) {
+          that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
+        } else if (stateOfPOA == -1) {
+          that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
         }
-        else if(stateOfPOA == -1){
-        that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
-        }
-        if(stateOfCon == 0){
+        if (stateOfCon == 0) {
           for (var i = 0; i < toggleableLayerIds.length; i++) {
-          var clickedLayer = toggleableLayerIds[i]; 
-          that.map.setLayoutProperty(clickedLayer, "visibility", "visible")
-        }
-        }
-        else if(stateOfCon == -1){
+            var clickedLayer = toggleableLayerIds[i];
+            that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
+          }
+        } else if (stateOfCon == -1) {
           for (var i = 0; i < toggleableLayerIds.length; i++) {
-          var clickedLayer = toggleableLayerIds[i]; 
-          that.map.setLayoutProperty(clickedLayer, "visibility", "none")
+            var clickedLayer = toggleableLayerIds[i];
+            that.map.setLayoutProperty(clickedLayer, "visibility", "none");
+          }
         }
-        }
-      })
-
+      });
     }
   },
   computed: {
@@ -338,15 +334,40 @@ export default {
     },
     maptooldata() {
       return this.$store.getters.getmaptooldata;
+    },
+    vorfeaters() {
+      return this.$store.getters.getvorfeaters;
     }
   },
   watch: {
     //监听dailydata数据变化
-    mapdata: function(newval, oldval) {
-    },
+    mapdata: function(newval, oldval) {},
     maptooldata: function(newval, oldval) {
-      this.changeLayer(newval)
+      this.changeLayer(newval);
     },
+    vorfeaters: function(newval, oldval) {
+      let that = this;
+      this.map.on("load", function() {
+        that.map.addSource("voronoi", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: newval
+          }
+        });
+        that.map.addLayer({
+          id: "voronoi-outline",
+          type: "line",
+          source: "voronoi",
+          paint: {
+            "line-width": 1,
+            "line-color": "#000",
+            "line-opacity": 1
+          },
+          maxzoom: 10.5
+        });
+      });
+    }
   }
 };
 </script>
@@ -360,5 +381,4 @@ export default {
   height: 60%;
   border: 1px #7a7a7a;
 }
-
 </style>

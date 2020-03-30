@@ -4,6 +4,7 @@
     <madeup></madeup>
     <groupbar></groupbar>
     <!-- <voronoichart></voronoichart> -->
+    <test></test>
     <mapview></mapview>
     <maptool></maptool>
     <timeline></timeline>
@@ -27,6 +28,7 @@ import maptool from "./components/maptool";
 import timeline from "./components/TimeLine";
 import mapview from "./components/MapView";
 import readcsv from "./tool/readcsv";
+import test from "./components/test";
 export default {
   name: "App",
   components: {
@@ -40,7 +42,8 @@ export default {
     headers,
     maptool,
     timeline,
-    mapview
+    mapview,
+    test
   },
   mounted: function() {
     /*

@@ -26,7 +26,8 @@ const store = new Vuex.Store({
     //平行坐标原始数据包括医院门诊数据，人口迁徙数据
     scCoordata: null,
     //时间轴范围
-    timeRange: ["2020-01-10", "2020-03-20"]
+    timeRange: ["2020-01-10", "2020-03-20"],
+    vorfeaters: ""
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -65,11 +66,14 @@ const store = new Vuex.Store({
     setscCoordata: function(state, data) {
       state.scCoordata = data;
     },
-    setcheckedcontrls:function(state,data){
+    setcheckedcontrls: function(state, data) {
       state.checkedcontrls = data;
     },
     settimeRange: function(state, timeRange) {
       state.timeRange = timeRange;
+    },
+    setvorfeaters: function(state, data) {
+      state.vorfeaters = data;
     }
   },
   getters: {
@@ -111,6 +115,9 @@ const store = new Vuex.Store({
     },
     gettimeRange: state => {
       return state.timeRange;
+    },
+    getvorfeaters: state => {
+      return state.vorfeaters;
     }
   }
 });

@@ -1,10 +1,11 @@
 <template>
   <div id="mapcontrl">
-    <el-checkbox-group v-model="checkedcontrls" @change="handleCheckedcontrlsChange">
+    <el-checkbox-group
+      v-model="checkedcontrls"
+      @change="handleCheckedcontrlsChange"
+    >
       <el-checkbox v-for="cont in contrls" :label="cont" :key="cont">
-        {{
-        cont
-        }}
+        {{ cont }}
       </el-checkbox>
     </el-checkbox-group>
   </div>
@@ -23,14 +24,12 @@ export default {
         "POA",
         "contours"
       ],
-      checkedcontrls: ["POA",
-        "contours"]
+      checkedcontrls: ["POA", "contours"]
     };
   },
   methods: {
     handleCheckedcontrlsChange: function(val) {
       this.$store.commit("setmaptooldata", val);
-
     }
   },
   computed: {
@@ -42,7 +41,7 @@ export default {
     //监听dailydata数据变化
     maptooldata: function(newval, oldval) {
       // console.log(newval)
-    },
+    }
   }
 };
 </script>
