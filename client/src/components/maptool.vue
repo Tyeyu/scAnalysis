@@ -24,7 +24,7 @@ export default {
         "POA",
         "contours"
       ],
-      checkedcontrls: ["POA", "contours"]
+      checkedcontrls: ["POA", "contours","test"]
     };
   },
   methods: {
