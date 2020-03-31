@@ -4,6 +4,7 @@
 
 <script>
 import * as mapboxgl from "mapbox-gl";
+import MapboxLanguage  from '@mapbox/mapbox-gl-language'
 import * as d3 from "d3";
 import * as d3geoVoronoi from "d3-geo-voronoi";
 
@@ -99,6 +100,9 @@ export default {
     mapInit() {
       mapboxgl.accessToken =
         "pk.eyJ1IjoiaG9uZ3l1amlhbmciLCJhIjoiY2s3N202NDIxMDhkdzNpcGg3djRtdnN4dCJ9.lysys8PBG25SxeHRF-sPvA";
+         mapboxgl.setRTLTextPlugin(
+        "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.0/mapbox-gl-rtl-text.js"
+      );
 
       this.map = new mapboxgl.Map({
         container: "map",
@@ -106,6 +110,9 @@ export default {
         center: [101.9199, 30.1904],
         zoom: 5
       });
+      //修改语言
+      var language = new MapboxLanguage({ defaultLanguage: "zh" });
+      this.map.addControl(language);
     },
     loadData() {
       axios.get("../static/latlon.json").then(response => {
@@ -385,7 +392,6 @@ export default {
   }
 };
 </script>
-
 <style>
 #map {
   position: absolute;
@@ -394,5 +400,10 @@ export default {
   width: 74.9%;
   height: 60%;
   border: 1px #7a7a7a;
+}
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right,
+.mapboxgl-ctrl-logo {
+  display: none;
 }
 </style>
