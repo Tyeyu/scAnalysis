@@ -295,8 +295,13 @@ export default {
       let that = this;
       let toggleableLayerIds = that.toggleableLayerIds;
       let clickedLayer1 = "points_layer";
+      let clickedLayer2 = "voronoi-outline"
       let stateOfPOA = data.indexOf("POA");
       let stateOfCon = data.indexOf("contours");
+      let stateOfVor = data.indexOf("voronoi-outline");
+      console.log(stateOfPOA)
+      console.log(stateOfCon)
+      console.log(stateOfVor)
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
           clickedLayer1,
@@ -313,7 +318,7 @@ export default {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
         } else if (stateOfPOA == -1) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
-        }
+        };
         if (stateOfCon == 0) {
           for (var i = 0; i < toggleableLayerIds.length; i++) {
             var clickedLayer = toggleableLayerIds[i];
@@ -324,6 +329,11 @@ export default {
             var clickedLayer = toggleableLayerIds[i];
             that.map.setLayoutProperty(clickedLayer, "visibility", "none");
           }
+        };
+        if(stateOfVor !== -1){
+          that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
+        }else if(stateOfVor == -1){
+          that.map.setLayoutProperty(clickedLayer2, "visibility", "none");
         }
       });
     }
@@ -343,6 +353,7 @@ export default {
     //监听dailydata数据变化
     mapdata: function(newval, oldval) {},
     maptooldata: function(newval, oldval) {
+      console.log(newval)
       this.changeLayer(newval);
     },
     vorfeaters: function(newval, oldval) {
@@ -359,6 +370,9 @@ export default {
           id: "voronoi-outline",
           type: "line",
           source: "voronoi",
+          layout: {
+            visibility: "none"
+          }, //指渲染位置和可见性
           paint: {
             "line-width": 1,
             "line-color": "#000",
