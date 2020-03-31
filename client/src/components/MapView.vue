@@ -1,7 +1,5 @@
 <template>
-  <div id="map">
-    <div id="menu"></div>
-  </div>
+  <div id="map"></div>
 </template>
 
 <script>
@@ -10,7 +8,6 @@ import * as d3 from "d3";
 import * as d3geoVoronoi from "d3-geo-voronoi";
 
 let axios = require("axios");
-import * as d3 from "d3";
 export default {
   name: "mapview",
   data() {
@@ -38,19 +35,19 @@ export default {
         { name: "甘孜", value: 78 },
         { name: "凉山", value: 13 }
       ],
-      toggleableLayerIds:[
-         "region-label",
+      toggleableLayerIds: [
+        "region-label",
         "city-outline",
-        "county-outline",
-        "county-overlay",
-        "county-label",
+        // "county-outline",
+        // "county-overlay",
+        // "county-label",
         "city-overlay",
         "region-label",
         "dstrc-overlay",
         "dstrc-outline",
-        "dstrc-label",
+        "dstrc-label"
       ],
-      counter:0,
+      counter: 0
     };
   },
   mounted() {
@@ -61,8 +58,6 @@ export default {
 
     this.map.on("load", function() {
       let res2 = axios.get("./api/sc_city.json").then(res => {
-        console.log(res.data);
-
         var optscale = d3
           .scaleLinear()
           .domain([
@@ -83,29 +78,22 @@ export default {
 
         for (var i = 0; i < res.data.features.length; i++) {
           var rename = res.data.features[i].properties.name;
-          // console.log();
           var cname = rename.substring(0, 2);
           if (cname == "攀枝") {
             cname = cname + "花";
           }
-          // console.log(cname);
-
           var reopt = optscale(qznest.get(cname)[0].value);
           res.data.features[i].properties["opt"] = reopt;
         }
-        // console.log(res.data);
         that.addcity2Map(res.data);
       });
       let res = axios.get("/api/sichuan_district.json").then(res => {
-        console.log(res.data);
         that.adddistrict2Map(res.data);
       });
       // let res3 = axios.get("/api/merge_sichuan.json").then(res => {
-      //   // console.log(res.data);
       //   that.addtown2Map(res.data);
       // });
     });
-    this.visLayer();
   },
   methods: {
     mapInit() {
@@ -114,7 +102,7 @@ export default {
 
       this.map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/light-v9",
+        style: "mapbox://styles/mapbox/streets-v9",
         center: [101.9199, 30.1904],
         zoom: 5
       });
@@ -122,22 +110,19 @@ export default {
     loadData() {
       axios.get("../static/latlon.json").then(response => {
         let _data = response.data;
-        // console.log(_data);
         this.addArrestPoint(_data);
       });
     },
     addArrestPoint(data) {
       let drawPoints = [];
       let mapData = data.RECORDS;
-      //   console.log(mapData);
       mapData.forEach(d => {
-        // console.log(d.lon,d.lat)
         drawPoints.push({
           type: "Feature",
           properties: {
             color: "red",
-            opacity: 0.8,
-            radius: 10
+            opacity: 0.5,
+            radius: 5
           },
           geometry: {
             type: "Point",
@@ -145,7 +130,6 @@ export default {
           }
         });
       });
-      //   console.log(drawPoints)
       this.map.on("load", () => {
         //load：在所有必要数据源下载完毕、且首个可见的地图渲染完毕后立即触发
         this.map.addSource("points_source", {
@@ -307,93 +291,83 @@ export default {
         maxzoom: 8.5
       });
     },
-    visLayer() {
+    changeLayer(data) {
       let that = this;
-      var link1 = document.createElement("a"); /* 创建a标签 */
-      var link2 = document.createElement("a"); /* 创建a标签 */
-      link1.href = "#";
-      link1.className = "active";
-      link1.textContent = "POA";
-      link2.href = "#";
-      link2.className = "active";
-      link2.textContent = "contours";
-      let counter1 = that.counter
-      let counter2 = that.counter
-      link1.onclick = function(e) {
-        /* 设置onclick事件回调函数 */
-        counter1 = counter1 + 1;
-        var clickedLayer = this.textContent; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
-        var clickedLayer = "points_layer";
-        e.preventDefault();
-        e.stopPropagation();
-        if(counter1 == 1){
-          that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
-        }
-        var visibility = that.map.getLayoutProperty(clickedLayer,"visibility"); /* getLayoutProperty(layer, name) 返回指定style layer上名为name的layout属性的值*/
-        console.log(visibility);
-        if (visibility === "visible") {
-          that.map.setLayoutProperty(clickedLayer, "visibility", "none");// 设置指定layer上名为name的layou属性的值
-          console.log("ghdkjhgdkjhfkj")
-          this.className = "";
-        } else {
-          this.className = "active";
-          console.log("jinlaimy")
-          that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
-        }
-      };
-      let toggleableLayerIds =  that.toggleableLayerIds;
-      link2.onclick = function(e) {
-        counter2 = counter2 + 1;
+      let toggleableLayerIds = that.toggleableLayerIds;
+      let clickedLayer1 = "points_layer";
+      let stateOfPOA = data.indexOf("POA");
+      let stateOfCon = data.indexOf("contours");
+      data.forEach(item => {
+        var visibility1 = that.map.setLayoutProperty(
+          clickedLayer1,
+          "visibility"
+        ); /* getLayoutProperty(layer, name) 返回指定style layer上名为name的layout属性的值*/
         for (var i = 0; i < toggleableLayerIds.length; i++) {
-          /* 设置onclick事件回调函数 */
-          var clickedLayer =
-            toggleableLayerIds[
-              i
-            ]; /* textContent 属性设置或返回指定节点的文本内容，以及它的所有后代 */
-          e.preventDefault();
-          e.stopPropagation();
-          console.log(clickedLayer);
-          if(counter2 == 1){
-          that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
-        }
-          var visibility = that.map.getLayoutProperty(
+          var clickedLayer = toggleableLayerIds[i];
+          var visibility = that.map.setLayoutProperty(
             clickedLayer,
             "visibility"
-          ); /* getLayoutProperty(layer, name) 返回指定style layer上名为name的layout属性的值*/
-          console.log(visibility);
-          if (visibility === "visible") {
-            that.map.setLayoutProperty(clickedLayer, "visibility", "none");
-             /* setLayoutProperty(layer, name, value)设置指定layer上名为name的layou属性的值 */
-            this.className = "";
-          } else {
-            this.className = "active";
-            console.log("jinlaimy")
+          );
+        }
+        if (stateOfPOA == 0) {
+          that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
+        } else if (stateOfPOA == -1) {
+          that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
+        }
+        if (stateOfCon == 0) {
+          for (var i = 0; i < toggleableLayerIds.length; i++) {
+            var clickedLayer = toggleableLayerIds[i];
             that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
           }
+        } else if (stateOfCon == -1) {
+          for (var i = 0; i < toggleableLayerIds.length; i++) {
+            var clickedLayer = toggleableLayerIds[i];
+            that.map.setLayoutProperty(clickedLayer, "visibility", "none");
+          }
         }
-      };
-
-      var layers = document.getElementById("menu");
-
-      layers.appendChild(link1);
-      layers.appendChild(
-        link2
-      ); /* appendChild() 方法向节点添加最后一个子节点,此处即向menu后面添加link节点 */
-      //   }
+      });
     }
   },
   computed: {
     mapdata() {
       return this.$store.getters.getmapdata;
+    },
+    maptooldata() {
+      return this.$store.getters.getmaptooldata;
+    },
+    vorfeaters() {
+      return this.$store.getters.getvorfeaters;
     }
   },
   watch: {
     //监听dailydata数据变化
-    mapdata: function(newval, oldval) {
-      //图表数据变化后该执行的操作
+    mapdata: function(newval, oldval) {},
+    maptooldata: function(newval, oldval) {
+      this.changeLayer(newval);
+    },
+    vorfeaters: function(newval, oldval) {
+      let that = this;
+      this.map.on("load", function() {
+        that.map.addSource("voronoi", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: newval
+          }
+        });
+        that.map.addLayer({
+          id: "voronoi-outline",
+          type: "line",
+          source: "voronoi",
+          paint: {
+            "line-width": 1,
+            "line-color": "#000",
+            "line-opacity": 1
+          },
+          maxzoom: 10.5
+        });
+      });
     }
-
-    
   }
 };
 </script>
@@ -407,47 +381,4 @@ export default {
   height: 60%;
   border: 1px #7a7a7a;
 }
-#menu {
-        background: #fff;
-        position: absolute;
-        z-index: 1;
-        top: 10px;
-        left: 10px;
-        border-radius: 3px;
-        width: 120px;
-        border: 1px solid rgba(0,0,0,0.4);
-        font-family: 'Open Sans', sans-serif;
-    }
- 
-    #menu a {
-        font-size: 13px;
-        color: #404040;
-        display: block;
-        margin: 0;
-        padding: 0;
-        padding: 10px;
-        text-decoration: none;
-        border-bottom: 1px solid rgba(0,0,0,0.25);
-        opacity: 0.5;
-        text-align: center;
-    }
-     #menu a:hover {
-        background-color: #f8f8f8;
-        opacity: 0.5;
-        color: #404040;
-    }
- 
-    #menu a.active {
-        background-color: #30313a;
-        opacity: 0.5;
-        color: #ffffff;
-    }
- 
-    #menu a.active:hover {
-        background: #3074a4;
-        opacity: 0.5;
-    }
-    #menu a:last-child {
-        border: none;
-    }
 </style>

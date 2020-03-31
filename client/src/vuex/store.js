@@ -16,7 +16,18 @@ const store = new Vuex.Store({
     //关系图数据
     relationData: null,
     //maptool选择数据
-    mapToolData: null
+    mapToolData: [],
+    //轨迹原始数据
+    scTrackData: null,
+    selectCity: "四川达州",
+    //四川Merger原始数据
+    scMergerData: null,
+    mergerCity: "",
+    //平行坐标原始数据包括医院门诊数据，人口迁徙数据
+    scCoordata: null,
+    //时间轴范围
+    timeRange: ["2020-01-10", "2020-03-20"],
+    vorfeaters: ""
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -39,6 +50,30 @@ const store = new Vuex.Store({
     },
     setmaptooldata: function(state, data) {
       state.mapToolData = data;
+    },
+    setscTrackData: function(state, data) {
+      state.scTrackData = data;
+    },
+    setselectCity: function(state, cityname) {
+      state.selectCity = cityname;
+    },
+    setscMergerData: function(state, data) {
+      state.scMergerData = data;
+    },
+    setmergerCity: function(state, cityname) {
+      state.mergerCity = cityname;
+    },
+    setscCoordata: function(state, data) {
+      state.scCoordata = data;
+    },
+    setcheckedcontrls: function(state, data) {
+      state.checkedcontrls = data;
+    },
+    settimeRange: function(state, timeRange) {
+      state.timeRange = timeRange;
+    },
+    setvorfeaters: function(state, data) {
+      state.vorfeaters = data;
     }
   },
   getters: {
@@ -62,6 +97,27 @@ const store = new Vuex.Store({
     },
     getmaptooldata: state => {
       return state.mapToolData;
+    },
+    getscTrackData: state => {
+      return state.scTrackData;
+    },
+    getselectCity: state => {
+      return state.selectCity;
+    },
+    getscMergerData: state => {
+      return state.scMergerData;
+    },
+    getmergerCity: state => {
+      return state.mergerCity;
+    },
+    getscCoordata: state => {
+      return state.scCoordata;
+    },
+    gettimeRange: state => {
+      return state.timeRange;
+    },
+    getvorfeaters: state => {
+      return state.vorfeaters;
     }
   }
 });

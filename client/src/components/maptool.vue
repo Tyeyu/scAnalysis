@@ -1,10 +1,11 @@
 <template>
   <div id="mapcontrl">
-    <el-checkbox-group v-model="checkedcontrls" @change="handleCheckedcontrlsChange">
+    <el-checkbox-group
+      v-model="checkedcontrls"
+      @change="handleCheckedcontrlsChange"
+    >
       <el-checkbox v-for="cont in contrls" :label="cont" :key="cont">
-        {{
-        cont
-        }}
+        {{ cont }}
       </el-checkbox>
     </el-checkbox-group>
   </div>
@@ -19,13 +20,17 @@ export default {
         "医院/发热门诊",
         "人口基数",
         "迁移细节",
-        "活跃度"
+        "活跃度",
+        "POA",
+        "contours"
       ],
-      checkedcontrls: []
+      checkedcontrls: ["POA", "contours","test"]
     };
   },
   methods: {
-    handleCheckedcontrlsChange: function(val) {}
+    handleCheckedcontrlsChange: function(val) {
+      this.$store.commit("setmaptooldata", val);
+    }
   },
   computed: {
     maptooldata() {
@@ -35,7 +40,7 @@ export default {
   watch: {
     //监听dailydata数据变化
     maptooldata: function(newval, oldval) {
-      //图表数据变化后该执行的操作
+      // console.log(newval)
     }
   }
 };
@@ -48,7 +53,7 @@ export default {
   padding-top: 10pt;
   top: 5.5%;
   width: 8.2%;
-  height: 20%;
+  height: 23%;
   border: 1px solid white;
   background-color: #30313a;
   -webkit-font-smoothing: antialiased;

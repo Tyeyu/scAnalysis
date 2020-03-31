@@ -1,5 +1,8 @@
 <template>
-  <div id="Relation"></div>
+  <div>
+    <div id="Relation"></div>
+    <div id="Rtooltip"></div>
+  </div>
 </template>
 <script>
 //传染关系图
@@ -22,27 +25,25 @@ export default {
     Readdata: function() {
       let that = this;
       d3.csv("../../static/testdata.csv")
-        .then(function(data) {
-          that.chartdata = data;
-          that.setXaxisdata();
-          that.initchartSet();
-          that.initchart(data);
-        })
+        .then(function(data) {})
         .catch(function(error) {});
     },
     setXaxisdata: function() {
       let that = this;
       var xdmap = d3.map();
       for (var i = 0; i < this.chartdata.length; i++) {
-        xdmap.set(that.chartdata[i].startdate, 0);
+        if (that.chartdata[i].startdate != "") {
+          xdmap.set(that.chartdata[i].startdate, 0);
+        }
+
         xdmap.set(that.chartdata[i].enddate, 0);
       }
       this.xaxiesdata = xdmap.keys();
       this.xaxiesdata = this.xaxiesdata.sort(function(a, b) {
-        var da = parseInt(a.split("月")[0]);
-        var daa = parseInt(a.split("月")[1].split("日")[0]);
-        var db = parseInt(b.split("月")[0]);
-        var dbb = parseInt(b.split("月")[1].split("日")[0]);
+        var da = parseInt(a.split("/")[1]);
+        var daa = parseInt(a.split("/")[2]);
+        var db = parseInt(b.split("/")[1]);
+        var dbb = parseInt(b.split("/")[2]);
 
         return da < db ? -1 : da > db ? 1 : daa < dbb ? -1 : 1;
       });
@@ -50,11 +51,6 @@ export default {
     //初始化图表基础配置
     initchartSet: function() {
       let that = this;
-      // //序数比例尺
-      // var s = d3.scaleBand(["2月1日", "2月2日", "2月3日"], d3.range(3));
-      // // .domain(d3.range(3))
-      // // .range(["2月1日", "2月2日", "2月3日"]);
-      // console.log(s("2月2日"));
       this.chartSvgwidth = document.getElementById("Relation").clientWidth - 10;
       this.chartSVgheight =
         document.getElementById("Relation").clientHeight - 10;
@@ -64,17 +60,20 @@ export default {
     //初始化图表
     initchart: function(data) {
       let that = this;
-      var chartXscale = d3.scaleBand(that.xaxiesdata, [
-        0,
-        that.chartSvgwidth - 30
-      ]);
+      var chartXscale = d3
+        .scaleTime()
+        .domain([
+          new Date(that.xaxiesdata[0]),
+          new Date(that.$store.getters.gettimeRange[1])
+        ])
 
+        .range([0, that.chartSvgwidth - 30]);
       var chartYscal = d3
         .scaleLinear()
         .domain([
           0,
           d3.max(this.chartdata, function(d) {
-            return d.ID;
+            return parseInt(d.ID);
           })
         ])
         .range([this.chartSVgheight - 30, 1]);
@@ -107,15 +106,25 @@ export default {
         .data(that.chartdata)
         .enter()
         .append("circle")
-        .attr("r", 10)
+        .attr("r", 3)
         .attr("transform", "translate(30,10)")
         .style("fill", "#a6cee3")
         .style("cursor", "pointer")
         .attr("cy", function(d, i) {
-          return chartYscal(d.ID);
+          return chartYscal(parseInt(d.ID)) + 1;
         })
         .attr("cx", function(d) {
-          return chartXscale(d.enddate);
+          return chartXscale(new Date(d.enddate));
+        })
+        .on("mouseover", function(d) {
+          d3.select("#Rtooltip")
+            .style("display", "inline")
+            .html("发病日期:" + d.startdate + "</br>确诊日期:" + d.enddate)
+            .style("left", d3.event.pageX + "px")
+            .style("top", d3.event.pageY - window.innerHeight * 0.07 + "px");
+        })
+        .on("mouseout", function() {
+          d3.select("#Rtooltip").style("display", "none");
         });
       svg
         .selectAll("bar")
@@ -125,35 +134,112 @@ export default {
         .attr("transform", "translate(30,10)")
         .style("fill", "#a6cee3")
         .attr("x", function(d) {
-          return chartXscale(d.startdate);
+          return chartXscale(new Date(d.startdate));
         })
         .attr("y", function(d, i) {
-          return chartYscal(i + 1);
+          return chartYscal(parseInt(d.ID));
         })
         .attr("width", function(d) {
-          return chartXscale(d.enddate) - chartXscale(d.startdate);
+          return (
+            chartXscale(new Date(d.enddate)) -
+            chartXscale(new Date(d.startdate))
+          );
         })
-        .attr("height", 4);
+        .attr("height", 2);
     },
-    redrawchart: function() {}
-  },
-  mounted: function() {
-    /*示例
-    /当通过commit提交数据时，relationData发生变化,watch监听到变化后改变状态
-    /*/
-
-    this.$store.commit("setRelationdata", "data");
+    redrawchart: function() {
+      var timeRange = [
+        new Date(this.$store.getters.gettimeRange[0]),
+        new Date(this.$store.getters.gettimeRange[1])
+      ];
+      var data = this.$store.getters.getRelationdata;
+      this.chartdata = [];
+      var k = 0;
+      for (var i = 0; i < data.length; i++) {
+        var sdate = data[i].startdate;
+        if (data[i].startdate != "") {
+          sdate = new Date(sdate);
+        }
+        var edate = new Date(data[i].enddate);
+        if (
+          sdate == "" ||
+          (sdate.getTime() >= timeRange[0].getTime() &&
+            edate.getTime() <= timeRange[1].getTime())
+        ) {
+          if (data[i].city == this.$store.getters.getselectCity) {
+            this.chartdata[k] = data[i];
+            k++;
+          }
+        }
+      }
+      d3.select("#Relation")
+        .select("svg")
+        .remove();
+      this.setXaxisdata();
+      this.initchartSet();
+      this.initchart(this.chartdata);
+    }
   },
   computed: {
     Relationdata() {
       return this.$store.getters.getRelationdata;
+    },
+    ScTrackData() {
+      return this.$store.getters.getscTrackData;
+    },
+    selectCity() {
+      return this.$store.getters.getselectCity;
+    },
+    timeRange() {
+      return this.$store.getters.gettimeRange;
     }
   },
   watch: {
-    //监听dailydata数据变化
+    //监听Relationdata数据变化
     Relationdata: function(newval, oldval) {
-      //图表数据变化后该执行的操作
-      this.Readdata();
+      // //图表数据变化后该执行的操作
+      // var cityname = this.$store.getters.getselectCity;
+      // this.chartdata = [];
+      // var k = 0;
+      // for (var i = 0; i < newval.length; i++) {
+      //   if (newval[i].city == cityname) {
+      //     this.chartdata[k] = newval[i];
+      //     k++;
+      //   }
+      // }
+      this.redrawchart();
+    },
+    //监听选中的城市
+    selectCity: function(newval, oldval) {
+      this.redrawchart();
+    },
+    timeRange: function(newval, oldval) {
+      this.redrawchart();
+    },
+    ScTrackData: function(newval, oldval) {
+      var drawdata = [];
+      var k = 0;
+      for (var i = 0; i < newval.length; i++) {
+        if (newval[i].onsetTime == "不明" || newval[i].onsetTime == "") {
+          drawdata[k] = {
+            startdate: "",
+            enddate: newval[i].diagnosisTime,
+            ID: newval[i].id,
+            city: newval[i].city
+          };
+          k++;
+          continue;
+        }
+
+        drawdata[k] = {
+          startdate: newval[i].onsetTime,
+          enddate: newval[i].diagnosisTime,
+          ID: newval[i].id,
+          city: newval[i].city
+        };
+        k++;
+      }
+      this.$store.commit("setRelationdata", drawdata);
     }
   }
 };
@@ -166,5 +252,29 @@ export default {
   width: 33.2%;
   height: 34%;
   border: 1px solid solid #dededd;
+}
+#Rtooltip {
+  position: absolute;
+  display: none;
+  border-style: solid;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  white-space: nowrap;
+  z-index: 9999999;
+  transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s,
+    top 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  background-color: rgba(50, 50, 50, 0.7);
+  border-width: 0px;
+  border-color: rgb(51, 51, 51);
+  border-radius: 4px;
+  color: rgb(255, 255, 255);
+  font: 14px / 21px "Microsoft YaHei";
+  padding: 5px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
 }
 </style>
