@@ -191,9 +191,8 @@ export default {
             .html(
               d.data.name +
                 "：" +
-                parseInt(d.area / 1000) +
-                " KM2" +
-                "<br> "
+                parseInt(d.area / 1000) 
+                
             )
             .style("left", d3.event.pageX - window.innerWidth * 0.31 + "px")
             .style("top", d3.event.pageY - 28 + "px");
