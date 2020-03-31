@@ -22,7 +22,8 @@ export default {
         "迁移细节",
         "活跃度",
         "POA",
-        "contours"
+        "contours",
+        "voronoi-outline"
       ],
       checkedcontrls: ["POA", "contours","test"]
     };
@@ -53,7 +54,7 @@ export default {
   padding-top: 10pt;
   top: 5.5%;
   width: 8.2%;
-  height: 23%;
+  height: 26%;
   border: 1px solid white;
   background-color: #30313a;
   -webkit-font-smoothing: antialiased;

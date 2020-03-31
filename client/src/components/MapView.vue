@@ -4,6 +4,7 @@
 
 <script>
 import * as mapboxgl from "mapbox-gl";
+import MapboxLanguage  from '@mapbox/mapbox-gl-language'
 import * as d3 from "d3";
 import * as d3geoVoronoi from "d3-geo-voronoi";
 
@@ -99,6 +100,9 @@ export default {
     mapInit() {
       mapboxgl.accessToken =
         "pk.eyJ1IjoiaG9uZ3l1amlhbmciLCJhIjoiY2s3N202NDIxMDhkdzNpcGg3djRtdnN4dCJ9.lysys8PBG25SxeHRF-sPvA";
+         mapboxgl.setRTLTextPlugin(
+        "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.0/mapbox-gl-rtl-text.js"
+      );
 
       this.map = new mapboxgl.Map({
         container: "map",
@@ -106,6 +110,9 @@ export default {
         center: [101.9199, 30.1904],
         zoom: 5
       });
+      //修改语言
+      var language = new MapboxLanguage({ defaultLanguage: "zh" });
+      this.map.addControl(language);
     },
     loadData() {
       axios.get("../static/latlon.json").then(response => {
@@ -295,8 +302,13 @@ export default {
       let that = this;
       let toggleableLayerIds = that.toggleableLayerIds;
       let clickedLayer1 = "points_layer";
+      let clickedLayer2 = "voronoi-outline"
       let stateOfPOA = data.indexOf("POA");
       let stateOfCon = data.indexOf("contours");
+      let stateOfVor = data.indexOf("voronoi-outline");
+      console.log(stateOfPOA)
+      console.log(stateOfCon)
+      console.log(stateOfVor)
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
           clickedLayer1,
@@ -313,7 +325,7 @@ export default {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
         } else if (stateOfPOA == -1) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
-        }
+        };
         if (stateOfCon == 0) {
           for (var i = 0; i < toggleableLayerIds.length; i++) {
             var clickedLayer = toggleableLayerIds[i];
@@ -324,6 +336,11 @@ export default {
             var clickedLayer = toggleableLayerIds[i];
             that.map.setLayoutProperty(clickedLayer, "visibility", "none");
           }
+        };
+        if(stateOfVor !== -1){
+          that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
+        }else if(stateOfVor == -1){
+          that.map.setLayoutProperty(clickedLayer2, "visibility", "none");
         }
       });
     }
@@ -343,6 +360,7 @@ export default {
     //监听dailydata数据变化
     mapdata: function(newval, oldval) {},
     maptooldata: function(newval, oldval) {
+      console.log(newval)
       this.changeLayer(newval);
     },
     vorfeaters: function(newval, oldval) {
@@ -359,6 +377,9 @@ export default {
           id: "voronoi-outline",
           type: "line",
           source: "voronoi",
+          layout: {
+            visibility: "none"
+          }, //指渲染位置和可见性
           paint: {
             "line-width": 1,
             "line-color": "#000",
@@ -371,7 +392,6 @@ export default {
   }
 };
 </script>
-
 <style>
 #map {
   position: absolute;
@@ -380,5 +400,10 @@ export default {
   width: 74.9%;
   height: 60%;
   border: 1px #7a7a7a;
+}
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right,
+.mapboxgl-ctrl-logo {
+  display: none;
 }
 </style>
