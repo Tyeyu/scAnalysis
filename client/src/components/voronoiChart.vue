@@ -193,7 +193,7 @@ export default {
                 "：" +
                 parseInt(d.area / 1000) +
                 " KM2" +
-                "<br> 兰咩舔鸡"
+                "<br> "
             )
             .style("left", d3.event.pageX - window.innerWidth * 0.31 + "px")
             .style("top", d3.event.pageY - 28 + "px");
