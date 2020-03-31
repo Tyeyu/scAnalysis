@@ -15,7 +15,7 @@
 </template>
 
 <script>
-// import mapview from "./components/MapView";
+//import mapview from "./components/MapView";
 import madeup from "./components/MadeUp";
 import groupbar from "./components/GroupBar";
 import AddedDaily from "./components/AddedDaily";
@@ -28,7 +28,7 @@ import timeline from "./components/TimeLine";
 export default {
   name: "App",
   components: {
-    // mapview,
+    //mapview,
     madeup,
     groupbar,
     AddedDaily,

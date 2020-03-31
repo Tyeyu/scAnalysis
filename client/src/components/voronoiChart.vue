@@ -18,14 +18,17 @@ export default{
 
         axios.get("/api/position.csv").then(PositionRes=>{
             axios.get("/api/sc_city.json").then(MapRes=>{
-              
-              let HosPosition = dsv.csvParse(PositionRes.data)
-              let mapdata = MapRes.data;
-              this.map_data = mapdata;
-              this.hos_data = HosPosition;
-              // console.log(this.hos_data);
-              // console.log("features",this.map_data.features);
-              this.AddVoronoi(this.map_data,this.hos_data)
+              axios.get("/api/sichuan.json").then(CordRes=>{
+                let HosPosition = dsv.csvParse(PositionRes.data)
+                let mapdata = MapRes.data;
+                let corddata = CordRes.data;
+                this.cord_data = corddata;
+                this.map_data = mapdata;
+                this.hos_data = HosPosition;
+                // console.log(this.hos_data);
+                // console.log("features",this.map_data.features);
+                this.AddVoronoi(this.map_data,this.hos_data,this.cord_data)
+              })
 
             })
       })
@@ -39,7 +42,7 @@ export default{
 
     methods:{
 
-        AddVoronoi(MapData,HosData){
+        AddVoronoi(MapData,HosData,CordData){
 
           var width = window.innerWidth*0.69;
           var height = window.innerHeight*0.6;
@@ -56,7 +59,6 @@ export default{
 								d3.event.transform.x + ","+ 
 								d3.event.transform.y +")scale(" + 
                 d3.event.transform.k + ")");
-                console.log("123")
 
                 d3.selectAll('.location').attr('r', 2 / d3.event.transform.k)
                 d3.selectAll('.cell').attr('stroke-width',1/d3.event.transform.k);
@@ -104,12 +106,11 @@ export default{
           let positions = [];
           HosData.forEach(function(d,p,q){
             d.lng = parseFloat(d.lng);
-            d.lat = parseFloat(d.lat);
-            console.log("number",d.number)        
+            d.lat = parseFloat(d.lat);      
             positions.push(projection([d.lng,d.lat])); 
             positions[p].number = d.number;
           })
-          //console.log("positions",positions)
+          console.log("positions",positions)
 
           const _voronoi = d3.voronoi()
             // .extent([[-1, -1],[innerWidth+1,innerHeight+1]])
@@ -117,29 +118,32 @@ export default{
           const polygons = _voronoi(positions).polygons();
 
           console.log("polygons",polygons)
+          console.log("CordData",CordData)
             
-          // let AreaData = []
-          // //构造poly1 poly2计算相交的面积
-          // polygons.forEach(d => {
-          //   let points = [];
-          //   points[0] = [];
-          //   for (var i = 0; i < d.length; i++) {
-          //       points[0][i] = [];
-          //       points[0][i]= projection.invert([d[i][0],d[i][1]])
-          //   }
-          //   points[0][d.length] = projection.invert([d[0][0],d[0][1]])//首尾连接
-          //   MapData.geometry.coordinates[0][MapData.geometry.coordinates.length]=MapData.geometry.coordinates[0][0]
-          //   let poly1 = turf.polygon(points)
-          //   let poly2 = turf.polygon(MapData.geometry.coordinates)
-          //   var intersection = turf.intersect(poly1, poly2);
-          //   if(intersection){
+          let AreaData = []
+          //构造poly1 poly2计算相交的面积
+          polygons.forEach(d => {
+            let points = [];
+            points[0] = [];
+            for (var i = 0; i < d.length; i++) {
+                points[0][i] = [];
+                points[0][i]= projection.invert([d[i][0],d[i][1]])
+            }
+            points[0][d.length] = projection.invert([d[0][0],d[0][1]])//首尾连接
+            // CordData.geometry.coordinates[0][CordData.geometry.coordinates.length]=CordData.geometry.coordinates[0][0]
+            let poly1 = turf.polygon(points)
+            // console.log("coordinates",CordData.geometry.coordinates)
+            let poly2 = turf.polygon(CordData.geometry.coordinates)
+            // console.log("ploy2",poly2)
+            var intersection = turf.intersect(poly1, poly2);
+            if(intersection){
 
-          //     var area_intersection = turf.area(intersection);
-          //     AreaData.push({"key":d.data.key,"area":area_intersection/1000000,"name":d.data.name,"polyg":d})
-          //   }
-          // })
+              var area_intersection = turf.area(intersection);
+              AreaData.push({"number":d.data.number,"area":area_intersection/1000000,"polyg":d})
+            }
+          })
 
-          // console.log(AreaData)
+          console.log(AreaData)
           // that.$root.$emit('AreaData',AreaData)
           
             var clipPath = this.container
@@ -173,25 +177,6 @@ export default{
               } )
           
         },
-        
-        // highLightVoronoi(data){
-          
-        //     d3.selectAll(".cell")
-        //     .attr("fill","steelblue")
-        //     .attr("fill-opacity",0.6)
-
-        //     //console.log(d3.select('#' + d))
-        
-
-        //   data.forEach(d=>{
-        //     d3.select('#' + d)
-        //     .attr("fill","#F26101")
-        //     .attr("fill-opacity",1)
-            
-
-        //   })
-
-        // }
  
 
     }
