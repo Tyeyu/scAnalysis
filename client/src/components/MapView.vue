@@ -4,7 +4,7 @@
 
 <script>
 import * as mapboxgl from "mapbox-gl";
-import MapboxLanguage  from '@mapbox/mapbox-gl-language'
+import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import * as d3 from "d3";
 import * as d3geoVoronoi from "d3-geo-voronoi";
 
@@ -100,7 +100,7 @@ export default {
     mapInit() {
       mapboxgl.accessToken =
         "pk.eyJ1IjoiaG9uZ3l1amlhbmciLCJhIjoiY2s3N202NDIxMDhkdzNpcGg3djRtdnN4dCJ9.lysys8PBG25SxeHRF-sPvA";
-         mapboxgl.setRTLTextPlugin(
+      mapboxgl.setRTLTextPlugin(
         "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.0/mapbox-gl-rtl-text.js"
       );
 
@@ -208,6 +208,7 @@ export default {
     },
 
     addcity2Map(features) {
+      let that = this;
       this.map.addSource("city_json", {
         type: "geojson",
         data: {
@@ -249,6 +250,12 @@ export default {
           "text-color": "#333"
         },
         maxzoom: 8.5
+      });
+      this.map.on("click", "city-overlay", function(e) {
+        var citynme = e.features[0].properties.name;
+        citynme = citynme.split(/市|藏族羌族自治州|藏族自治州|彝族自治州/)[0];
+        that.$store.commit("setmergerCity", citynme);
+        // console.log(citynme);
       });
     },
     adddistrict2Map(features) {
@@ -302,13 +309,13 @@ export default {
       let that = this;
       let toggleableLayerIds = that.toggleableLayerIds;
       let clickedLayer1 = "points_layer";
-      let clickedLayer2 = "voronoi-outline"
+      let clickedLayer2 = "voronoi-outline";
       let stateOfPOA = data.indexOf("POA");
       let stateOfCon = data.indexOf("contours");
       let stateOfVor = data.indexOf("voronoi-outline");
-      console.log(stateOfPOA)
-      console.log(stateOfCon)
-      console.log(stateOfVor)
+      console.log(stateOfPOA);
+      console.log(stateOfCon);
+      console.log(stateOfVor);
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
           clickedLayer1,
@@ -325,7 +332,7 @@ export default {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
         } else if (stateOfPOA == -1) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
-        };
+        }
         if (stateOfCon == 0) {
           for (var i = 0; i < toggleableLayerIds.length; i++) {
             var clickedLayer = toggleableLayerIds[i];
@@ -336,10 +343,10 @@ export default {
             var clickedLayer = toggleableLayerIds[i];
             that.map.setLayoutProperty(clickedLayer, "visibility", "none");
           }
-        };
-        if(stateOfVor !== -1){
+        }
+        if (stateOfVor !== -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
-        }else if(stateOfVor == -1){
+        } else if (stateOfVor == -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "none");
         }
       });
@@ -360,7 +367,7 @@ export default {
     //监听dailydata数据变化
     mapdata: function(newval, oldval) {},
     maptooldata: function(newval, oldval) {
-      console.log(newval)
+      console.log(newval);
       this.changeLayer(newval);
     },
     vorfeaters: function(newval, oldval) {
