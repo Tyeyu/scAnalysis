@@ -111,7 +111,7 @@ export default {
         .style("fill", "#a6cee3")
         .style("cursor", "pointer")
         .attr("cy", function(d, i) {
-          return chartYscal(parseInt(d.ID)) + 1;
+          return chartYscal(parseInt(i)) + 1;
         })
         .attr("cx", function(d) {
           return chartXscale(new Date(d.enddate));
@@ -137,7 +137,7 @@ export default {
           return chartXscale(new Date(d.startdate));
         })
         .attr("y", function(d, i) {
-          return chartYscal(parseInt(d.ID));
+          return chartYscal(parseInt(i));
         })
         .attr("width", function(d) {
           return (
@@ -166,7 +166,10 @@ export default {
           (sdate.getTime() >= timeRange[0].getTime() &&
             edate.getTime() <= timeRange[1].getTime())
         ) {
-          if (data[i].city == this.$store.getters.getselectCity) {
+          if (
+            this.$store.getters.getmergerCity == "" ||
+            data[i].city == this.$store.getters.getmergerCity
+          ) {
             this.chartdata[k] = data[i];
             k++;
           }
@@ -188,7 +191,7 @@ export default {
       return this.$store.getters.getscTrackData;
     },
     selectCity() {
-      return this.$store.getters.getselectCity;
+      return this.$store.getters.getmergerCity;
     },
     timeRange() {
       return this.$store.getters.gettimeRange;
