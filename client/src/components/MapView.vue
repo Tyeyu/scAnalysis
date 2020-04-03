@@ -106,7 +106,7 @@ export default {
 
       this.map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v9",
+        style: "mapbox://styles/mapbox/streets-v10",
         center: [101.9199, 30.1904],
         zoom: 5
       });
@@ -118,6 +118,7 @@ export default {
       axios.get("../static/latlon.json").then(response => {
         let _data = response.data;
         this.addArrestPoint(_data);
+        this.test();
       });
     },
     addArrestPoint(data) {
@@ -129,7 +130,8 @@ export default {
           properties: {
             color: "red",
             opacity: 0.5,
-            radius: 5
+            radius: 5,
+            description: d.address
           },
           geometry: {
             type: "Point",
@@ -313,9 +315,6 @@ export default {
       let stateOfPOA = data.indexOf("POA");
       let stateOfCon = data.indexOf("contours");
       let stateOfVor = data.indexOf("voronoi-outline");
-      console.log(stateOfPOA);
-      console.log(stateOfCon);
-      console.log(stateOfVor);
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
           clickedLayer1,
@@ -350,6 +349,27 @@ export default {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "none");
         }
       });
+    },
+    test() {
+      let that = this;
+      this.map.on("click", "points_layer", function(e) {
+        // 改变光标样式
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = e.features[0].properties.description;
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+        new mapboxgl.Popup()
+          .setLngLat(coordinates)
+          .setHTML(description)
+          .addTo(that.map);
+      });
+      this.map.on("mouseenter", "places", function() {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      this.map.on("mouseleave", "places", function() {
+        map.getCanvas().style.cursor = "";
+      });
     }
   },
   computed: {
@@ -367,7 +387,6 @@ export default {
     //监听dailydata数据变化
     mapdata: function(newval, oldval) {},
     maptooldata: function(newval, oldval) {
-      console.log(newval);
       this.changeLayer(newval);
     },
     vorfeaters: function(newval, oldval) {
@@ -399,7 +418,9 @@ export default {
   }
 };
 </script>
+
 <style>
+@import url('../../node_modules/mapbox-gl/dist/mapbox-gl.css');
 #map {
   position: absolute;
   top: 5.1%;
@@ -407,6 +428,10 @@ export default {
   width: 74.9%;
   height: 60%;
   border: 1px #7a7a7a;
+}
+.mapboxgl-popup {
+  max-width: 400px;
+  font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 .mapboxgl-ctrl-bottom-left,
 .mapboxgl-ctrl-bottom-right,
