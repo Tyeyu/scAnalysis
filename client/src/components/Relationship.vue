@@ -72,8 +72,8 @@ export default {
         .scaleLinear()
         .domain([
           0,
-          d3.max(this.chartdata, function(d) {
-            return parseInt(d.ID);
+          d3.max(this.chartdata, function(d,i) {
+            return parseInt(i);
           })
         ])
         .range([this.chartSVgheight - 30, 1]);
