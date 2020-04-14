@@ -48,7 +48,8 @@ export default {
         "dstrc-outline",
         "dstrc-label"
       ],
-      counter: 0
+      counter: 0,
+      sc_cityData: null
     };
   },
   mounted() {
@@ -59,23 +60,8 @@ export default {
 
     this.map.on("load", function() {
       let res2 = axios.get("./api/sc_city.json").then(res => {
-        var optscale = d3
-          .scaleLinear()
-          .domain([
-            d3.min(that.quezheng, function(d) {
-              return d.value;
-            }),
-            d3.max(that.quezheng, function(d) {
-              return d.value;
-            })
-          ])
-          .range([0, 1]);
-        var qznest = d3
-          .nest()
-          .key(function(d) {
-            return d.name;
-          })
-          .map(that.quezheng);
+        var optscale = that.DiagnosisScale(that.quezheng);
+        var qznest = that.DiagnosisNest(that.quezheng);
 
         for (var i = 0; i < res.data.features.length; i++) {
           var rename = res.data.features[i].properties.name;
@@ -86,6 +72,7 @@ export default {
           var reopt = optscale(qznest.get(cname)[0].value);
           res.data.features[i].properties["opt"] = reopt;
         }
+        that.sc_cityData = res.data;
         that.addcity2Map(res.data);
       });
       let res = axios.get("/api/sichuan_district.json").then(res => {
@@ -350,6 +337,29 @@ export default {
         }
       });
     },
+    DiagnosisScale: function(data) {
+      var Qscale = d3
+        .scaleLinear()
+        .domain([
+          d3.min(data, function(d) {
+            return d.value;
+          }),
+          d3.max(data, function(d) {
+            return d.value;
+          })
+        ])
+        .range([0, 1]);
+      return Qscale;
+    },
+    DiagnosisNest: function(data) {
+      var nests = d3
+        .nest()
+        .key(function(d) {
+          return d.name;
+        })
+        .map(data);
+      return nests;
+    },
     test() {
       let that = this;
       this.map.on("click", "points_layer", function(e) {
@@ -381,6 +391,9 @@ export default {
     },
     vorfeaters() {
       return this.$store.getters.getvorfeaters;
+    },
+    timeRange() {
+      return this.$store.getters.gettimeRange;
     }
   },
   watch: {
@@ -414,13 +427,55 @@ export default {
           maxzoom: 10.5
         });
       });
+    },
+    timeRange: function(newval, oldval) {
+      var mergerdata = this.$store.getters.getscMergerData;
+      var timeRange = [
+        new Date(this.$store.getters.gettimeRange[0]),
+        new Date(this.$store.getters.gettimeRange[1])
+      ];
+      this.quezheng = [];
+      for (var i = 0; i < mergerdata.length; i++) {
+        // console.log(newval[i].city);
+        var dates = mergerdata[i].date;
+        dates = new Date(
+          2020,
+          parseInt(dates.split("月")[0]) - 1,
+          dates.split("月")[1].split("日")[0]
+        );
+        if (dates.getTime() == timeRange[1].getTime()) {
+          // console.log(mergerdata[i]);
+          if (mergerdata[i].city != "") {
+            this.quezheng.push({
+              name: mergerdata[i].city,
+              value: parseInt(mergerdata[i].accumulativeDiagnosis)
+            });
+          }
+        }
+      }
+      var optscale = this.DiagnosisScale(this.quezheng);
+      var qznest = this.DiagnosisNest(this.quezheng);
+      for (var i = 0; i < this.sc_cityData.features.length; i++) {
+        var rename = this.sc_cityData.features[i].properties.name;
+        var cname = rename.substring(0, 2);
+        if (cname == "攀枝") {
+          cname = cname + "花";
+        }
+        var reopt = optscale(qznest.get(cname)[0].value);
+        this.sc_cityData.features[i].properties["opt"] = reopt;
+      }
+      this.map.getSource("city_json").setData({
+        type: "FeatureCollection",
+        features: this.sc_cityData.features
+      });
+      console.log(this.quezheng);
     }
   }
 };
 </script>
 
 <style>
-@import url('../../node_modules/mapbox-gl/dist/mapbox-gl.css');
+@import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
 #map {
   position: absolute;
   top: 5.1%;
