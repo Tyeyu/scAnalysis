@@ -1,8 +1,9 @@
 <template>
   <div id="pie">
+
     <div id="in-pie"></div>
     <div id="in-bar"></div>
-    <div id="in-content"></div>
+
   </div>
 </template>
 
@@ -14,6 +15,7 @@ export default {
     return {
       sexData: null,
       ageData: null,
+        series: null,
       myChart: null,
       option: null
     };
@@ -52,7 +54,7 @@ export default {
           }
         ]
       };
-      that.myChart.setOption(that.option, true);
+      that.myChart.setOption(that.option);
     },
     drawbar() {
       let that = this;
@@ -105,7 +107,7 @@ export default {
           {
             name: "患病人数",
             type: "bar",
-            barWidth: "30%",
+            barWidth: "50%",
             data: that.ageData
           }
         ]
@@ -118,9 +120,11 @@ export default {
           { name: "", value: 0 },
           { name: "", value: 0 }
         ],
-        age: []
+        age: [],
+          seriesData: {confirmed: 0, health: 0, death: 0}
       };
       var j = 0;
+
       var timerange = [
         new Date(this.$store.getters.gettimeRange[0]),
         new Date(this.$store.getters.gettimeRange[1])
@@ -138,20 +142,65 @@ export default {
             madeupdata.sex[1].value += 1;
             madeupdata.sex[1].name = "女";
           }
+
           madeupdata.age[j] = newval[i].age;
           j++;
         }
       }
+
+
+
       this.$store.commit("setmadeupdata", madeupdata);
+    },
+    mergeData: function (newval) {
+        var seriesData = {
+            confirmed: 0,
+            health: 0,
+            death: 0
+        };
+        var timerange = [
+            new Date(this.$store.getters.gettimeRange[0]),
+            new Date(this.$store.getters.gettimeRange[1])
+        ];
+        for (var k = 0; k < newval.length; k++) {
+            var dates = newval[k].date;
+            console.log(dates);
+            console.log(dates.split("月")[1].split("日")[0]);
+            dates = new Date(
+                2020,
+                parseInt(dates.split("月")[0]) - 1,
+                dates.split("月")[1].split("日")[0]
+            );
+
+            if (
+                timeRange[0].getTime() <= dates.getTime() &&
+                dates.getTime() <= timeRange[1].getTime()
+            ) {
+                if (newval[k].newDiagnosis != '') {
+                    madeupdata.seriesData.confirmed += newval[k].newDiagnosis;
+                }
+                else if(newval[k].newHealth != ''){
+                    madeupdata.seriesData.health += newval[k].newHealth;
+                }
+                else if(newval[k].newDeath != ''){
+                    madeupdata.seriesData.death += newval[k].newDeath;
+                }
+            }
+        }
+        this.$store.commit("setmadeupdata", seriesData);
     }
   },
   computed: {
     madeupdata() {
       return this.$store.getters.getmadeupdata;
     },
+
     ScTrackData() {
       return this.$store.getters.getscTrackData;
     },
+      scMergerData() {
+          return this.$store.getters.getscMergerData;
+      },
     timeRange() {
       return this.$store.getters.gettimeRange;
     }
@@ -162,12 +211,17 @@ export default {
       //图表数据变化后该执行的操作
       this.sexData = newval.sex;
       this.ageData = newval.age;
+        this.series = newval.seriesData;
       this.drawpie();
       this.drawbar();
     },
     timeRange: function(newval, oldval) {
       this.changedata(this.$store.getters.getscTrackData);
+
     },
+      scMergerData: function(newval, oldval) {
+          this.changeData(newval);
+      },
     ScTrackData: function(newval, oldval) {
       this.changedata(newval);
     }
@@ -189,7 +243,7 @@ export default {
   height: 70%;
   width: 30%;
   bottom: 0.1%;
-  top: 20%;
+  top: 30%;
   float: left;
 }
 #in-bar {
@@ -198,9 +252,9 @@ export default {
   float: right;
 }
   #in-content{
-    height: 30%;
+    height: 90%;
     width: 30%;
-    top: 0.1%;
-    bottom: 10%;
+    top: 10%;
+
   }
 </style>

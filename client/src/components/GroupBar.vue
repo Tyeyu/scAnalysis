@@ -18,14 +18,16 @@ export default {
       regionData: null,
       localData: null,
       inputData: null,
-      percentData: null
+      percentData: null,
+      unknownData: null,
+        chart: null,
     };
   },
-  mounted() {},
+  mounted() {this.chartFacet()},
   methods: {
     chartInit() {
       let that = this;
-      console.log(that.regionData);
+      console.log(that.localData);
       var myChart = echarts.init(document.getElementById("gpbar"));
       var option = {
         tooltip: {
@@ -36,7 +38,7 @@ export default {
           }
         },
         legend: {
-          data: ["本地", "输入"],
+          data: ["本地", "输入", "不明"],
           right: "20%",
           itemHeight: 20
         },
@@ -45,7 +47,7 @@ export default {
           right: "3%",
           bottom: "3%",
           top: "15%",
-          height: "86%",
+          height: "98%",
           containLabel: true
         },
         xAxis: {
@@ -68,6 +70,7 @@ export default {
             name: "本地",
             type: "bar",
             stack: "总量",
+              barWidth: "90%",
             label: {
               show: true,
               position: "insideRight"
@@ -78,17 +81,33 @@ export default {
             name: "输入",
             type: "bar",
             stack: "总量",
+              barWidth: "90%",
             label: {
               show: true,
               position: "insideRight"
             },
             data: that.inputData
-          }
+          },
+            {
+                name: "不明",
+                type: "bar",
+                stack: "总量",
+                barWidth: "90%",
+                label: {
+                    show: true,
+                    position: "insideRight"
+                },
+                data: that.unknownData
+            }
         ]
       };
       myChart.setOption(option, true);
     },
     chartFacet() {
+        let that = this;
+            if(that.chart){     // 如果存在的话就删除图表再重新生成
+                that.chart.destroy()
+            }
       var data = [
         { region: "成都", type: "local", count: 27 },
         { region: "成都", type: "input", count: 35 },
@@ -103,63 +122,72 @@ export default {
         { region: "四川达州", type: "local", count: 6 },
         { region: "四川达州", type: "input", count: 12 }
       ];
-      const chart = new G2.Chart({
+      that.chart = new G2.Chart({
         container: "facet",
         forceFit: true,
-        height: 210,
+        height: 250,
         top: "10%",
-        padding: [19, 50, 20, 5]
+
+        padding: [10, 50, 50, 5]
       });
-      chart.source(data);
-      chart.legend(false);
-      chart.coord("theta", {
-        radius: 0.8
+
+
+      that.chart.source(data);
+      that.chart.legend(false);
+        that.chart.tooltip({
+            showTitle: false
+        });
+      that.chart.coord("theta", {
+        radius: 0.9
       });
-      chart.facet("list", {
+      that.chart.facet("list", {
         fields: ["region"],
         cols: 1,
-        padding: 8,
-        colTitle: {
-          offsetY: -10,
-          style: {
-            fontSize: 12,
-            textAlign: "center",
-            fontWeight: 300,
-            fill: "#89398d"
-          }
-        },
+        padding: 5,
+          line: {
+              stroke: '#00a3d7'
+          },
+        showTitle: false,
+
         eachView(view, facet) {
-          var ds = new DataSet();
-          var dv = ds.createView().source(data);
-          dv.transform({
+            const data = facet.data;
+          const dv = new DataSet.View();
+          dv.source(data).transform({
             type: "percent",
             field: "count",
             dimension: "type",
             as: "percent"
           });
-
+            view.source(dv, {
+                percent: {
+                    formatter(val) {
+                        return (val * 100).toFixed(2) + '%';
+                    }
+                }
+            });
           view
             .interval()
             .position("percent")
-            .color("region")
+            .color("type")
             .adjust("stack");
         }
       });
-      chart.render();
+      that.chart.render();
     },
     datachange: function(newval) {
       var citydata = {
         region: [
-          "四川达州",
-          "四川德阳",
-          "四川绵阳",
-          "四川遂宁",
-          "四川巴中",
+          "达州",
+          "德阳",
+          "绵阳",
+          "遂宁",
+          "巴中",
           "成都"
         ],
         local: [0, 0, 0, 0, 0, 0],
         input: [0, 0, 0, 0, 0, 0],
-        percent: [0, 0, 0, 0, 0, 0]
+        percent: [0, 0, 0, 0, 0, 0],
+        unknown: [0, 0, 0, 0, 0, 0]
       };
       var timerange = [
         new Date(this.$store.getters.gettimeRange[0]),
@@ -185,6 +213,9 @@ export default {
                 newval[i].InfectionType == "第一代")
             ) {
               citydata.input[k]++;
+            }
+            else if (newval[i].city == citydata.region[k] && newval[i].InfectionType == "不明"){
+                citydata.unknown[k]++;
             }
             citydata.percent[k] =
               citydata.local[k] / (citydata.local[k] + citydata.input[k]);
@@ -213,6 +244,7 @@ export default {
       this.localData = newval.local;
       this.inputData = newval.input;
       this.percentData = newval.percent;
+      this.unknownData = newval.unknown;
       this.chartInit();
       this.chartFacet();
     },
