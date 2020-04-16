@@ -103,6 +103,7 @@ export default {
       };
       myChart.setOption(option, true);
     },
+      
     chartFacet() {
         let that = this;
             if(that.chart){     // 如果存在的话就删除图表再重新生成
