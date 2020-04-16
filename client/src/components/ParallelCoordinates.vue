@@ -17,7 +17,8 @@ export default {
       seriesdata: null,
       hospitalmap: null,
       migraComputmap: null,
-      mergcomputmap: null
+      mergcomputmap: null,
+      populationmap: null
     };
   },
   methods: {
@@ -35,7 +36,8 @@ export default {
         { name: "CO", index: 4, text: "迁入" },
         { name: "NO2", index: 5, text: "迁出" },
         { name: "SO2", index: 6, text: "定点医院个数" },
-        { name: "等级", index: 7, text: "发热门诊个数" }
+        { name: "等级", index: 7, text: "发热门诊个数" },
+        { name: "P", index: 8, text: "常住人口(万)" }
       ];
       var option = {
         //backgroundColor: "#F0F0EF",
@@ -63,7 +65,8 @@ export default {
           { dim: 4, name: schema[4].text },
           { dim: 5, name: schema[5].text },
           { dim: 6, name: schema[6].text },
-          { dim: 7, name: schema[7].text }
+          { dim: 7, name: schema[7].text },
+          { dim: 8, name: schema[8].text }
         ],
         parallel: {
           top: "20%",
@@ -150,6 +153,14 @@ export default {
         });
       }
     },
+    populationdata: function(newval) {
+      this.populationmap = d3
+        .nest()
+        .key(function(d) {
+          return d.city;
+        })
+        .map(newval.population);
+    },
     mergedata: function() {
       //计算给定日期的确诊、治愈率、死亡率
       var timeRange = [
@@ -207,6 +218,7 @@ export default {
         var migrd = this.migraComputmap.get(citys[i]);
 
         var hospd = this.hospitalmap.get(citys[i]);
+        var popul = this.populationmap.get(citys[i]);
         var serie = {
           name: citys[i],
           type: "parallel",
@@ -220,7 +232,8 @@ export default {
               migrd.Inrate,
               migrd.Outrate,
               hospd[0].hospital,
-              hospd[0].outpatient
+              hospd[0].outpatient,
+              popul[0].population
             ]
           ]
         };
@@ -255,6 +268,7 @@ export default {
     ScCoordata: function(newval, oldval) {
       this.hospitaldata(newval);
       this.migrationdata(newval);
+      this.populationdata(newval);
       this.mergedata();
       this.setserierdata();
       this.initchart();

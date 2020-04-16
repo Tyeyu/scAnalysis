@@ -13,10 +13,13 @@ const readcsv = {
       .then(mergerData => {
         d3.csv("../../static/hospitalnum.csv").then(hospitalData => {
           d3.csv("../../static/scMigration.csv").then(scMigrationData => {
-            store.commit("setscMergerData", mergerData);
-            store.commit("setscCoordata", {
-              hospital: hospitalData,
-              Migration: scMigrationData
+            d3.csv("../../static/population.csv").then(populationData => {
+              store.commit("setscMergerData", mergerData);
+              store.commit("setscCoordata", {
+                hospital: hospitalData,
+                Migration: scMigrationData,
+                population: populationData
+              });
             });
           });
         });
