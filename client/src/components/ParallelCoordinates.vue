@@ -226,7 +226,7 @@ export default {
         };
         this.seriesdata.push(serie);
       }
-      console.log(this.seriesdata);
+      // console.log(this.seriesdata);
     }
   },
   mounted() {},

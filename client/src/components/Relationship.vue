@@ -72,7 +72,7 @@ export default {
         .scaleLinear()
         .domain([
           0,
-          d3.max(this.chartdata, function(d,i) {
+          d3.max(this.chartdata, function(d, i) {
             return parseInt(i);
           })
         ])
@@ -140,10 +140,14 @@ export default {
           return chartYscal(parseInt(i));
         })
         .attr("width", function(d) {
-          return (
+          var width =
             chartXscale(new Date(d.enddate)) -
-            chartXscale(new Date(d.startdate))
-          );
+            chartXscale(new Date(d.startdate));
+          if (isNaN(width)) {
+            return 0;
+          } else {
+            return width;
+          }
         })
         .attr("height", 2);
     },

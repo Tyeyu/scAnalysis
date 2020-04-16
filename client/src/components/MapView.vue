@@ -435,6 +435,7 @@ export default {
         new Date(this.$store.getters.gettimeRange[1])
       ];
       this.quezheng = [];
+      var citys = [];
       for (var i = 0; i < mergerdata.length; i++) {
         // console.log(newval[i].city);
         var dates = mergerdata[i].date;
@@ -443,13 +444,31 @@ export default {
           parseInt(dates.split("月")[0]) - 1,
           dates.split("月")[1].split("日")[0]
         );
+        if (dates.getTime() == timeRange[0].getTime()) {
+          citys.push(mergerdata[i]);
+        }
         if (dates.getTime() == timeRange[1].getTime()) {
           // console.log(mergerdata[i]);
           if (mergerdata[i].city != "") {
-            this.quezheng.push({
-              name: mergerdata[i].city,
-              value: parseInt(mergerdata[i].accumulativeDiagnosis)
-            });
+            for (var j = 0; j < citys.length; j++) {
+              if (citys[j].city == mergerdata[i].city) {
+                var value =
+                  parseInt(mergerdata[i].accumulativeDiagnosis) -
+                  parseInt(citys[j].accumulativeDiagnosis);
+                if (isNaN(value)) {
+                  value = 0;
+                }
+                this.quezheng.push({
+                  name: mergerdata[i].city,
+                  value: value
+                });
+                console.log(
+                  parseInt(mergerdata[i].accumulativeDiagnosis) -
+                    parseInt(citys[j].accumulativeDiagnosis)
+                );
+                break;
+              }
+            }
           }
         }
       }
@@ -462,13 +481,16 @@ export default {
           cname = cname + "花";
         }
         var reopt = optscale(qznest.get(cname)[0].value);
-        this.sc_cityData.features[i].properties["opt"] = reopt;
+        if (qznest.get(cname)[0].value == 0) {
+          this.sc_cityData.features[i].properties["opt"] = 0;
+        } else {
+          this.sc_cityData.features[i].properties["opt"] = reopt;
+        }
       }
       this.map.getSource("city_json").setData({
         type: "FeatureCollection",
         features: this.sc_cityData.features
       });
-      console.log(this.quezheng);
     }
   }
 };
