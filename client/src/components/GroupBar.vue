@@ -105,7 +105,7 @@ export default {
     },
     chartFacet() {
         let that = this;
-            if(that.chart){     
+            if(that.chart){
                 that.chart.destroy()
             }
       var data = [
@@ -168,7 +168,7 @@ export default {
           view
             .interval()
             .position("percent")
-            .color("type")
+            .color("type", ['#c41608','#050f31'])
             .adjust("stack");
         }
       });
