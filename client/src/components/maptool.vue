@@ -2,7 +2,7 @@
   <div>
     <div id="mapcontrl">
       <el-checkbox-group v-model="checkedcontrls" @change="handleCheckedcontrlsChange">
-        <el-checkbox v-for="cont in contrls" :label="cont" :key="cont">{{ cont }}</el-checkbox>
+        <el-checkbox v-for="cont in contrls" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
       </el-checkbox-group>
     </div>
     <div id="ColorCard"></div>
@@ -14,17 +14,18 @@ export default {
   data() {
     return {
       contrls: [
-        "病例/轨迹",
-        "病例小区",
-        "医院/发热门诊",
-        "人口基数",
-        "迁移细节",
-        "活跃度",
-        "POA",
-        "contours",
-        "voronoi-outline"
+        { name: "病例/轨迹", id: "patient" },
+        { name: "病例小区", id: "CaseCell" },
+        { name: "医院/发热门诊", id: "hospital" },
+        { name: "人口基数", id: "population" },
+        { name: "迁移细节", id: "daily" },
+        { name: "活跃度", id: "Activity" },
+        { name: "POA", id: "POA" },
+        { name: "contours", id: "contours" },
+        { name: "维诺图", id: "voronoi-outline" }
       ],
-      checkedcontrls: ["POA", "contours", "test"]
+      checkedcontrls: ["POA", "contours", "test"],
+      popuchoose: false
     };
   },
   mounted() {
@@ -32,6 +33,18 @@ export default {
   },
   methods: {
     handleCheckedcontrlsChange: function(val) {
+      var pop = val.indexOf("population");
+      var con = val.indexOf("contours");
+      if (pop != -1 && !this.popuchoose && con != -1) {
+        val.splice(con, 1);
+        this.popuchoose = true;
+      } else {
+        if (con != -1 && this.popuchoose && pop != -1) {
+          val.splice(pop, 1);
+          this.popuchoose = false;
+        }
+      }
+
       this.$store.commit("setmaptooldata", val);
     },
     drawColorCard: function() {
@@ -92,7 +105,7 @@ export default {
   padding-top: 10pt;
   top: 5.5%;
   width: 8.2%;
-  height: 26%;
+  height: 27%;
   border: 1px solid white;
   background-color: #30313a;
   -webkit-font-smoothing: antialiased;
@@ -105,7 +118,7 @@ export default {
   left: 91%;
   padding-left: 5pt;
   padding-top: 10pt;
-  top: 31.5%;
+  top: 32.5%;
   width: 8.2%;
   height: 20%;
 }

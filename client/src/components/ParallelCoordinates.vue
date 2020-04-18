@@ -103,7 +103,7 @@ export default {
         },
         series: that.seriesdata
       };
-      myChart.setOption(option);
+      myChart.setOption(option, true);
     },
     hospitaldata: function(newval) {
       this.hospitalmap = d3

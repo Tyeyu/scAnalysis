@@ -36,6 +36,29 @@ export default {
         { name: "甘孜", value: 78 },
         { name: "凉山", value: 13 }
       ],
+      populations: [
+        { city: "成都", population: 1604.47 },
+        { city: "自贡", population: 290.14 },
+        { city: "攀枝花", population: 123.61 },
+        { city: "泸州", population: 431.72 },
+        { city: "德阳", population: 353.16 },
+        { city: "绵阳", population: 483.56 },
+        { city: "广元", population: 266 },
+        { city: "遂宁", population: 323.59 },
+        { city: "内江", population: 375.37 },
+        { city: "乐山", population: 327.21 },
+        { city: "南充", population: 641.79 },
+        { city: "眉山", population: 297.48 },
+        { city: "宜宾", population: 453 },
+        { city: "广安", population: 325.03 },
+        { city: "达州", population: 568.95 },
+        { city: "雅安", population: 153.78 },
+        { city: "巴中", population: 331.67 },
+        { city: "资阳", population: 255.31 },
+        { city: "阿坝", population: 94.01 },
+        { city: "甘孜", population: 118.63 },
+        { city: "凉山", population: 483.52 }
+      ],
       toggleableLayerIds: [
         "region-label",
         "city-outline",
@@ -62,7 +85,8 @@ export default {
       let res2 = axios.get("./api/sc_city.json").then(res => {
         var optscale = that.DiagnosisScale(that.quezheng);
         var qznest = that.DiagnosisNest(that.quezheng);
-
+        var Pscale = that.PopulationScale();
+        var Pnests = that.PopulationNest();
         for (var i = 0; i < res.data.features.length; i++) {
           var rename = res.data.features[i].properties.name;
           var cname = rename.substring(0, 2);
@@ -71,6 +95,16 @@ export default {
           }
           var reopt = optscale(qznest.get(cname)[0].value);
           res.data.features[i].properties["opt"] = reopt;
+        }
+        for (var i = 0; i < res.data.features.length; i++) {
+          var rename = res.data.features[i].properties.name;
+          var cname = rename.substring(0, 2);
+          if (cname == "攀枝") {
+            cname = cname + "花";
+          }
+          var reopt = Pscale(Pnests.get(cname)[0].population);
+          res.data.features[i].properties["popt"] = reopt;
+          console.log(reopt);
         }
         that.sc_cityData = res.data;
         that.addcity2Map(res.data);
@@ -215,7 +249,19 @@ export default {
         },
         maxzoom: 8.5
       });
-
+      this.map.addLayer({
+        id: "population",
+        type: "fill",
+        source: "city_json",
+        layout: {
+          visibility: "none"
+        },
+        paint: {
+          "fill-color": "#FF9933",
+          "fill-opacity": ["get", "popt"]
+        },
+        maxzoom: 8.5
+      });
       this.map.addLayer({
         id: "city-outline",
         type: "line",
@@ -302,6 +348,7 @@ export default {
       let stateOfPOA = data.indexOf("POA");
       let stateOfCon = data.indexOf("contours");
       let stateOfVor = data.indexOf("voronoi-outline");
+      let statePopu = data.indexOf("population");
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
           clickedLayer1,
@@ -335,8 +382,20 @@ export default {
         } else if (stateOfVor == -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "none");
         }
+        if (statePopu != -1) {
+          that.map.setLayoutProperty("population", "visibility", "visible");
+          that.map.setLayoutProperty("city-outline", "visibility", "visible");
+          that.map.setLayoutProperty("region-label", "visibility", "visible");
+        } else if (statePopu == -1) {
+          that.map.setLayoutProperty("population", "visibility", "none");
+          if (stateOfCon == -1) {
+            that.map.setLayoutProperty("city-outline", "visibility", "none");
+            that.map.setLayoutProperty("region-label", "visibility", "none");
+          }
+        }
       });
     },
+    //确诊比例尺
     DiagnosisScale: function(data) {
       var Qscale = d3
         .scaleLinear()
@@ -359,6 +418,30 @@ export default {
         })
         .map(data);
       return nests;
+    },
+    //人口比例尺
+    PopulationScale: function() {
+      var Pscale = d3
+        .scaleLinear()
+        .domain([
+          d3.min(this.populations, function(d) {
+            return d.population;
+          }),
+          d3.max(this.populations, function(d) {
+            return d.population;
+          })
+        ])
+        .range([0, 1]);
+      return Pscale;
+    },
+    PopulationNest: function() {
+      var Pnests = d3
+        .nest()
+        .key(function(d) {
+          return d.city;
+        })
+        .map(this.populations);
+      return Pnests;
     },
     test() {
       let that = this;
@@ -400,6 +483,7 @@ export default {
     //监听dailydata数据变化
     mapdata: function(newval, oldval) {},
     maptooldata: function(newval, oldval) {
+      console.log(newval);
       this.changeLayer(newval);
     },
     vorfeaters: function(newval, oldval) {
@@ -462,10 +546,6 @@ export default {
                   name: mergerdata[i].city,
                   value: value
                 });
-                console.log(
-                  parseInt(mergerdata[i].accumulativeDiagnosis) -
-                    parseInt(citys[j].accumulativeDiagnosis)
-                );
                 break;
               }
             }
@@ -479,6 +559,10 @@ export default {
         var cname = rename.substring(0, 2);
         if (cname == "攀枝") {
           cname = cname + "花";
+        }
+        if (qznest.get(cname) == undefined) {
+          this.sc_cityData.features[i].properties["opt"] = 0;
+          continue;
         }
         var reopt = optscale(qznest.get(cname)[0].value);
         if (qznest.get(cname)[0].value == 0) {

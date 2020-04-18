@@ -1,9 +1,7 @@
 <template>
   <div id="pie">
-
     <div id="in-pie"></div>
     <div id="in-bar"></div>
-
   </div>
 </template>
 
@@ -15,7 +13,7 @@ export default {
     return {
       sexData: null,
       ageData: null,
-        series: null,
+      series: null,
       myChart: null,
       option: null
     };
@@ -34,20 +32,19 @@ export default {
         },
         tooltip: {
           trigger: "item",
-          position: 'right'
-
+          position: "right"
         },
         series: [
           {
             name: "感染者性别",
             type: "pie",
             center: ["60%", "60%"],
-            radius: ['40%','60%'],
-              bottom: '1%',
+            radius: ["40%", "60%"],
+            bottom: "1%",
             avoidLabelOverlap: false,
             label: {
-                  show: false,
-                  position: 'center'
+              show: false,
+              position: "center"
             },
 
             data: that.sexData
@@ -121,7 +118,7 @@ export default {
           { name: "", value: 0 }
         ],
         age: [],
-          seriesData: {confirmed: 0, health: 0, death: 0}
+        seriesData: { confirmed: 0, health: 0, death: 0 }
       };
       var j = 0;
 
@@ -148,46 +145,42 @@ export default {
         }
       }
 
-
-
       this.$store.commit("setmadeupdata", madeupdata);
     },
-    mergeData: function (newval) {
-        var seriesData = {
-            confirmed: 0,
-            health: 0,
-            death: 0
-        };
-        var timerange = [
-            new Date(this.$store.getters.gettimeRange[0]),
-            new Date(this.$store.getters.gettimeRange[1])
-        ];
-        for (var k = 0; k < newval.length; k++) {
-            var dates = newval[k].date;
-            console.log(dates);
-            console.log(dates.split("月")[1].split("日")[0]);
-            dates = new Date(
-                2020,
-                parseInt(dates.split("月")[0]) - 1,
-                dates.split("月")[1].split("日")[0]
-            );
+    mergeData: function(newval) {
+      var seriesData = {
+        confirmed: 0,
+        health: 0,
+        death: 0
+      };
+      var timeRange = [
+        new Date(this.$store.getters.gettimeRange[0]),
+        new Date(this.$store.getters.gettimeRange[1])
+      ];
+      for (var k = 0; k < newval.length; k++) {
+        var dates = newval[k].date;
+        // console.log(dates);
+        // console.log(dates.split("月")[1].split("日")[0]);
+        dates = new Date(
+          2020,
+          parseInt(dates.split("月")[0]) - 1,
+          dates.split("月")[1].split("日")[0]
+        );
 
-            if (
-                timeRange[0].getTime() <= dates.getTime() &&
-                dates.getTime() <= timeRange[1].getTime()
-            ) {
-                if (newval[k].newDiagnosis != '') {
-                    madeupdata.seriesData.confirmed += newval[k].newDiagnosis;
-                }
-                else if(newval[k].newHealth != ''){
-                    madeupdata.seriesData.health += newval[k].newHealth;
-                }
-                else if(newval[k].newDeath != ''){
-                    madeupdata.seriesData.death += newval[k].newDeath;
-                }
-            }
+        if (
+          timeRange[0].getTime() <= dates.getTime() &&
+          dates.getTime() <= timeRange[1].getTime()
+        ) {
+          if (newval[k].newDiagnosis != "") {
+            seriesData.confirmed += newval[k].newDiagnosis;
+          } else if (newval[k].newHealth != "") {
+            seriesData.health += newval[k].newHealth;
+          } else if (newval[k].newDeath != "") {
+            seriesData.death += newval[k].newDeath;
+          }
         }
-        this.$store.commit("setmadeupdata", seriesData);
+      }
+      this.$store.commit("setmadeupdata", seriesData);
     }
   },
   computed: {
@@ -198,9 +191,9 @@ export default {
     ScTrackData() {
       return this.$store.getters.getscTrackData;
     },
-      scMergerData() {
-          return this.$store.getters.getscMergerData;
-      },
+    scMergerData() {
+      return this.$store.getters.getscMergerData;
+    },
     timeRange() {
       return this.$store.getters.gettimeRange;
     }
@@ -211,17 +204,16 @@ export default {
       //图表数据变化后该执行的操作
       this.sexData = newval.sex;
       this.ageData = newval.age;
-        this.series = newval.seriesData;
+      this.series = newval.seriesData;
       this.drawpie();
       this.drawbar();
     },
     timeRange: function(newval, oldval) {
       this.changedata(this.$store.getters.getscTrackData);
-
     },
-      scMergerData: function(newval, oldval) {
-          this.changeData(newval);
-      },
+    scMergerData: function(newval, oldval) {
+      // this.mergeData(newval);
+    },
     ScTrackData: function(newval, oldval) {
       this.changedata(newval);
     }
@@ -251,10 +243,9 @@ export default {
   width: 70%;
   float: right;
 }
-  #in-content{
-    height: 90%;
-    width: 30%;
-    top: 10%;
-
-  }
+#in-content {
+  height: 90%;
+  width: 30%;
+  top: 10%;
+}
 </style>
