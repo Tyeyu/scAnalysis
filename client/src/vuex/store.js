@@ -27,7 +27,9 @@ const store = new Vuex.Store({
     scCoordata: null,
     //时间轴范围
     timeRange: ["2020-01-10", "2020-03-20"],
-    vorfeaters: ""
+    vorfeaters: "",
+    //医院门诊的图标的经纬度数据
+    hosImageData: null
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -74,6 +76,9 @@ const store = new Vuex.Store({
     },
     setvorfeaters: function(state, data) {
       state.vorfeaters = data;
+    },
+    sethosImageData: function(state, data) {
+      state.hosImageData = data;
     }
   },
   getters: {
@@ -118,6 +123,9 @@ const store = new Vuex.Store({
     },
     getvorfeaters: state => {
       return state.vorfeaters;
+    },
+    gethosImageData: state => {
+      return state.hosImageData;
     }
   }
 });

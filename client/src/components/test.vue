@@ -45,7 +45,8 @@ export default {
       //   .scale(2500)
       //   // .translate([this.width / 2-200 , this.height / 2 +250]);
       //   .translate([width / 4 - 200, height / 3 + 280]);
-      let positions = [];
+      // let positions = [];
+      let hospitals = [];
       let pos = [];
       HosData.forEach(function(d, p, q) {
         d.lng = parseFloat(d.lng);
@@ -55,6 +56,16 @@ export default {
         // positions[p].name = d["机构名称"];
         pos.push([d.lng, d.lat]);
         pos[p].name = d["机构名称"];
+        hospitals.push({
+          type: "Feature",
+          properties: {
+            name: d["机构名称"]
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [d.lng, d.lat]
+          }
+        });
       });
       const _voronoi = d3.voronoi();
       var posvor = _voronoi(pos).polygons();
@@ -108,6 +119,8 @@ export default {
         }
       }
       this.$store.commit("setvorfeaters", that.mapfeaters);
+      console.log(hospitals);
+      this.$store.commit("sethosImageData", hospitals);
     },
     loadsourse() {}
   }

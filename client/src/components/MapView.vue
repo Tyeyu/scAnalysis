@@ -7,7 +7,7 @@ import * as mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import * as d3 from "d3";
 import * as d3geoVoronoi from "d3-geo-voronoi";
-
+import hosImg from "../assets/timg.png";
 let axios = require("axios");
 export default {
   name: "mapview",
@@ -104,7 +104,6 @@ export default {
           }
           var reopt = Pscale(Pnests.get(cname)[0].population);
           res.data.features[i].properties["popt"] = reopt;
-          console.log(reopt);
         }
         that.sc_cityData = res.data;
         that.addcity2Map(res.data);
@@ -349,6 +348,7 @@ export default {
       let stateOfCon = data.indexOf("contours");
       let stateOfVor = data.indexOf("voronoi-outline");
       let statePopu = data.indexOf("population");
+      let stateOfHos = data.indexOf("hospitalImage");
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
           clickedLayer1,
@@ -392,6 +392,11 @@ export default {
             that.map.setLayoutProperty("city-outline", "visibility", "none");
             that.map.setLayoutProperty("region-label", "visibility", "none");
           }
+        }
+        if (stateOfHos != -1) {
+          that.map.setLayoutProperty("hospitalImage", "visibility", "visible");
+        } else if (stateOfHos == -1) {
+          that.map.setLayoutProperty("hospitalImage", "visibility", "none");
         }
       });
     },
@@ -443,6 +448,33 @@ export default {
         .map(this.populations);
       return Pnests;
     },
+    //加载医院
+    hospitalImageLayout: function(featuresdata) {
+      let that = this;
+      this.map.on("load", function() {
+        that.map.loadImage(hosImg, function(error, image) {
+          if (error) throw error;
+          that.map.addImage("hospital", image);
+          that.map.addSource("point", {
+            type: "geojson",
+            data: {
+              type: "FeatureCollection",
+              features: featuresdata
+            }
+          });
+          that.map.addLayer({
+            id: "hospitalImage",
+            type: "symbol",
+            source: "point",
+            layout: {
+              "icon-image": "hospital",
+              "icon-size": 0.04,
+              visibility: "none"
+            }
+          });
+        });
+      });
+    },
     test() {
       let that = this;
       this.map.on("click", "points_layer", function(e) {
@@ -477,6 +509,9 @@ export default {
     },
     timeRange() {
       return this.$store.getters.gettimeRange;
+    },
+    hosImageData() {
+      return this.$store.getters.gethosImageData;
     }
   },
   watch: {
@@ -575,6 +610,9 @@ export default {
         type: "FeatureCollection",
         features: this.sc_cityData.features
       });
+    },
+    hosImageData: function(newval, oldval) {
+      this.hospitalImageLayout(newval);
     }
   }
 };

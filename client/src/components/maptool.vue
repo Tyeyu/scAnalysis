@@ -16,7 +16,7 @@ export default {
       contrls: [
         { name: "病例/轨迹", id: "patient" },
         { name: "病例小区", id: "CaseCell" },
-        { name: "医院/发热门诊", id: "hospital" },
+        { name: "医院/发热门诊", id: "hospitalImage" },
         { name: "人口基数", id: "population" },
         { name: "迁移细节", id: "daily" },
         { name: "活跃度", id: "Activity" },
