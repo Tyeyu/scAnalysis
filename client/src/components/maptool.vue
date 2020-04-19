@@ -15,13 +15,13 @@ export default {
     return {
       contrls: [
         { name: "病例/轨迹", id: "patient" },
-        { name: "病例小区", id: "CaseCell" },
+        { name: "病例小区", id: "POA" },
         { name: "医院/发热门诊", id: "hospitalImage" },
         { name: "人口基数", id: "population" },
         { name: "迁移细节", id: "daily" },
         { name: "活跃度", id: "Activity" },
-        { name: "POA", id: "POA" },
-        { name: "contours", id: "contours" },
+        // { name: "POA", id: "POA" },
+        { name: "确诊", id: "contours" },
         { name: "维诺图", id: "voronoi-outline" }
       ],
       checkedcontrls: ["POA", "contours", "test"],
