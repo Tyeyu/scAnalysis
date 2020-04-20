@@ -59,6 +59,29 @@ export default {
         { city: "甘孜", population: 118.63 },
         { city: "凉山", population: 483.52 }
       ],
+      cityActivity: [
+        { name: "成都", value: 0 },
+        { name: "自贡", value: 0 },
+        { name: "攀枝花", value: 0 },
+        { name: "泸州", value: 0 },
+        { name: "德阳", value: 0 },
+        { name: "绵阳", value: 0 },
+        { name: "广元", value: 0 },
+        { name: "遂宁", value: 0 },
+        { name: "内江", value: 0 },
+        { name: "乐山", value: 0 },
+        { name: "南充", value: 0 },
+        { name: "宜宾", value: 0 },
+        { name: "广安", value: 0 },
+        { name: "达州", value: 0 },
+        { name: "巴中", value: 0 },
+        { name: "雅安", value: 0 },
+        { name: "眉山", value: 0 },
+        { name: "资阳", value: 0 },
+        { name: "阿坝", value: 0 },
+        { name: "甘孜", value: 0 },
+        { name: "凉山", value: 0 }
+      ],
       toggleableLayerIds: [
         "region-label",
         "city-outline",
@@ -87,6 +110,8 @@ export default {
         var qznest = that.DiagnosisNest(that.quezheng);
         var Pscale = that.PopulationScale();
         var Pnests = that.PopulationNest();
+        var CActivScale = that.DiagnosisScale(that.cityActivity);
+        var Cnests = that.DiagnosisNest(that.cityActivity);
         for (var i = 0; i < res.data.features.length; i++) {
           var rename = res.data.features[i].properties.name;
           var cname = rename.substring(0, 2);
@@ -105,6 +130,17 @@ export default {
           var reopt = Pscale(Pnests.get(cname)[0].population);
           res.data.features[i].properties["popt"] = reopt;
         }
+
+        for (var i = 0; i < res.data.features.length; i++) {
+          var rename = res.data.features[i].properties.name;
+          var cname = rename.substring(0, 2);
+          if (cname == "攀枝") {
+            cname = cname + "花";
+          }
+          var reopt = CActivScale(Cnests.get(cname)[0].value);
+          res.data.features[i].properties["copt"] = reopt;
+        }
+
         that.sc_cityData = res.data;
         that.addcity2Map(res.data);
       });
@@ -262,6 +298,19 @@ export default {
         maxzoom: 8.5
       });
       this.map.addLayer({
+        id: "Activity",
+        type: "fill",
+        source: "city_json",
+        layout: {
+          visibility: "none"
+        },
+        paint: {
+          "fill-color": "#87CEFA",
+          "fill-opacity": ["get", "copt"]
+        },
+        maxzoom: 8.5
+      });
+      this.map.addLayer({
         id: "city-outline",
         type: "line",
         source: "city_json",
@@ -349,6 +398,8 @@ export default {
       let stateOfVor = data.indexOf("voronoi-outline");
       let statePopu = data.indexOf("population");
       let stateOfHos = data.indexOf("hospitalImage");
+      let stateOfAct = data.indexOf("Activity");
+
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
           clickedLayer1,
@@ -388,7 +439,7 @@ export default {
           that.map.setLayoutProperty("region-label", "visibility", "visible");
         } else if (statePopu == -1) {
           that.map.setLayoutProperty("population", "visibility", "none");
-          if (stateOfCon == -1) {
+          if (stateOfCon == -1 && stateOfAct == -1) {
             that.map.setLayoutProperty("city-outline", "visibility", "none");
             that.map.setLayoutProperty("region-label", "visibility", "none");
           }
@@ -397,6 +448,18 @@ export default {
           that.map.setLayoutProperty("hospitalImage", "visibility", "visible");
         } else if (stateOfHos == -1) {
           that.map.setLayoutProperty("hospitalImage", "visibility", "none");
+        }
+
+        if (stateOfAct != -1) {
+          that.map.setLayoutProperty("Activity", "visibility", "visible");
+          that.map.setLayoutProperty("city-outline", "visibility", "visible");
+          that.map.setLayoutProperty("region-label", "visibility", "visible");
+        } else {
+          that.map.setLayoutProperty("Activity", "visibility", "none");
+          if (stateOfCon == -1 && statePopu == -1) {
+            that.map.setLayoutProperty("city-outline", "visibility", "none");
+            that.map.setLayoutProperty("region-label", "visibility", "none");
+          }
         }
       });
     },
@@ -518,7 +581,7 @@ export default {
     //监听dailydata数据变化
     mapdata: function(newval, oldval) {},
     maptooldata: function(newval, oldval) {
-      console.log(newval);
+      // console.log(newval);
       this.changeLayer(newval);
     },
     vorfeaters: function(newval, oldval) {

@@ -25,7 +25,9 @@ export default {
         { name: "维诺图", id: "voronoi-outline" }
       ],
       checkedcontrls: ["POA", "contours", "test"],
-      popuchoose: false
+      popuchoose: false,
+      citychoose: false,
+      lastchoose: "contours"
     };
   },
   mounted() {
@@ -35,15 +37,51 @@ export default {
     handleCheckedcontrlsChange: function(val) {
       var pop = val.indexOf("population");
       var con = val.indexOf("contours");
-      if (pop != -1 && !this.popuchoose && con != -1) {
-        val.splice(con, 1);
-        this.popuchoose = true;
+      var cit = val.indexOf("Activity");
+      if (this.lastchoose === "contours") {
+        if (pop != -1) {
+          val.splice(con, 1);
+          this.lastchoose = "population";
+        } else {
+          if (cit != -1) {
+            val.splice(con, 1);
+            this.lastchoose = "Activity";
+          }
+        }
       } else {
-        if (con != -1 && this.popuchoose && pop != -1) {
-          val.splice(pop, 1);
-          this.popuchoose = false;
+        if (this.lastchoose === "population") {
+          if (con != -1) {
+            val.splice(pop, 1);
+            this.lastchoose = "contours";
+          } else {
+            if (cit != -1) {
+              val.splice(pop, 1);
+              this.lastchoose = "Activity";
+            }
+          }
+        } else {
+          if (this.lastchoose === "Activity") {
+            if (con != -1) {
+              val.splice(cit, 1);
+              this.lastchoose = "contours";
+            } else {
+              if (pop != -1) {
+                val.splice(cit, 1);
+                this.lastchoose = "population";
+              }
+            }
+          }
         }
       }
+      // if (pop != -1 && con == -1 && cit == -1 && !this.popuchoose) {
+      //   this.popuchoose = true;
+      // } else {
+      //   if (con != -1 && this.popuchoose && pop != -1 && cit != -1) {
+      //     val.splice(pop, 1);
+      //     val.splice(cit, 1);
+      //     this.popuchoose = false;
+      //   }
+      // }
 
       this.$store.commit("setmaptooldata", val);
     },
