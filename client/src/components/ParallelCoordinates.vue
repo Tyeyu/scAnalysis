@@ -213,6 +213,7 @@ export default {
       //封装数据
       this.seriesdata = [];
       var citys = this.hospitalmap.keys();
+      var cActivity = []; //活跃度数据
       for (var i = 0; i < citys.length; i++) {
         var mergd = this.mergcomputmap.get(citys[i]);
         var migrd = this.migraComputmap.get(citys[i]);
@@ -238,7 +239,12 @@ export default {
           ]
         };
         this.seriesdata.push(serie);
+        cActivity.push({
+          name: citys[i],
+          value: (parseFloat(migrd.Inrate) + parseFloat(migrd.Outrate)) / 2
+        });
       }
+      this.$store.commit("setcityActivity", cActivity);
       // console.log(this.seriesdata);
     }
   },

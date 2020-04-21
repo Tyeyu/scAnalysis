@@ -575,6 +575,9 @@ export default {
     },
     hosImageData() {
       return this.$store.getters.gethosImageData;
+    },
+    Activity() {
+      return this.$store.getters.getcityActivity;
     }
   },
   watch: {
@@ -676,6 +679,28 @@ export default {
     },
     hosImageData: function(newval, oldval) {
       this.hospitalImageLayout(newval);
+    },
+    Activity: function(newval, oldval) {
+      console.log(newval);
+      if (this.sc_cityData == null) {
+        return;
+      }
+      var CActivScale = this.DiagnosisScale(newval);
+      var Cnests = this.DiagnosisNest(newval);
+      for (var i = 0; i < this.sc_cityData.features.length; i++) {
+        var rename = this.sc_cityData.features[i].properties.name;
+        var cname = rename.substring(0, 2);
+        if (cname == "攀枝") {
+          cname = cname + "花";
+        }
+        var reopt = CActivScale(Cnests.get(cname)[0].value);
+        console.log(reopt);
+        this.sc_cityData.features[i].properties["copt"] = reopt;
+      }
+      this.map.getSource("city_json").setData({
+        type: "FeatureCollection",
+        features: this.sc_cityData.features
+      });
     }
   }
 };

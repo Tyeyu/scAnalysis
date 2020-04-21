@@ -29,7 +29,8 @@ const store = new Vuex.Store({
     timeRange: ["2020-01-10", "2020-03-20"],
     vorfeaters: "",
     //医院门诊的图标的经纬度数据
-    hosImageData: null
+    hosImageData: null,
+    cityActivity: null
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -79,6 +80,9 @@ const store = new Vuex.Store({
     },
     sethosImageData: function(state, data) {
       state.hosImageData = data;
+    },
+    setcityActivity: function(state, data) {
+      state.cityActivity = data;
     }
   },
   getters: {
@@ -126,6 +130,9 @@ const store = new Vuex.Store({
     },
     gethosImageData: state => {
       return state.hosImageData;
+    },
+    getcityActivity: state => {
+      return state.cityActivity;
     }
   }
 });
