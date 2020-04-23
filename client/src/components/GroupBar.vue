@@ -20,10 +20,12 @@ export default {
       inputData: null,
       percentData: null,
       unknownData: null,
-        chart: null,
+      chart: null
     };
   },
-  mounted() {this.chartFacet()},
+  mounted() {
+    this.chartFacet();
+  },
   methods: {
     chartInit() {
       let that = this;
@@ -51,26 +53,19 @@ export default {
           containLabel: true
         },
         xAxis: {
-          show: false,
+          show: false
         },
         yAxis: {
           type: "category",
 
-          data: [
-            "达州",
-            "德阳",
-            "绵阳",
-            "遂宁",
-            "巴中",
-            "成都"
-          ]
+          data: ["达州", "德阳", "绵阳", "遂宁", "巴中", "成都"]
         },
         series: [
           {
             name: "本地",
             type: "bar",
             stack: "总量",
-              barWidth: "90%",
+            barWidth: "90%",
             label: {
               show: true,
               position: "insideRight"
@@ -81,33 +76,33 @@ export default {
             name: "输入",
             type: "bar",
             stack: "总量",
-              barWidth: "90%",
+            barWidth: "90%",
             label: {
               show: true,
               position: "insideRight"
             },
             data: that.inputData
           },
-            {
-                name: "不明",
-                type: "bar",
-                stack: "总量",
-                barWidth: "90%",
-                label: {
-                    show: true,
-                    position: "insideRight"
-                },
-                data: that.unknownData
-            }
+          {
+            name: "不明",
+            type: "bar",
+            stack: "总量",
+            barWidth: "90%",
+            label: {
+              show: true,
+              position: "insideRight"
+            },
+            data: that.unknownData
+          }
         ]
       };
       myChart.setOption(option, true);
     },
     chartFacet() {
-        let that = this;
-            if(that.chart){
-                that.chart.destroy()
-            }
+      let that = this;
+      if (that.chart) {
+        that.chart.destroy();
+      }
       var data = [
         { region: "成都", type: "local", count: 27 },
         { region: "成都", type: "input", count: 35 },
@@ -131,12 +126,11 @@ export default {
         padding: [10, 50, 50, 5]
       });
 
-
       that.chart.source(data);
       that.chart.legend(false);
-        that.chart.tooltip({
-            showTitle: false
-        });
+      that.chart.tooltip({
+        showTitle: false
+      });
       that.chart.coord("theta", {
         radius: 0.9
       });
@@ -144,13 +138,13 @@ export default {
         fields: ["region"],
         cols: 1,
         padding: 5,
-          line: {
-              stroke: '#00a3d7'
-          },
+        line: {
+          stroke: "#00a3d7"
+        },
         showTitle: false,
 
         eachView(view, facet) {
-            const data = facet.data;
+          const data = facet.data;
           const dv = new DataSet.View();
           dv.source(data).transform({
             type: "percent",
@@ -158,17 +152,17 @@ export default {
             dimension: "type",
             as: "percent"
           });
-            view.source(dv, {
-                percent: {
-                    formatter(val) {
-                        return (val * 100).toFixed(2) + '%';
-                    }
-                }
-            });
+          view.source(dv, {
+            percent: {
+              formatter(val) {
+                return (val * 100).toFixed(2) + "%";
+              }
+            }
+          });
           view
             .interval()
             .position("percent")
-            .color("type", ['#c41608','#050f31'])
+            .color("type", ["#c41608", "#050f31"])
             .adjust("stack");
         }
       });
@@ -176,14 +170,7 @@ export default {
     },
     datachange: function(newval) {
       var citydata = {
-        region: [
-          "达州",
-          "德阳",
-          "绵阳",
-          "遂宁",
-          "巴中",
-          "成都"
-        ],
+        region: ["达州", "德阳", "绵阳", "遂宁", "巴中", "成都"],
         local: [0, 0, 0, 0, 0, 0],
         input: [0, 0, 0, 0, 0, 0],
         percent: [0, 0, 0, 0, 0, 0],
@@ -193,32 +180,60 @@ export default {
         new Date(this.$store.getters.gettimeRange[0]),
         new Date(this.$store.getters.gettimeRange[1])
       ];
+      var playcheck = this.$store.getters.getplaycheck;
       for (var i = 0; i < newval.length; i++) {
         var times = new Date(newval[i].diagnosisTime);
-        if (
-          times.getTime() >= timerange[0].getTime() &&
-          times.getTime() <= timerange[1].getTime()
-        ) {
-          for (var k = 0; k < citydata.region.length; k++) {
-            if (
-              newval[i].city == citydata.region[k] &&
-              (newval[i].InfectionType == "二代" ||
-                newval[i].InfectionType == "第二代" ||
-                newval[i].InfectionType == "第三代")
-            ) {
-              citydata.local[k]++;
-            } else if (
-              newval[i].city == citydata.region[k] &&
-              (newval[i].InfectionType == "一代" ||
-                newval[i].InfectionType == "第一代")
-            ) {
-              citydata.input[k]++;
-            }
-            else if (newval[i].city == citydata.region[k] && newval[i].InfectionType == "不明"){
+        if (times.getTime() <= timerange[1].getTime()) {
+          if (playcheck) {
+            for (var k = 0; k < citydata.region.length; k++) {
+              if (
+                newval[i].city == citydata.region[k] &&
+                (newval[i].InfectionType == "二代" ||
+                  newval[i].InfectionType == "第二代" ||
+                  newval[i].InfectionType == "第三代")
+              ) {
+                citydata.local[k]++;
+              } else if (
+                newval[i].city == citydata.region[k] &&
+                (newval[i].InfectionType == "一代" ||
+                  newval[i].InfectionType == "第一代")
+              ) {
+                citydata.input[k]++;
+              } else if (
+                newval[i].city == citydata.region[k] &&
+                newval[i].InfectionType == "不明"
+              ) {
                 citydata.unknown[k]++;
+              }
+              citydata.percent[k] =
+                citydata.local[k] / (citydata.local[k] + citydata.input[k]);
             }
-            citydata.percent[k] =
-              citydata.local[k] / (citydata.local[k] + citydata.input[k]);
+          } else {
+            if (times.getTime() >= timerange[0].getTime()) {
+              for (var k = 0; k < citydata.region.length; k++) {
+                if (
+                  newval[i].city == citydata.region[k] &&
+                  (newval[i].InfectionType == "二代" ||
+                    newval[i].InfectionType == "第二代" ||
+                    newval[i].InfectionType == "第三代")
+                ) {
+                  citydata.local[k]++;
+                } else if (
+                  newval[i].city == citydata.region[k] &&
+                  (newval[i].InfectionType == "一代" ||
+                    newval[i].InfectionType == "第一代")
+                ) {
+                  citydata.input[k]++;
+                } else if (
+                  newval[i].city == citydata.region[k] &&
+                  newval[i].InfectionType == "不明"
+                ) {
+                  citydata.unknown[k]++;
+                }
+                citydata.percent[k] =
+                  citydata.local[k] / (citydata.local[k] + citydata.input[k]);
+              }
+            }
           }
         }
       }

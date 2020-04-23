@@ -30,7 +30,8 @@ const store = new Vuex.Store({
     vorfeaters: "",
     //医院门诊的图标的经纬度数据
     hosImageData: null,
-    cityActivity: null
+    cityActivity: null,
+    playcheck: false
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -83,6 +84,9 @@ const store = new Vuex.Store({
     },
     setcityActivity: function(state, data) {
       state.cityActivity = data;
+    },
+    setplaycheck: function(state, data) {
+      state.playcheck = data;
     }
   },
   getters: {
@@ -133,6 +137,9 @@ const store = new Vuex.Store({
     },
     getcityActivity: state => {
       return state.cityActivity;
+    },
+    getplaycheck: state => {
+      return state.playcheck;
     }
   }
 });

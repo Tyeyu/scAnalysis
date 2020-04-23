@@ -126,22 +126,35 @@ export default {
         new Date(this.$store.getters.gettimeRange[0]),
         new Date(this.$store.getters.gettimeRange[1])
       ];
+      var playcheck = this.$store.getters.getplaycheck;
       for (var i = 0; i < newval.length; i++) {
         var times = new Date(newval[i].diagnosisTime);
-        if (
-          times.getTime() >= timerange[0].getTime() &&
-          times.getTime() <= timerange[1].getTime()
-        ) {
-          if (newval[i].sex == "男") {
-            madeupdata.sex[0].value += 1;
-            madeupdata.sex[0].name = "男";
-          } else if (newval[i].sex == "女") {
-            madeupdata.sex[1].value += 1;
-            madeupdata.sex[1].name = "女";
-          }
+        if (times.getTime() <= timerange[1].getTime()) {
+          if (playcheck) {
+            if (newval[i].sex == "男") {
+              madeupdata.sex[0].value += 1;
+              madeupdata.sex[0].name = "男";
+            } else if (newval[i].sex == "女") {
+              madeupdata.sex[1].value += 1;
+              madeupdata.sex[1].name = "女";
+            }
 
-          madeupdata.age[j] = newval[i].age;
-          j++;
+            madeupdata.age[j] = newval[i].age;
+            j++;
+          } else {
+            if (times.getTime() >= timerange[0].getTime()) {
+              if (newval[i].sex == "男") {
+                madeupdata.sex[0].value += 1;
+                madeupdata.sex[0].name = "男";
+              } else if (newval[i].sex == "女") {
+                madeupdata.sex[1].value += 1;
+                madeupdata.sex[1].name = "女";
+              }
+
+              madeupdata.age[j] = newval[i].age;
+              j++;
+            }
+          }
         }
       }
 

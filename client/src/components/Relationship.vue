@@ -157,25 +157,36 @@ export default {
         new Date(this.$store.getters.gettimeRange[1])
       ];
       var data = this.$store.getters.getRelationdata;
+      var playcheck = this.$store.getters.getplaycheck;
       this.chartdata = [];
       var k = 0;
+      var sdate = null;
       for (var i = 0; i < data.length; i++) {
-        var sdate = data[i].startdate;
+        sdate = data[i].startdate;
         if (data[i].startdate != "") {
           sdate = new Date(sdate);
         }
         var edate = new Date(data[i].enddate);
-        if (
-          sdate == "" ||
-          (sdate.getTime() >= timeRange[0].getTime() &&
-            edate.getTime() <= timeRange[1].getTime())
-        ) {
-          if (
-            this.$store.getters.getmergerCity == "" ||
-            data[i].city == this.$store.getters.getmergerCity
-          ) {
-            this.chartdata[k] = data[i];
-            k++;
+
+        if (sdate == "" || edate.getTime() <= timeRange[1].getTime()) {
+          if (playcheck) {
+            if (
+              this.$store.getters.getmergerCity == "" ||
+              data[i].city == this.$store.getters.getmergerCity
+            ) {
+              this.chartdata[k] = data[i];
+              k++;
+            }
+          } else {
+            if (sdate == "" || sdate.getTime() >= timeRange[0].getTime()) {
+              if (
+                this.$store.getters.getmergerCity == "" ||
+                data[i].city == this.$store.getters.getmergerCity
+              ) {
+                this.chartdata[k] = data[i];
+                k++;
+              }
+            }
           }
         }
       }

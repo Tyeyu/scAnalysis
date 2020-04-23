@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div id="play">
+      <el-button size="medium" v-bind:icon="playicon" circle @click="playclick"></el-button>
+    </div>
+
     <div id="timeLine"></div>
     <div id="timeLineText"></div>
   </div>
@@ -15,10 +19,53 @@ export default {
       xscale: null,
       interval: null,
       bush: null,
-      xAxis: null
+      xAxis: null,
+      playcheck: false,
+      playicon: "el-icon-video-play",
+      playstart: 0,
+      playlen: null,
+      play: null
     };
   },
   methods: {
+    playclick: function() {
+      let that = this;
+      if (!this.playcheck) {
+        this.playcheck = true;
+        this.$store.commit("setplaycheck", this.playcheck);
+        this.playicon = "el-icon-video-pause"; //切换图标
+        this.playlen = this.xscale(new Date("2020-01-11"));
+
+        this.play = self.setInterval(function() {
+          if (
+            that.playcheck &&
+            that.playstart + that.playlen <= that.svgWidth
+          ) {
+            d3.select(".brush")
+              .transition()
+              .call(that.brush.move, [
+                that.playstart,
+                that.playstart + that.playlen
+              ]);
+            that.$store.commit("settimeRange", [
+              that.interval.round(that.xscale.invert(that.playstart)),
+              that.interval.round(
+                that.xscale.invert(that.playstart + that.playlen)
+              )
+            ]);
+            that.playstart += that.playlen;
+          }
+        }, 3000);
+      } else {
+        this.playicon = "el-icon-video-play";
+        this.playcheck = false;
+        this.$store.commit("setplaycheck", this.playcheck);
+        window.clearInterval(this.play);
+        if (this.playstart + this.playlen >= this.svgWidth) {
+          this.playstart = 0;
+        }
+      }
+    },
     //初始化基本配置
     initsvg: function() {
       this.svgWidth = document.getElementById("timeLine").clientWidth - 10;
@@ -92,7 +139,10 @@ export default {
       const [x0, x1] = selection.map(d =>
         that.interval.round(that.xscale.invert(d))
       );
-      that.$store.commit("settimeRange", [x0, x1]);
+      that.$store.commit("settimeRange", [
+        that.dateFormat("YYYY-mm-dd", x0),
+        that.dateFormat("YYYY-mm-dd", x1)
+      ]);
       //确保绘制的矩形区域的最小单位为1天的宽度
       d3.select(".brush")
         .transition()
@@ -105,7 +155,7 @@ export default {
         that.interval.round(that.xscale.invert(d))
       );
 
-      // console.log([x0, x1]);
+      console.log([x0, x1]);
     },
     dateFormat: function(fmt, date) {
       let ret;
@@ -137,6 +187,15 @@ export default {
 };
 </script>
 <style>
+#play {
+  position: absolute;
+  left: 25.9%;
+  top: 50%;
+}
+#play .el-icon-video-play,
+.el-icon-video-pause {
+  font-size: 20px;
+}
 #timeLine {
   position: absolute;
   left: 25.9%;
