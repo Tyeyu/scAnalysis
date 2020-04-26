@@ -51,15 +51,12 @@ export default {
       HosData.forEach(function(d, p, q) {
         d.lng = parseFloat(d.lng);
         d.lat = parseFloat(d.lat);
-
-        // positions.push(projection([d.lng, d.lat]));
-        // positions[p].name = d["机构名称"];
         pos.push([d.lng, d.lat]);
         pos[p].name = d["机构名称"];
         hospitals.push({
           type: "Feature",
           properties: {
-            name: d["机构名称"]
+            description: d["机构名称"]
           },
           geometry: {
             type: "Point",
@@ -119,7 +116,7 @@ export default {
         }
       }
       this.$store.commit("setvorfeaters", that.mapfeaters);
-      console.log(hospitals);
+      // console.log(hospitals);
       this.$store.commit("sethosImageData", hospitals);
     },
     loadsourse() {}

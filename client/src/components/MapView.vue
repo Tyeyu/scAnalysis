@@ -174,7 +174,7 @@ export default {
       axios.get("../static/latlon.json").then(response => {
         let _data = response.data;
         this.addArrestPoint(_data);
-        this.test();
+        this.popUp("points_layer");
       });
     },
     addArrestPoint(data) {
@@ -537,28 +537,26 @@ export default {
           });
         });
       });
+      this.popUp("hospitalImage")
     },
-    test() {
+    popUp(id) {
       let that = this;
-      this.map.on("click", "points_layer", function(e) {
+      this.map.on("click", id, function(e) {
         // 改变光标样式
         var coordinates = e.features[0].geometry.coordinates.slice();
         var description = e.features[0].properties.description;
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
         new mapboxgl.Popup()
           .setLngLat(coordinates)
           .setHTML(description)
           .addTo(that.map);
       });
-      this.map.on("mouseenter", "places", function() {
-        map.getCanvas().style.cursor = "pointer";
+      this.map.on("mouseenter",id, function() {
+        that.map.getCanvas().style.cursor = "pointer";
       });
-      this.map.on("mouseleave", "places", function() {
-        map.getCanvas().style.cursor = "";
+      this.map.on("mouseleave",id, function() {
+        that.map.getCanvas().style.cursor = "";
       });
-    }
+    },
   },
   computed: {
     mapdata() {
