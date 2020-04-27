@@ -56,9 +56,9 @@ export default {
 </script>
 
 <style>
-body {
-  background-color: #f0f0ef;
-}
+/* body {
+  background-color: #252525;
+} */
 
 #app {
   width: 100%;

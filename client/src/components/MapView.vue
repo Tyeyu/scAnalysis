@@ -162,7 +162,7 @@ export default {
 
       this.map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v10",
+        style: "mapbox://styles/mapbox/light-v9?optimize=true",
         center: [101.9199, 30.1904],
         zoom: 5
       });
@@ -714,6 +714,10 @@ export default {
   height: 60%;
   border: 1px #7a7a7a;
 }
+/* canvas.mapboxgl-canvas {
+   filter: grayscale(1); */
+   /* filter: invert(1);
+} */
 .mapboxgl-popup {
   max-width: 400px;
   font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
