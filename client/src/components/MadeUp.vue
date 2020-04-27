@@ -15,6 +15,7 @@ export default {
       ageData: null,
       series: null,
       myChart: null,
+        cityname: "四川省",
       option: null
     };
   },
@@ -112,11 +113,14 @@ export default {
       that.myChart.setOption(that.option, true);
     },
     changedata: function(newval) {
+        var cityname = this.$store.getters.getmergerCity;
+        console.log(cityname);
       var madeupdata = {
         sex: [
           { name: "", value: 0 },
           { name: "", value: 0 }
         ],
+
         age: [],
         seriesData: { confirmed: 0, health: 0, death: 0 }
       };
@@ -130,6 +134,7 @@ export default {
       for (var i = 0; i < newval.length; i++) {
         var times = new Date(newval[i].diagnosisTime);
         if (times.getTime() <= timerange[1].getTime()) {
+            //console.log(newval[i]);
           if (playcheck) {
             if (newval[i].sex == "男") {
               madeupdata.sex[0].value += 1;
@@ -142,7 +147,22 @@ export default {
             madeupdata.age[j] = newval[i].age;
             j++;
           } else {
-            if (times.getTime() >= timerange[0].getTime()) {
+              console.log(cityname == "");
+              if (times.getTime() >= timerange[0].getTime() && cityname == "")
+              {
+                  if (newval[i].sex == "男") {
+                      madeupdata.sex[0].value += 1;
+                      madeupdata.sex[0].name = "男";
+                  } else if (newval[i].sex == "女") {
+                      madeupdata.sex[1].value += 1;
+                      madeupdata.sex[1].name = "女";
+                  }
+
+                  madeupdata.age[j] = newval[i].age;
+                  j++;
+              }
+
+            if(times.getTime() >= timerange[0].getTime() && newval[i].city == cityname) {
               if (newval[i].sex == "男") {
                 madeupdata.sex[0].value += 1;
                 madeupdata.sex[0].name = "男";
@@ -154,6 +174,7 @@ export default {
               madeupdata.age[j] = newval[i].age;
               j++;
             }
+
           }
         }
       }
@@ -209,7 +230,10 @@ export default {
     },
     timeRange() {
       return this.$store.getters.gettimeRange;
-    }
+    },
+      Cityname() {
+          return this.$store.getters.getmergerCity;
+      }
   },
   watch: {
     //监听madeupdata数据变化
@@ -229,7 +253,11 @@ export default {
     },
     ScTrackData: function(newval, oldval) {
       this.changedata(newval);
-    }
+    },
+      Cityname: function(newval, oldval) {
+        this.cityname = newval;
+        this.changedata(this.$store.getters.getscTrackData);
+      }
   }
 };
 </script>
