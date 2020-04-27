@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <headers></headers>
-    <madeup></madeup>
+    <!-- <madeup></madeup> 
+    2020/4/27 cancel
+    -->
     <groupbar></groupbar>
     <!-- <voronoichart></voronoichart> -->
     <test></test>
