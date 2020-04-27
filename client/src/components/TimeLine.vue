@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div id="play">
-      <el-button size="medium" v-bind:icon="playicon" circle @click="playclick"></el-button>
+    <div>
+      <el-button id="play" size="medium" v-bind:icon="playicon" circle @click="playclick"></el-button>
     </div>
 
     <div id="timeLine"></div>
@@ -22,6 +22,7 @@ export default {
       xAxis: null,
       playcheck: false,
       playicon: "el-icon-video-play",
+      playend: 0,
       playstart: 0,
       playlen: null,
       play: null
@@ -35,25 +36,28 @@ export default {
         this.$store.commit("setplaycheck", this.playcheck);
         this.playicon = "el-icon-video-pause"; //切换图标
         this.playlen = this.xscale(new Date("2020-01-11"));
-
+        var clicked = false;
         this.play = self.setInterval(function() {
-          if (
-            that.playcheck &&
-            that.playstart + that.playlen <= that.svgWidth
-          ) {
+          if (that.playcheck && that.playend + that.playlen <= that.svgWidth) {
             d3.select(".brush")
               .transition()
               .call(that.brush.move, [
                 that.playstart,
-                that.playstart + that.playlen
+                that.playend + that.playlen
               ]);
             that.$store.commit("settimeRange", [
               that.interval.round(that.xscale.invert(that.playstart)),
               that.interval.round(
-                that.xscale.invert(that.playstart + that.playlen)
+                that.xscale.invert(that.playend + that.playlen)
               )
             ]);
-            that.playstart += that.playlen;
+            that.playend += that.playlen;
+          } else {
+            if (that.playend + that.playlen >= that.svgWidth && !clicked) {
+              console.log("@@@@@@");
+              document.getElementById("play").click();
+              clicked = true;
+            }
           }
         }, 3000);
       } else {
@@ -61,8 +65,8 @@ export default {
         this.playcheck = false;
         this.$store.commit("setplaycheck", this.playcheck);
         window.clearInterval(this.play);
-        if (this.playstart + this.playlen >= this.svgWidth) {
-          this.playstart = 0;
+        if (this.playend + this.playlen >= this.svgWidth) {
+          this.playend = 0;
         }
       }
     },

@@ -120,14 +120,18 @@ export default {
         new Date(this.$store.getters.gettimeRange[0]),
         new Date(this.$store.getters.gettimeRange[1])
       ];
+      var playcheck = this.$store.getters.getplaycheck;
       let migrations = [];
       for (var i = 0; i < migradata.length; i++) {
         var mdate = new Date(migradata[i].date);
-        if (
-          mdate.getTime() >= timeRange[0].getTime() &&
-          mdate.getTime() <= timeRange[1].getTime()
-        ) {
-          migrations.push(migradata[i]);
+        if (mdate.getTime() <= timeRange[1].getTime()) {
+          if (playcheck) {
+            migrations.push(migradata[i]);
+          } else {
+            if (mdate.getTime() >= timeRange[0].getTime()) {
+              migrations.push(migradata[i]);
+            }
+          }
         }
       }
       var migraNetsmap = d3
