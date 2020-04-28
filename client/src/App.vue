@@ -23,8 +23,8 @@
     <maptool></maptool>
     <timeline></timeline>
     <!--放下面的三幅图-->
-    <!-- <AddedDaily /> -->
-    <!-- <Relationship /> -->
+    <AddedDaily />
+    <Relationship />
     <PCooordinates />
   </div>
 </template>
@@ -50,7 +50,7 @@ export default {
   name: "App",
   data() {
     return {
-      activeTab: "second"
+      activeTab: "first"
     };
   },
   components: {

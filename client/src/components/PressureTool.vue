@@ -89,7 +89,12 @@ export default {
         this.stop = false;
         var SEIRparam = {
           Beata: this.Beata / 100,
-          hospitalbed: this.hospitalbed
+          hospitalbed: this.hospitalbed,
+          stop: this.stop,
+          play: this.play,
+          controltime: this.controltime,
+          health: this.health / 100,
+          midu: this.midu
         };
         this.$store.commit("settestparam", SEIRparam);
       } else {
