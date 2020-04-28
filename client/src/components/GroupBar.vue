@@ -1,17 +1,26 @@
 <template>
-  <div id="bar" class = "bar-angel">
+  <div id="bar" class="bar-angel">
     <div id="groupbar_title">
-
       <div style="float:left; padding-left:10%">
-        <h3>地区人数统计</h3>
-         <el-button type="info" icon="el-icon-caret-top" circle @click="barchart_sort_ascend()"></el-button>
-         <el-button type="info" icon="el-icon-caret-bottom" circle @click="barchart_sort_desascend()"></el-button>
+        <h3 style="color:white">地区人数统计</h3>
+        <el-button type="info" icon="el-icon-caret-top" circle @click="barchart_sort_ascend()"></el-button>
+        <el-button
+          type="info"
+          icon="el-icon-caret-bottom"
+          circle
+          @click="barchart_sort_desascend()"
+        ></el-button>
       </div>
 
       <div style="float:left; padding-left:30%">
-        <h3>地区输入比</h3>
-         <el-button type="info" icon="el-icon-caret-top" circle @click="piechart_sort_ascend()"></el-button>
-         <el-button type="info" icon="el-icon-caret-bottom" circle @click="piechart_sort_desascend()"></el-button>
+        <h3 style="color:white">地区输入比</h3>
+        <el-button type="info" icon="el-icon-caret-top" circle @click="piechart_sort_ascend()"></el-button>
+        <el-button
+          type="info"
+          icon="el-icon-caret-bottom"
+          circle
+          @click="piechart_sort_desascend()"
+        ></el-button>
       </div>
     </div>
 
@@ -36,14 +45,15 @@ export default {
       percentData: null,
       unknownData: null,
       chart: null,
-      datastore:[], //sort data container
-      placesort:['成都', '巴中', '遂宁', '绵阳', '德阳', '达州'],
-      facetdata:{ "成都" : {'local': 27, 'input': 35 },
-          "巴中": {'local': 3, 'input': 21},
-          "遂宁": {'local': 8, 'input': 3},
-          "绵阳": {'local': 3, 'input': 2},
-          "德阳": {'local': 9, 'input': 3},
-          "达州": {'local': 6, 'input': 12}
+      datastore: [], //sort data container
+      placesort: ["成都", "巴中", "遂宁", "绵阳", "德阳", "达州"],
+      facetdata: {
+        成都: { local: 27, input: 35 },
+        巴中: { local: 3, input: 21 },
+        遂宁: { local: 8, input: 3 },
+        绵阳: { local: 3, input: 2 },
+        德阳: { local: 9, input: 3 },
+        达州: { local: 6, input: 12 }
       }
     };
   },
@@ -55,6 +65,25 @@ export default {
       let that = this;
       var myChart = echarts.init(document.getElementById("gpbar"));
       var option = {
+        // color:['#5b7fa7','#508da3','#a5def1','ffffff'],
+        color: [
+          "#d21222",
+          "#dd6b66",
+          "#73B9BC",
+          "#E69D87",
+          "#8DC1A9",
+          "#EA7E53",
+          "#EEDD78",
+          "#73A373",
+          "#759AA0",
+          "#7289AB",
+          "#91CA8C",
+          "#F49F42",
+          "#FFFFFF"
+        ],
+        textStyle: {
+          color: "#ffffff"
+        },
         tooltip: {
           trigger: "axis",
           axisPointer: {
@@ -64,9 +93,12 @@ export default {
         },
         legend: {
           data: ["本地", "输入", "不明"],
+          textStyle: {
+        color: '#fff'
+    },
           right: "20%",
           itemHeight: 20,
-          padding:[24,0,0,0]
+          padding: [24, 0, 0, 0]
         },
         grid: {
           left: "10%",
@@ -81,6 +113,7 @@ export default {
         },
         yAxis: {
           type: "category",
+          color: "white",
           data: that.regionData
         },
         series: [
@@ -126,12 +159,19 @@ export default {
       if (that.chart) {
         that.chart.destroy();
       }
-      let data = []
-      this.placesort.forEach(function(d,i){
-        data.push({'region': d, type: 'local', count: that.facetdata[d]['local']})
-        data.push({'region': d, type: 'input', count: that.facetdata[d]['input']})
-      })
-
+      let data = [];
+      this.placesort.forEach(function(d, i) {
+        data.push({
+          region: d,
+          type: "local",
+          count: that.facetdata[d]["local"]
+        });
+        data.push({
+          region: d,
+          type: "input",
+          count: that.facetdata[d]["input"]
+        });
+      });
 
       that.chart = new G2.Chart({
         container: "facet",
@@ -178,7 +218,7 @@ export default {
           view
             .interval()
             .position("percent")
-            .color("type", ["#c41608", "#050f31"])
+            .color("type", ["#d21222","#dd6b66"])
             .adjust("stack");
         }
       });
@@ -187,6 +227,7 @@ export default {
     datachange: function(newval) {
       var citydata = {
         region: ["达州", "德阳", "绵阳", "遂宁", "巴中", "成都"],
+        color: "white",
         local: [0, 0, 0, 0, 0, 0],
         input: [0, 0, 0, 0, 0, 0],
         percent: [0, 0, 0, 0, 0, 0],
@@ -255,27 +296,26 @@ export default {
       }
       this.$store.commit("setgroupbardata", citydata);
     },
-    dispatchdata: function(){
+    dispatchdata: function() {
       let that = this,
         _regionData = [],
         _localData = [],
         _inputData = [],
         _percentData = [],
-        _unknownData = []
+        _unknownData = [];
 
-        that.placesort = []
+      that.placesort = [];
 
-        this.datastore.forEach(function(d,i){
-          _regionData.push(d['regionData'])
-          _localData.push(d['localData'])
-          _inputData.push(d['inputData'])
-          _percentData.push(d['percentData'])
-          _unknownData.push(d['unknownData'])
-          that.placesort.push(d['regionData'])
-          that.facetdata[d['regionData']]['local'] = d['localData']
-          that.facetdata[d['regionData']]['input'] = d['inputData']
-        })
-
+      this.datastore.forEach(function(d, i) {
+        _regionData.push(d["regionData"]);
+        _localData.push(d["localData"]);
+        _inputData.push(d["inputData"]);
+        _percentData.push(d["percentData"]);
+        _unknownData.push(d["unknownData"]);
+        that.placesort.push(d["regionData"]);
+        that.facetdata[d["regionData"]]["local"] = d["localData"];
+        that.facetdata[d["regionData"]]["input"] = d["inputData"];
+      });
 
       this.regionData = _regionData;
       this.localData = _localData;
@@ -285,23 +325,46 @@ export default {
 
       this.chartInit();
       this.chartFacet();
-
     },
-    barchart_sort_ascend(){
-      this.datastore.sort((a,b) => (+a.patientsum > +b.patientsum) ? 1 : ((+b.patientsum > +a.patientsum) ? -1 : 0));
-      this.dispatchdata()
+    barchart_sort_ascend() {
+      this.datastore.sort((a, b) =>
+        +a.patientsum > +b.patientsum
+          ? 1
+          : +b.patientsum > +a.patientsum
+          ? -1
+          : 0
+      );
+      this.dispatchdata();
     },
-    barchart_sort_desascend(){
-      this.datastore = this.datastore.sort((a,b) => (+a.patientsum < +b.patientsum) ? 1 : ((+b.patientsum < +a.patientsum) ? -1 : 0));
-      this.dispatchdata()
+    barchart_sort_desascend() {
+      this.datastore = this.datastore.sort((a, b) =>
+        +a.patientsum < +b.patientsum
+          ? 1
+          : +b.patientsum < +a.patientsum
+          ? -1
+          : 0
+      );
+      this.dispatchdata();
     },
-    piechart_sort_ascend(){
-      this.datastore = this.datastore.sort((a,b) => (+a.percentData > +b.percentData) ? -1 : ((+b.percentData > +a.percentData) ? 1 : 0));
-      this.dispatchdata()
+    piechart_sort_ascend() {
+      this.datastore = this.datastore.sort((a, b) =>
+        +a.percentData > +b.percentData
+          ? -1
+          : +b.percentData > +a.percentData
+          ? 1
+          : 0
+      );
+      this.dispatchdata();
     },
-    piechart_sort_desascend(){
-      this.datastore = this.datastore.sort((a,b) => (+a.percentData < +b.percentData) ? -1 : ((+b.percentData < +a.percentData) ? 1 : 0));
-      this.dispatchdata()
+    piechart_sort_desascend() {
+      this.datastore = this.datastore.sort((a, b) =>
+        +a.percentData < +b.percentData
+          ? -1
+          : +b.percentData < +a.percentData
+          ? 1
+          : 0
+      );
+      this.dispatchdata();
     }
   },
   computed: {
@@ -319,7 +382,7 @@ export default {
     //监听dailydata数据变化
     groupbardata: function(newval, oldval) {
       //图表数据变化后该执行的操作
-      let that = this
+      let that = this;
       this.regionData = newval.region;
       this.localData = newval.local;
       this.inputData = newval.input;
@@ -327,22 +390,22 @@ export default {
       this.unknownData = newval.unknown;
       this.chartInit();
       this.chartFacet();
-      this.datastore = []
+      this.datastore = [];
 
-      for(let i=0; i<newval.region.length; i++){
-        let patientsum = newval['local'][i] + newval['input'][i] + newval['unknown'][i]
+      for (let i = 0; i < newval.region.length; i++) {
+        let patientsum =
+          newval["local"][i] + newval["input"][i] + newval["unknown"][i];
         this.datastore.push({
-          'regionData': newval['region'][i],
-          'localData': newval['local'][i],
-          'inputData': newval['input'][i],
-          'percentData': newval['percent'][i],
-          'unknownData': newval['unknown'][i],
-          'local': that.facetdata[newval['region'][i]]['local'],
-          'input': that.facetdata[newval['region'][i]]['input'],
-          'patientsum': patientsum
-        })
+          regionData: newval["region"][i],
+          localData: newval["local"][i],
+          inputData: newval["input"][i],
+          percentData: newval["percent"][i],
+          unknownData: newval["unknown"][i],
+          local: that.facetdata[newval["region"][i]]["local"],
+          input: that.facetdata[newval["region"][i]]["input"],
+          patientsum: patientsum
+        });
       }
-
     },
     timeRange: function(newval, oldval) {
       this.datachange(this.$store.getters.getscTrackData);
@@ -374,9 +437,8 @@ export default {
   float: left;
   position: relative;
 }
-  .bar-angel{
-
-    background: linear-gradient(#00faff, #00faff) left top,
+.bar-angel {
+  background: linear-gradient(#00faff, #00faff) left top,
     linear-gradient(#00faff, #00faff) left top,
     linear-gradient(#00faff, #00faff) right top,
     linear-gradient(#00faff, #00faff) right top,
@@ -384,14 +446,14 @@ export default {
     linear-gradient(#00faff, #00faff) left bottom,
     linear-gradient(#00faff, #00faff) right bottom,
     linear-gradient(#00faff, #00faff) right bottom;
-    background-repeat: no-repeat;
-    background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+  background-repeat: no-repeat;
+  background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
     0.6rem 0.15rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    white-space: nowrap;
-    /* border:3px solid #ffffff; */
+  background-color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  /* border:3px solid #ffffff; */
 
-    margin: 0.1% 0 0 0.1%;
-    z-index: 2;
-  }
+  margin: 0.1% 0 0 0.1%;
+  z-index: 2;
+}
 </style>

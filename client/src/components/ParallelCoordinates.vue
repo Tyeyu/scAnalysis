@@ -40,23 +40,26 @@ export default {
         { name: "P", index: 8, text: "常住人口(万)" }
       ];
       var option = {
-        //backgroundColor: "#F0F0EF",
-
-        // dataZoom: {
-        //     show: true,
-        //     orient: 'vertical',
-        //     parallelAxisIndex: [0]
-        // },
+        textStyle: {
+          color: "#ffffff"
+        },
+        color:['#dd6b66','#73B9BC','#E69D87','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
         parallelAxis: [
           {
             dim: 0,
             name: schema[0].text,
+            textStyle: {
+          color: "#ffffff"
+        },
             type: "category"
           },
           {
             dim: 1,
             name: schema[1].text,
             inverse: true,
+            textStyle: {
+          color: "#ffffff"
+        },
             // max: 101,
             nameLocation: "start"
           },
@@ -80,24 +83,24 @@ export default {
             nameLocation: "end",
             nameGap: 20,
             nameTextStyle: {
-              color: "black",
+              color: "white",
               fontSize: 12
             },
             axisLine: {
               lineStyle: {
-                color: "black"
+                color: "white"
               }
             },
             axisTick: {
               lineStyle: {
-                color: "black"
+                color: "white"
               }
             },
             splitLine: {
               show: false
             },
             axisLabel: {
-              color: "black"
+              color: "white"
             }
           }
         },
