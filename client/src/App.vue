@@ -11,9 +11,11 @@
       </el-tab-pane>
       <el-tab-pane label="抗压力分析" name="second">
         抗压力分析
+        <pressuretool></pressuretool>
+        <seir></seir>
       </el-tab-pane>
     </el-tabs>
-    
+
     <!-- <voronoichart></voronoichart> -->
     <test></test>
     <mapview></mapview>
@@ -40,12 +42,14 @@ import timeline from "./components/TimeLine";
 import mapview from "./components/MapView";
 import readcsv from "./tool/readcsv";
 import test from "./components/test";
+import pressuretool from "./components/PressureTool";
+import seir from "./components/SEIR";
 export default {
   name: "App",
-  data(){
+  data() {
     return {
-      activeTab: 'first'
-    }
+      activeTab: "first"
+    };
   },
   components: {
     //mapview,
@@ -59,7 +63,9 @@ export default {
     maptool,
     timeline,
     mapview,
-    test
+    test,
+    pressuretool,
+    seir
   },
   mounted: function() {
     /*
@@ -73,18 +79,19 @@ export default {
 
 <style>
 body {
-  background-color: #f2f2f1;
+  background-color: #13142a;
+  opacity: 0.5;
 }
 
 #app {
   width: 100%;
   height: 100%;
 }
-.el-tabs__content{
+.el-tabs__content {
   overflow: auto !important;
   position: unset !important;
 }
-.el-tabs__header{
+.el-tabs__header {
   width: 24%;
   padding-top: 2%;
 }

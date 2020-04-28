@@ -1,5 +1,5 @@
 <template>
-  <div id="bar">
+  <div id="bar" class="bar-angel">
     <div id="groupbar_title">
       <div id='panel_time'>
         <p style="padding-left: 6%; padding-top: 5%; font-weight: 500; margin-bottom: 1px">{{infopanel_title}}</p>
@@ -115,6 +115,25 @@ export default {
       let that = this;
       var myChart = echarts.init(document.getElementById("gpbar"));
       var option = {
+        // color:['#5b7fa7','#508da3','#a5def1','ffffff'],
+        color: [
+          "#d21222",
+          "#dd6b66",
+          "#73B9BC",
+          "#E69D87",
+          "#8DC1A9",
+          "#EA7E53",
+          "#EEDD78",
+          "#73A373",
+          "#759AA0",
+          "#7289AB",
+          "#91CA8C",
+          "#F49F42",
+          "#FFFFFF"
+        ],
+        textStyle: {
+          color: "#ffffff"
+        },
         tooltip: {
           trigger: "axis",
           axisPointer: {
@@ -241,7 +260,7 @@ export default {
           view
             .interval()
             .position("percent")
-            .color("type", ["#c41608", "#050f31"])
+            .color("type", ["#d21222","#dd6b66"])
             .adjust("stack");
         }
       });
@@ -396,23 +415,46 @@ export default {
       
       this.chartInit();
       this.chartFacet();
-        
     },
-    barchart_sort_ascend(){
-      this.datastore.sort((a,b) => (+a.patientsum > +b.patientsum) ? 1 : ((+b.patientsum > +a.patientsum) ? -1 : 0));
-      this.dispatchdata()
+    barchart_sort_ascend() {
+      this.datastore.sort((a, b) =>
+        +a.patientsum > +b.patientsum
+          ? 1
+          : +b.patientsum > +a.patientsum
+          ? -1
+          : 0
+      );
+      this.dispatchdata();
     },
-    barchart_sort_desascend(){
-      this.datastore = this.datastore.sort((a,b) => (+a.patientsum < +b.patientsum) ? 1 : ((+b.patientsum < +a.patientsum) ? -1 : 0));
-      this.dispatchdata()
+    barchart_sort_desascend() {
+      this.datastore = this.datastore.sort((a, b) =>
+        +a.patientsum < +b.patientsum
+          ? 1
+          : +b.patientsum < +a.patientsum
+          ? -1
+          : 0
+      );
+      this.dispatchdata();
     },
-    piechart_sort_ascend(){
-      this.datastore = this.datastore.sort((a,b) => (+a.percentData > +b.percentData) ? -1 : ((+b.percentData > +a.percentData) ? 1 : 0));
-      this.dispatchdata()
+    piechart_sort_ascend() {
+      this.datastore = this.datastore.sort((a, b) =>
+        +a.percentData > +b.percentData
+          ? -1
+          : +b.percentData > +a.percentData
+          ? 1
+          : 0
+      );
+      this.dispatchdata();
     },
-    piechart_sort_desascend(){
-      this.datastore = this.datastore.sort((a,b) => (+a.percentData < +b.percentData) ? -1 : ((+b.percentData < +a.percentData) ? 1 : 0));
-      this.dispatchdata()
+    piechart_sort_desascend() {
+      this.datastore = this.datastore.sort((a, b) =>
+        +a.percentData < +b.percentData
+          ? -1
+          : +b.percentData < +a.percentData
+          ? 1
+          : 0
+      );
+      this.dispatchdata();
     }
   },
   computed: {
@@ -433,7 +475,7 @@ export default {
     //监听dailydata数据变化
     groupbardata: function(newval, oldval) {
       //图表数据变化后该执行的操作
-      let that = this
+      let that = this;
       this.regionData = newval.region;
       this.localData = newval.local;
       this.inputData = newval.input;
@@ -452,10 +494,11 @@ export default {
 
       this.chartInit();
       this.chartFacet();
-      this.datastore = []
+      this.datastore = [];
 
-      for(let i=0; i<newval.region.length; i++){
-        let patientsum = newval['local'][i] + newval['input'][i] + newval['unknown'][i]
+      for (let i = 0; i < newval.region.length; i++) {
+        let patientsum =
+          newval["local"][i] + newval["input"][i] + newval["unknown"][i];
         this.datastore.push({
           'regionData': newval['region'][i], 
           'localData': newval['local'][i], 
@@ -467,7 +510,6 @@ export default {
           'patientsum': patientsum
         })
       }
-
     },
     timeRange: function(newval, oldval) {
       this.updateInfoPanel()
