@@ -4,7 +4,16 @@
     <!-- <madeup></madeup> 
     2020/4/27 cancel
     -->
-    <groupbar></groupbar>
+
+    <el-tabs v-model="activeTab" stretch="true">
+      <el-tab-pane label="疫情分析" name="first">
+        <groupbar></groupbar>
+      </el-tab-pane>
+      <el-tab-pane label="抗压力分析" name="second">
+        抗压力分析
+      </el-tab-pane>
+    </el-tabs>
+    
     <!-- <voronoichart></voronoichart> -->
     <test></test>
     <mapview></mapview>
@@ -33,6 +42,11 @@ import readcsv from "./tool/readcsv";
 import test from "./components/test";
 export default {
   name: "App",
+  data(){
+    return {
+      activeTab: 'first'
+    }
+  },
   components: {
     //mapview,
     madeup,
@@ -65,5 +79,13 @@ body {
 #app {
   width: 100%;
   height: 100%;
+}
+.el-tabs__content{
+  overflow: auto !important;
+  position: unset !important;
+}
+.el-tabs__header{
+  width: 24%;
+  padding-top: 2%;
 }
 </style>
