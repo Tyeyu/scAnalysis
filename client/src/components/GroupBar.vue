@@ -1,5 +1,5 @@
 <template>
-  <div id="bar">
+  <div id="bar" class = "bar-angel">
     <div id="groupbar_title">
 
       <div style="float:left; padding-left:10%">
@@ -131,7 +131,7 @@ export default {
         data.push({'region': d, type: 'local', count: that.facetdata[d]['local']})
         data.push({'region': d, type: 'input', count: that.facetdata[d]['input']})
       })
-      
+
 
       that.chart = new G2.Chart({
         container: "facet",
@@ -282,10 +282,10 @@ export default {
       this.inputData = _inputData;
       this.percentData = _percentData;
       this.unknownData = _unknownData;
-      
+
       this.chartInit();
       this.chartFacet();
-        
+
     },
     barchart_sort_ascend(){
       this.datastore.sort((a,b) => (+a.patientsum > +b.patientsum) ? 1 : ((+b.patientsum > +a.patientsum) ? -1 : 0));
@@ -332,9 +332,9 @@ export default {
       for(let i=0; i<newval.region.length; i++){
         let patientsum = newval['local'][i] + newval['input'][i] + newval['unknown'][i]
         this.datastore.push({
-          'regionData': newval['region'][i], 
-          'localData': newval['local'][i], 
-          'inputData': newval['input'][i], 
+          'regionData': newval['region'][i],
+          'localData': newval['local'][i],
+          'inputData': newval['input'][i],
           'percentData': newval['percent'][i],
           'unknownData': newval['unknown'][i],
           'local': that.facetdata[newval['region'][i]]['local'],
@@ -374,4 +374,24 @@ export default {
   float: left;
   position: relative;
 }
+  .bar-angel{
+
+    background: linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
+    background-repeat: no-repeat;
+    background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+    0.6rem 0.15rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+    /* border:3px solid #ffffff; */
+
+    margin: 0.1% 0 0 0.1%;
+    z-index: 2;
+  }
 </style>

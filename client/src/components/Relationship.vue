@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div id="Relation"></div>
+  <div >
+    <div id="Relation" class="Relationship-angel" ></div>
     <div id="Rtooltip"></div>
   </div>
 </template>
@@ -558,5 +558,25 @@ export default {
   padding-right: 5px;
   padding-bottom: 5px;
   padding-left: 5px;
+}
+.Relationship-angel{
+
+  background: linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) right bottom,
+  linear-gradient(#00faff, #00faff) right bottom;
+  background-repeat: no-repeat;
+  background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+  0.6rem 0.15rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  /* border:3px solid #ffffff; */
+
+  margin: 0.1% 0 0 0.1%;
+  z-index: 2;
 }
 </style>

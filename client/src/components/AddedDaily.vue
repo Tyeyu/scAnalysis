@@ -1,5 +1,5 @@
 <template>
-  <div id="Daily"></div>
+  <div id="Daily" class="Daily-angel"></div>
 </template>
 
 <script>
@@ -180,5 +180,25 @@ export default {
   width: 33.2%;
   height: 34%;
   border: 1px solid #dededd;
+}
+.Daily-angel{
+
+  background: linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) right bottom,
+  linear-gradient(#00faff, #00faff) right bottom;
+  background-repeat: no-repeat;
+  background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+  0.6rem 0.15rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  /* border:3px solid #ffffff; */
+
+  margin: 0.1% 0 0 0.1%;
+  z-index: 2;
 }
 </style>
