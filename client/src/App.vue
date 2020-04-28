@@ -5,7 +5,7 @@
     2020/4/27 cancel
     -->
 
-    <el-tabs v-model="activeTab" stretch="true">
+    <el-tabs v-model="activeTab" :stretch="true">
       <el-tab-pane label="疫情分析" name="first">
         <groupbar></groupbar>
       </el-tab-pane>
