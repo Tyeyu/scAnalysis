@@ -13,6 +13,7 @@
         抗压力分析
         <pressuretool></pressuretool>
         <seir></seir>
+        <testTotal></testTotal>
       </el-tab-pane>
     </el-tabs>
 
@@ -22,8 +23,8 @@
     <maptool></maptool>
     <timeline></timeline>
     <!--放下面的三幅图-->
-    <AddedDaily />
-    <Relationship />
+    <!-- <AddedDaily /> -->
+    <!-- <Relationship /> -->
     <PCooordinates />
   </div>
 </template>
@@ -44,11 +45,12 @@ import readcsv from "./tool/readcsv";
 import test from "./components/test";
 import pressuretool from "./components/PressureTool";
 import seir from "./components/SEIR";
+import testTotal from "./components/testTotal";
 export default {
   name: "App",
   data() {
     return {
-      activeTab: "first"
+      activeTab: "second"
     };
   },
   components: {
@@ -65,7 +67,8 @@ export default {
     mapview,
     test,
     pressuretool,
-    seir
+    seir,
+    testTotal
   },
   mounted: function() {
     /*

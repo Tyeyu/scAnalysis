@@ -1,6 +1,6 @@
 <template>
-  <div >
-    <div id="Relation" class="Relationship-angel" ></div>
+  <div>
+    <div id="Relation" class="Relationship-angel"></div>
     <div id="Rtooltip"></div>
   </div>
 </template>
@@ -104,11 +104,13 @@ export default {
 
         .attr("transform", "translate(30," + (that.chartSVgheight - 20) + ")")
         .attr("class", "axis")
+        .attr("stroke", "white")
         .call(chartXaxies);
       svg
         .append("g")
         .attr("transform", "translate(30,10)")
         .attr("class", "axis")
+        .attr("stroke", "white")
         .call(chartYaxies);
       //确诊
       svg
@@ -527,6 +529,9 @@ export default {
 };
 </script>
 <style>
+#Relation .axis path {
+  stroke: white;
+}
 #Relation {
   position: absolute;
   top: 65.1%;
@@ -559,19 +564,18 @@ export default {
   padding-bottom: 5px;
   padding-left: 5px;
 }
-.Relationship-angel{
-
+.Relationship-angel {
   background: linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) right bottom,
-  linear-gradient(#00faff, #00faff) right bottom;
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
   background-repeat: no-repeat;
   background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
-  0.6rem 0.15rem;
+    0.6rem 0.15rem;
   background-color: rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   /* border:3px solid #ffffff; */

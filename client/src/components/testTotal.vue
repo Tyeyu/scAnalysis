@@ -1,0 +1,97 @@
+<template>
+  <div id="testTotal"></div>
+</template>
+<script>
+import echarts from "echarts";
+export default {
+  data() {
+    return {
+      nowBeds: [100, 99, 89, 80],
+      nowDia: [0, 1, 11, 20],
+      total: [0, 1, 11, 20],
+      dayarry: [1, 2, 3, 4]
+    };
+  },
+  methods: {
+    drawchart: function() {
+      var mychart = echarts.init(document.getElementById("testTotal"));
+      var option = {
+        textStyle: {
+          color: "#ffffff"
+        },
+        title: {
+          text: "医疗资源",
+          textStyle: {
+            color: "#ffffff"
+          }
+        },
+        tooltip: {
+          trigger: "axis"
+        },
+        legend: {
+          data: ["现有确诊", "剩余病床", "累计确诊"],
+          textStyle: {
+            color: "#ffffff"
+          }
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        toolbox: {
+          feature: {}
+        },
+        xAxis: {
+          type: "category",
+          data: this.dayarry,
+          axisLine: {
+            lineStyle: { color: "#ffffff" }
+          }
+        },
+        yAxis: {
+          type: "value",
+          axisLine: {
+            lineStyle: { color: "#ffffff" }
+          }
+        },
+        series: [
+          {
+            name: "现有确诊",
+            type: "line",
+            smooth: true,
+            data: this.nowDia
+          },
+          {
+            name: "剩余病床",
+            type: "line",
+            smooth: true,
+            data: this.nowBeds
+          },
+          {
+            name: "累计确诊",
+            type: "line",
+            smooth: true,
+            data: this.total
+          }
+        ]
+      };
+      mychart.setOption(option, true);
+    }
+  },
+  mounted() {
+    this.drawchart();
+  }
+};
+</script>
+<style>
+#testTotal {
+  position: absolute;
+  top: 65.1%;
+  left: 33.4%;
+  width: 33.2%;
+  height: 34%;
+  border: 1px solid solid #dededd;
+}
+</style>

@@ -31,7 +31,11 @@ const store = new Vuex.Store({
     //医院门诊的图标的经纬度数据
     hosImageData: null,
     cityActivity: null,
-    playcheck: false
+    playcheck: false,
+    //压力测试参数
+    testparam: null,
+    //压力测试选择城市
+    testcity: "成都"
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -87,6 +91,12 @@ const store = new Vuex.Store({
     },
     setplaycheck: function(state, data) {
       state.playcheck = data;
+    },
+    settestparam: function(state, param) {
+      state.testparam = param;
+    },
+    settestcity: function(state, city) {
+      state.testcity = city;
     }
   },
   getters: {
@@ -140,6 +150,12 @@ const store = new Vuex.Store({
     },
     getplaycheck: state => {
       return state.playcheck;
+    },
+    gettestparam: state => {
+      return state.testparam;
+    },
+    gettestcity: state => {
+      return state.testcity;
     }
   }
 });

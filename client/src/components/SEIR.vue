@@ -71,14 +71,23 @@ export default {
     initchart: function() {
       var mychart = echarts.init(document.getElementById("Seir"));
       var option = {
+        textStyle: {
+          color: "#ffffff"
+        },
         title: {
-          text: "SEIR"
+          text: "SEIR",
+          textStyle: {
+            color: "#ffffff"
+          }
         },
         tooltip: {
           trigger: "axis"
         },
         legend: {
-          data: ["易感数", "潜伏者数", "传染者数", "康复者数"]
+          data: ["易感数", "潜伏者数", "传染者数", "康复者数"],
+          textStyle: {
+            color: "#ffffff"
+          }
         },
         grid: {
           left: "3%",
@@ -91,10 +100,16 @@ export default {
         },
         xAxis: {
           type: "category",
-          data: this.dayarry
+          data: this.dayarry,
+          axisLine: {
+            lineStyle: { color: "#ffffff" }
+          }
         },
         yAxis: {
-          type: "value"
+          type: "value",
+          axisLine: {
+            lineStyle: { color: "#ffffff" }
+          }
         },
         series: [
           {
