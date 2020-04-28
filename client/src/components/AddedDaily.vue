@@ -24,8 +24,15 @@ export default {
       let that = this;
       that.myChart = echarts.init(document.getElementById("Daily"));
       that.option = {
+        color:['#dd6b66','#73B9BC','#E69D87','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
+        textStyle: {
+          color: "#ffffff"
+        },
         title: {
           text: that.cityname + "每日新增",
+          textStyle: {
+          color: "#ffffff"
+        },
           left: "7%",
           top: "10px"
         },
@@ -34,6 +41,9 @@ export default {
         },
         legend: {
           data: ["确诊", "死亡", "治愈"],
+          textStyle: {
+          color: "#ffffff"
+        },
           right: "9%",
           top: "30px"
         },

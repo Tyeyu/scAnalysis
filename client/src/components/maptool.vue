@@ -105,7 +105,7 @@ export default {
           // },
           controller: {
             inRange: {
-              color: ["red"]
+              color: ["cyan"]
             }
           }
         }
@@ -159,5 +159,6 @@ export default {
   top: 32.5%;
   width: 8.2%;
   height: 20%;
+  filter: invert(1);
 }
 </style>

@@ -26,6 +26,7 @@ export default {
       console.log(that.sexData);
       that.myChart = echarts.init(document.getElementById("in-pie"));
       that.option = {
+        color:['#dd6b66','#73B9BC','#E69D87','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
         title: {
           text: "性别占比",
           top: "15px",

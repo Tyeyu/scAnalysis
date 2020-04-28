@@ -73,7 +73,8 @@ export default {
 
 <style>
 body {
-  background-color: #f2f2f1;
+  background-color: #13142a;
+  opacity: 0.5;
 }
 
 #app {
