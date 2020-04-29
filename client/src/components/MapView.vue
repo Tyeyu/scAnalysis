@@ -162,7 +162,7 @@ export default {
 
       this.map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v10",
+        style: "mapbox://styles/mapbox/streets-v9",
         center: [101.9199, 30.1904],
         zoom: 5
       });
@@ -184,7 +184,7 @@ export default {
         drawPoints.push({
           type: "Feature",
           properties: {
-            color: "red",
+            color: "cyan",
             opacity: 0.5,
             radius: 5,
             description: d.address
@@ -279,7 +279,7 @@ export default {
         type: "fill",
         source: "city_json",
         paint: {
-          "fill-color": "red",
+          "fill-color": "cyan",
           "fill-opacity": ["get", "opt"]
         },
         maxzoom: 8.5
@@ -741,10 +741,13 @@ export default {
 #map {
   position: absolute;
   top: 5.1%;
-  left: 24.9%;
-  width: 74.9%;
-  height: 60%;
+  left: 0.3%;
+  width: 99.7%;
+  height: 94%;
   border: 1px #7a7a7a;
+}
+canvas.mapboxgl-canvas {
+  filter: invert(1);
 }
 .mapboxgl-popup {
   max-width: 400px;

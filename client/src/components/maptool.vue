@@ -2,7 +2,35 @@
   <div>
     <div id="mapcontrl">
       <el-checkbox-group v-model="checkedcontrls" @change="handleCheckedcontrlsChange">
-        <el-checkbox v-for="cont in contrls" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
+        <el-menu
+          class="el-menu-vertical"
+          background-color="#545c64"
+          text-color="#fff"
+        >
+          <el-submenu index="1">
+            <template slot="title">确诊
+            </template>
+            <el-menu-item-group>
+              <el-checkbox v-for="cont in contrls1" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="2">
+            <template slot="title">
+              小区/医院
+            </template>
+            <el-menu-item-group>
+              <el-checkbox v-for="cont in contrls2" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="3">
+            <template slot="title">
+              <span>人口</span>
+            </template>
+            <el-menu-item-group>
+            <el-checkbox v-for="cont in contrls3" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
+            </el-menu-item-group>
+          </el-submenu>
+        </el-menu>
       </el-checkbox-group>
     </div>
     <div id="ColorCard"></div>
@@ -13,21 +41,26 @@ import echarts from "echarts";
 export default {
   data() {
     return {
-      contrls: [
-        { name: "病例/轨迹", id: "patient" },
+      contrls1: [
+        { name: "累计确诊", id: "contours" },
+        { name: "现有确诊", id: "exist" },
+        { name: "新增确诊", id: "newAdd" }
+      ],
+      contrls2: [
         { name: "病例小区", id: "POA" },
-        { name: "医院/发热门诊", id: "hospitalImage" },
+        { name: "医院定点", id: "hospitalImage" },
+        { name: "发热门诊", id: "clinic" },
+        { name: "医院覆盖范围", id: "voronoi-outline" }
+      ],
+      contrls3: [
         { name: "人口基数", id: "population" },
-        { name: "迁移细节", id: "daily" },
-        { name: "活跃度", id: "Activity" },
-        // { name: "POA", id: "POA" },
-        { name: "确诊", id: "contours" },
-        { name: "维诺图", id: "voronoi-outline" },
+        { name: "迁移活跃度", id: "Activity" }
       ],
       checkedcontrls: ["POA", "contours", "test"],
       popuchoose: false,
       citychoose: false,
-      lastchoose: "contours"
+      lastchoose: "contours",
+      activeIndex: "1"
     };
   },
   mounted() {
@@ -105,7 +138,7 @@ export default {
           // },
           controller: {
             inRange: {
-              color: ["red"]
+              color: ["cyan"]
             }
           }
         }
@@ -120,6 +153,9 @@ export default {
         // 获取点击图例的选中状态
         console.log(params);
       });
+    },
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath);
     }
   },
   computed: {
@@ -138,26 +174,36 @@ export default {
 <style>
 #mapcontrl {
   position: absolute;
-  left: 91%;
-  padding-left: 5pt;
-  padding-top: 10pt;
+  left: 93%;
+  padding-left: 2pt;
+  padding-top: 0pt;
   top: 5.5%;
-  width: 8.2%;
-  height: 27%;
-  border: 1px solid white;
-  background-color: #30313a;
+  width: 6%;
+  height: 40%;
+  /* border: 1px solid white; */
+  /* background-color: #30313a; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: sans-serif;
   font-size: 12;
 }
+/* .el-menu-vertical{
+  border: 1px solid white;
+} */
+.el-checkbox{
+  color: aliceblue;
+}
+.el-menu-item-group__title{
+  padding: 0px 0 0px 0px;
+}
 #ColorCard {
   position: absolute;
-  left: 91%;
+  left: 30%;
   padding-left: 5pt;
   padding-top: 10pt;
-  top: 32.5%;
+  top: 5%;
   width: 8.2%;
   height: 20%;
+  filter: invert(1);
 }
 </style>
