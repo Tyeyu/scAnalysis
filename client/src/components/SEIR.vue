@@ -24,7 +24,8 @@ export default {
       Iarry: null,
       Earry: null,
       Rarry: null,
-      dayarry: []
+      dayarry: [],
+      tabechange: false
     };
   },
   methods: {
@@ -66,7 +67,6 @@ export default {
       this.Iarry.push(this.I);
       this.Rarry.push(this.R);
       this.dayarry.push("40天");
-      console.log(this.Earry);
     },
     initchart: function() {
       var mychart = echarts.init(document.getElementById("Seir"));
@@ -143,7 +143,26 @@ export default {
   },
   mounted() {
     this.initdata();
-    this.initchart();
+    // this.initchart();
+  },
+  computed: {
+    tabe() {
+      return this.$store.getters.gettabeselect;
+    }
+  },
+  watch: {
+    // "$store.state.tabeselect": function(newval, oldval) {
+    //   console.log("########");
+    //   this.initdata();
+
+    //   this.initchart();
+    // },
+    tabe: function(newval, oldval) {
+      if (!this.tabechange) {
+        this.initchart();
+        this.tabechange = true;
+      }
+    }
   }
 };
 </script>

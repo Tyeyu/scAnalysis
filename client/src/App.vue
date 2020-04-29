@@ -12,8 +12,6 @@
           <AddedDaily />
           <Relationship />
           <PCooordinates />
-          <maptool></maptool>
-          <timeline></timeline>
         </el-tab-pane>
         <el-tab-pane label="抗压力分析" name="second">
           抗压力分析
@@ -28,6 +26,8 @@
     <!-- <voronoichart></voronoichart> -->
     <test></test>
     <mapview></mapview>
+    <maptool></maptool>
+    <timeline></timeline>
   </div>
 </template>
 
@@ -53,7 +53,7 @@ export default {
   name: "App",
   data() {
     return {
-      activeTab: "second"
+      activeTab: "first"
     };
   },
   components: {
@@ -80,6 +80,12 @@ export default {
     /*/
     readcsv.readscTrack();
     readcsv.readscMerge();
+  },
+  watch: {
+    activeTab: function(newval, oldval) {
+      console.log(this.activeTab);
+      this.$store.commit("settabeselect", this.activeTab);
+    }
   }
 };
 </script>

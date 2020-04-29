@@ -9,7 +9,8 @@ export default {
       nowBeds: [100, 99, 89, 80],
       nowDia: [0, 1, 11, 20],
       total: [0, 1, 11, 20],
-      dayarry: [1, 2, 3, 4]
+      dayarry: [1, 2, 3, 4],
+      tabechange: false
     };
   },
   methods: {
@@ -80,8 +81,19 @@ export default {
       mychart.setOption(option, true);
     }
   },
-  mounted() {
-    this.drawchart();
+  mounted() {},
+  computed: {
+    tabe() {
+      return this.$store.getters.gettabeselect;
+    }
+  },
+  watch: {
+    tabe: function(newval, oldval) {
+      if (!this.tabechange) {
+        this.drawchart();
+        this.tabechange = true;
+      }
+    }
   }
 };
 </script>

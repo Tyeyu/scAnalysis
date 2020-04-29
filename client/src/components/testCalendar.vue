@@ -9,7 +9,8 @@ export default {
       incity: [1],
       outprovinces: [1],
       svgwidth: null,
-      svgheight: null
+      svgheight: null,
+      tabechange: false
     };
   },
   methods: {
@@ -24,12 +25,12 @@ export default {
         .attr("height", this.svgheight);
       svg
         .append("g")
-        .selectAll("rect")
+        .selectAll("bar")
         .data(this.incity)
         .enter()
         .append("rect")
-        .attr("width", 20)
-        .attr("height", 20)
+        .attr("width", 100)
+        .attr("height", 100)
         .attr("fill", "red");
       svg
         .append("g")
@@ -40,6 +41,19 @@ export default {
         .attr("width", 20)
         .attr("height", 20)
         .attr("fill", "green");
+    }
+  },
+  computed: {
+    tabe() {
+      return this.$store.getters.gettabeselect;
+    }
+  },
+  watch: {
+    tabe: function(newval, oldval) {
+      if (!this.tabechange) {
+        this.drawchart();
+        this.tabechange = true;
+      }
     }
   }
 };
@@ -52,5 +66,6 @@ export default {
   width: 33.2%;
   height: 34%;
   border: 1pt solid #dededd;
+  z-index: 1;
 }
 </style>

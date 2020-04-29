@@ -35,7 +35,8 @@ const store = new Vuex.Store({
     //压力测试参数
     testparam: null,
     //压力测试选择城市
-    testcity: "成都"
+    testcity: "成都",
+    tabeselect: "first"
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -97,6 +98,9 @@ const store = new Vuex.Store({
     },
     settestcity: function(state, city) {
       state.testcity = city;
+    },
+    settabeselect: function(state, selected) {
+      state.tabeselect = selected;
     }
   },
   getters: {
@@ -156,6 +160,9 @@ const store = new Vuex.Store({
     },
     gettestcity: state => {
       return state.testcity;
+    },
+    gettabeselect: state => {
+      return state.tabeselect;
     }
   }
 });

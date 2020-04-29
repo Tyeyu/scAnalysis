@@ -536,10 +536,10 @@ export default {
   position: absolute;
   top: 65.1%;
   left: 33.9%;
-  width: 33.0%;
+  width: 33%;
   height: 34%;
   background-color: #30313a;
- //border: 1px solid solid #dededd;
+  /* border: 1px solid solid #dededd; */
 }
 #Rtooltip {
   position: absolute;
