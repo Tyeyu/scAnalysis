@@ -12,12 +12,15 @@
           <AddedDaily />
           <Relationship />
           <PCooordinates />
+          <maptool></maptool>
+          <timeline></timeline>
         </el-tab-pane>
         <el-tab-pane label="抗压力分析" name="second">
           抗压力分析
           <pressuretool></pressuretool>
           <seir></seir>
           <testTotal></testTotal>
+          <testcalen></testcalen>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -25,8 +28,6 @@
     <!-- <voronoichart></voronoichart> -->
     <test></test>
     <mapview></mapview>
-    <maptool></maptool>
-    <timeline></timeline>
   </div>
 </template>
 
@@ -47,11 +48,12 @@ import test from "./components/test";
 import pressuretool from "./components/PressureTool";
 import seir from "./components/SEIR";
 import testTotal from "./components/testTotal";
+import testcalen from "./components/testCalendar";
 export default {
   name: "App",
   data() {
     return {
-      activeTab: "first"
+      activeTab: "second"
     };
   },
   components: {
@@ -69,7 +71,8 @@ export default {
     test,
     pressuretool,
     seir,
-    testTotal
+    testTotal,
+    testcalen
   },
   mounted: function() {
     /*
