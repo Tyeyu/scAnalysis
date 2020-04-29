@@ -4,18 +4,19 @@
     <!-- <madeup></madeup> 
     2020/4/27 cancel
     -->
-
-    <el-tabs v-model="activeTab" :stretch="true">
-      <el-tab-pane label="疫情分析" name="first">
-        <groupbar></groupbar>
-      </el-tab-pane>
-      <el-tab-pane label="抗压力分析" name="second">
-        抗压力分析
-        <pressuretool></pressuretool>
-        <seir></seir>
-        <testTotal></testTotal>
-      </el-tab-pane>
-    </el-tabs>
+    <div>
+      <el-tabs v-model="activeTab" :stretch="true" class='eltabs'>
+        <el-tab-pane label="疫情分析" name="first">
+          <groupbar></groupbar>
+        </el-tab-pane>
+        <el-tab-pane label="抗压力分析" name="second">
+          抗压力分析
+          <pressuretool></pressuretool>
+          <seir></seir>
+          <testTotal></testTotal>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
 
     <!-- <voronoichart></voronoichart> -->
     <test></test>
@@ -98,4 +99,9 @@ body {
   width: 24%;
   padding-top: 2%;
 }
+
+.eltabs{
+  padding-top: 0.5%;
+}
+
 </style>

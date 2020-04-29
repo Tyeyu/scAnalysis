@@ -1,34 +1,37 @@
 <template>
   <div id="bar" class="bar-angel">
     <div id="groupbar_title">
+
+      <!--       
       <div id='panel_time'>
         <p style="padding-left: 6%; padding-top: 5%; font-weight: 500; margin-bottom: 1px">{{infopanel_title}}</p>
-      </div>
+      </div> -->
+
     <el-row :gutter="20" class="panelinfo" >
       <el-col :span="6">
         <div class="grid-content ">
-          <p>{{now_confirmed}}</p>
+          <p class="panelinfofont">{{now_confirmed}}</p>
           <p style="color:#F74C30; font-size:smaller">现存确诊</p>
           
         </div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content ">
-          <p>{{acc_confirmed}}</p>
+          <p class="panelinfofont">{{acc_confirmed}}</p>
           <p style="color:#B0202C; font-size:smaller">累计确诊</p>
           
         </div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content">
-          <p>{{acc_dead}}</p>
+          <p class="panelinfofont">{{acc_dead}}</p>
           <p style="color:#5D6F96; font-size:smaller">累计死亡</p>
           
         </div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content ">
-          <p>{{acc_cure}}</p>
+          <p class="panelinfofont">{{acc_cure}}</p>
           <p style="color:#28B8AB; font-size:smaller">累计治愈</p>
           
         </div>
@@ -42,14 +45,14 @@
           <div style="padding-left:25%">
 
             <div>
-              <p>地区输入比</p>
+              <p class="panelinfofont">地区输入比</p>
             </div>
 
-            <div style="transform:translate(5%, -40%)">
-              <el-button size="mini" icon="el-icon-caret-top" circle @click="piechart_sort_ascend()"></el-button>
-              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="piechart_sort_desascend()"></el-button>
+            <div style="transform:translate(50%, -150%)">
+              <el-button size="mini" icon="el-icon-caret-top" circle @click="piechart_sort_ascend()" style="background:#13142A; color:white; border: 0px"></el-button>
+              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="piechart_sort_desascend()" style="background:#13142A; color:white; border: 0px; transform:translate(-50%, 0)"></el-button>
             </div>
-
+          <!--  -->
           </div>
 
       </el-col>
@@ -59,12 +62,12 @@
           <div style="padding-left:25%">
 
             <div>
-              <p>地区人数统计</p>
+              <p class="panelinfofont">地区人数统计</p>
             </div>
 
-            <div style="transform:translate(7%, -40%)">
-              <el-button size="mini" style="color:'#606266'; background:'#F2F2F1'" icon="el-icon-caret-top" circle @click="barchart_sort_ascend()"></el-button>
-              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="barchart_sort_desascend()"></el-button>
+            <div style="transform:translate(60%, -150%)">
+              <el-button size="mini" icon="el-icon-caret-top" circle @click="barchart_sort_ascend()" style="background:#13142A; color:white; border: 0px"></el-button>
+              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="barchart_sort_desascend()" style="background:#13142A; color:white; border: 0px; transform:translate(-50%, 0)"></el-button>
             </div>
 
           </div>
@@ -143,14 +146,19 @@ export default {
         },
         legend: {
           data: ["本地发展阶段", "输入阶段", "境外输入阶段"],
-          x: 'right',
-          y: 'bottom'
+          left: 'right',
+          top: 'bottom',
+          orient: 'vertical',
+          textStyle: {
+            color: '#FFF'
+          }
         },
         grid: {
-          left: "10%",
-          right: "3%",
-          bottom: "10%",
-          height: "90%",
+          left: "0%",
+          right: "10%",
+          bottom: "0%",
+          top:"0%",
+          height: "180%",
           containLabel: true
         },
         xAxis: {
@@ -161,6 +169,12 @@ export default {
           data: that.chart_data.region,
           axisLabel: {
             margin: 20
+          },
+          nameTextStyle: {
+            color: '#13142A'
+          },
+          axisLine: {
+            show: false
           }
         },
         series: [
@@ -170,8 +184,8 @@ export default {
             stack: "总量",
             barWidth: "90%",
             label: {
-              show: true,
-              position: "insideRight"
+              show: false,
+              position: "insideRight",
             },
             data: that.chart_data.local
           },
@@ -181,8 +195,8 @@ export default {
             stack: "总量",
             barWidth: "90%",
             label: {
-              show: true,
-              position: "insideRight"
+              show: false,
+              position: "insideRight",
             },
             data: that.chart_data.input
           },
@@ -192,11 +206,12 @@ export default {
             stack: "总量",
             barWidth: "90%",
             label: {
-              show: true,
+              show: false,
               position: "insideRight"
             },
             data: that.chart_data.unknown
-          }
+            }
+
         ]
       };
       myChart.setOption(option, true);
@@ -208,10 +223,8 @@ export default {
         that.chart.destroy();
       }
       let data = []
-      
 
       for(let i = this.chart_data.region.length-1; i>=0 ; i--){
-        
         data.push({'region': this.chart_data.region[i], type: 'local', count: that.chart_data.local[i]})
         data.push({'region': this.chart_data.region[i], type: 'input', count: that.chart_data.input[i]})
       }
@@ -219,7 +232,7 @@ export default {
       that.chart = new G2.Chart({
         container: "facet",
         padding: [0,0,0,0],
-        height: document.getElementById('facet').offsetHeight,
+        height: (1.7 * document.getElementById('facet').offsetHeight),
         width: document.getElementById('facet').offsetWidth
       });
 
@@ -229,13 +242,13 @@ export default {
         showTitle: false
       });
       that.chart.coord("theta", {
-        radius: 0.5
+        radius: 0.8
       });
 
       that.chart.facet("list", {
         fields: ["region"],
         cols: 1,
-        padding: 1,
+        padding: 0.3,
         line: {
           stroke: "#00a3d7"
         },
@@ -532,24 +545,25 @@ export default {
   top: 5.5%;
   left: 0.1%;
   width: 24.8%;
-  height: 59%;
+  height: 56%;
   border: 1px solid #dededd;
 }
+.bar-angel{
+  padding-top: 2%
+}
 #gpbar {
-  height: 58%;
+  height: 68%;
   width: 80%;
   float: left;
 }
 #facet {
-  height: 50%;
+  height: 72%;
   width: 20%;
   float: left;
   position: relative;
+  overflow: hidden;
 }
 
-  .el-row {
-    margin-bottom: 20px;
-  }
   .el-col {
     border-radius: 4px;
   }
@@ -572,5 +586,7 @@ export default {
   box-shadow:2px 2px 2px #00000020; 
   text-align:center
 }
-
+.panelinfofont{
+  color: #FFF
+}
 </style>
