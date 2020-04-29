@@ -22,7 +22,7 @@ export default {
         { name: "活跃度", id: "Activity" },
         // { name: "POA", id: "POA" },
         { name: "确诊", id: "contours" },
-        { name: "维诺图", id: "voronoi-outline" }
+        { name: "维诺图", id: "voronoi-outline" },
       ],
       checkedcontrls: ["POA", "contours", "test"],
       popuchoose: false,
