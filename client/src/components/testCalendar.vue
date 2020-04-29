@@ -1,5 +1,5 @@
 <template>
-  <div id="testCalendar">
+  <div id="testCalendar" class="testCalender-angel">
     <div>
       <span>关联地区风险</span>
     </div>
@@ -21,30 +21,30 @@ export default {
         { name: "遂宁", value: 0 },
         { name: "内江", value: 0 },
         { name: "乐山", value: 0 },
-        { name: "南充", value: 0 },
-        { name: "宜宾", value: 0 },
-        { name: "广安", value: 0 },
-        { name: "达州", value: 0 },
-        { name: "巴中", value: 0 },
-        { name: "雅安", value: 0 },
-        { name: "眉山", value: 0 },
-        { name: "资阳", value: 0 },
-        { name: "阿坝", value: 0 },
-        { name: "甘孜", value: 0 },
-        { name: "凉山", value: 0 }
+        { name: "南充", value: 0 }
+        // { name: "宜宾", value: 0 },
+        // { name: "广安", value: 0 },
+        // { name: "达州", value: 0 },
+        // { name: "巴中", value: 0 },
+        // { name: "雅安", value: 0 },
+        // { name: "眉山", value: 0 },
+        // { name: "资阳", value: 0 },
+        // { name: "阿坝", value: 0 },
+        // { name: "甘孜", value: 0 },
+        // { name: "凉山", value: 0 }
       ],
       outprovinces: [
-        { cityname: "重庆", value: 0 },
-        { cityname: "云南", value: 0 },
-        { cityname: "陕西", value: 0 },
-        { cityname: "贵州", value: 0 },
-        { cityname: "宁夏", value: 0 },
-        { cityname: "西藏", value: 0 },
-        { cityname: "青海", value: 0 },
-        { cityname: "陕西", value: 0 },
-        { cityname: "甘肃", value: 0 },
-        { cityname: "湖南", value: 0 },
-        { cityname: "湖北", value: 0 }
+        { name: "重庆", value: 0 },
+        { name: "云南", value: 0 },
+        { name: "陕西", value: 0 },
+        { name: "贵州", value: 0 },
+        { name: "宁夏", value: 0 },
+        { name: "西藏", value: 0 },
+        { name: "青海", value: 0 },
+        { name: "陕西", value: 0 },
+        { name: "甘肃", value: 0 },
+        { name: "湖南", value: 0 },
+        { name: "湖北", value: 0 }
       ],
       svgwidth: null,
       svgheight: null,
@@ -65,6 +65,22 @@ export default {
       console.log(height);
       var incityg = svg.append("g");
       incityg
+        .selectAll("text")
+        .data(this.incity)
+        .enter()
+        .append("text")
+        .attr("fontsize", "8")
+        .attr("fill", "white")
+        .attr("x", function(d, i) {
+          return height * 2 + (i % 11) * height * 8 + (i % 11) * height;
+        })
+        .attr("y", function(d) {
+          return height * 8;
+        })
+        .text(function(d) {
+          return d.name;
+        });
+      incityg
         .selectAll("bar")
         .data(this.incity)
         .enter()
@@ -81,7 +97,9 @@ export default {
         })
         .attr("width", height * 8)
         .attr("height", height * 8)
-        .attr("fill", "red");
+        .attr("fill", "red")
+        .attr("stroke", "#898994")
+        .attr("troke-width", 1);
       var outpg = svg.append("g");
       outpg
         .selectAll("rect")
@@ -94,7 +112,25 @@ export default {
         })
         .attr("width", height * 8)
         .attr("height", height * 8)
-        .attr("fill", "green");
+        .attr("fill", "green")
+        .attr("stroke", "#898994")
+        .attr("troke-width", 1);
+      outpg
+        .selectAll("text")
+        .data(this.outprovinces)
+        .enter()
+        .append("text")
+        .attr("fontsize", "8")
+        .attr("fill", "white")
+        .attr("x", function(d, i) {
+          return height * 2 + i * height * 8 + i * height;
+        })
+        .attr("y", function(d) {
+          return 30 * height;
+        })
+        .text(function(d) {
+          return d.name;
+        });
     }
   },
   computed: {
@@ -120,10 +156,26 @@ export default {
 #testCalendar {
   position: absolute;
   top: 65.1%;
-  right: 0.1%;
-  width: 33.2%;
+  right: 0.5%;
+  width: 32%;
   height: 34%;
-  border: 1pt solid #dededd;
-  z-index: 1;
+  background-color: #30313a;
+}
+.testCalender-angel {
+  z-index: 2;
+  background: linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
+  background-repeat: no-repeat;
+  background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+    0.6rem 0.15rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  margin: 0.1% 0 0 0.1%;
 }
 </style>

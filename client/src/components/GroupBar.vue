@@ -1,84 +1,94 @@
 <template>
   <div id="bar" class="bar-angel">
     <div id="groupbar_title">
-
-      <!--       
+      <!--
       <div id='panel_time'>
         <p style="padding-left: 6%; padding-top: 5%; font-weight: 500; margin-bottom: 1px">{{infopanel_title}}</p>
-      </div> -->
+      </div>-->
 
-    <el-row :gutter="20" class="panelinfo" >
-      <el-col :span="6">
-        <div class="grid-content ">
-          <p class="panelinfofont">{{now_confirmed}}</p>
-          <p style="color:#F74C30; font-size:smaller">现存确诊</p>
+      <el-row :gutter="20" class="panelinfo">
+        <el-col :span="6">
+          <div class="grid-content">
+            <p class="panelinfofont">{{now_confirmed}}</p>
+            <p style="color:#F74C30; font-size:smaller">现存确诊</p>
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content">
+            <p class="panelinfofont">{{acc_confirmed}}</p>
+            <p style="color:#B0202C; font-size:smaller">累计确诊</p>
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content">
+            <p class="panelinfofont">{{acc_dead}}</p>
+            <p style="color:#5D6F96; font-size:smaller">累计死亡</p>
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content">
+            <p class="panelinfofont">{{acc_cure}}</p>
+            <p style="color:#28B8AB; font-size:smaller">累计治愈</p>
+          </div>
+        </el-col>
+      </el-row>
 
-        </div>
-      </el-col>
-      <el-col :span="6">
-        <div class="grid-content ">
-          <p class="panelinfofont">{{acc_confirmed}}</p>
-          <p style="color:#B0202C; font-size:smaller">累计确诊</p>
-
-        </div>
-      </el-col>
-      <el-col :span="6">
-        <div class="grid-content">
-          <p class="panelinfofont">{{acc_dead}}</p>
-          <p style="color:#5D6F96; font-size:smaller">累计死亡</p>
-
-        </div>
-      </el-col>
-      <el-col :span="6">
-        <div class="grid-content ">
-          <p class="panelinfofont">{{acc_cure}}</p>
-          <p style="color:#28B8AB; font-size:smaller">累计治愈</p>
-
-        </div>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="20" class="chartinfo" >
-
-      <el-col :span="12">
-
+      <el-row :gutter="20" class="chartinfo">
+        <el-col :span="12">
           <div style="padding-left:25%">
-
             <div>
               <p class="panelinfofont">地区输入比</p>
             </div>
 
             <div style="transform:translate(50%, -150%)">
-              <el-button size="mini" icon="el-icon-caret-top" circle @click="piechart_sort_ascend()" style="background:#212232; color:white; border: 0px"></el-button>
-              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="piechart_sort_desascend()" style="background:#212232; color:white; border: 0px; transform:translate(-50%, 0)"></el-button>
+              <el-button
+                size="mini"
+                icon="el-icon-caret-top"
+                circle
+                @click="piechart_sort_ascend()"
+                style="background:#212232; color:white; border: 0px"
+              ></el-button>
+              <el-button
+                size="mini"
+                icon="el-icon-caret-bottom"
+                circle
+                @click="piechart_sort_desascend()"
+                style="background:#212232; color:white; border: 0px; transform:translate(-50%, 0)"
+              ></el-button>
             </div>
-          <!--  -->
+            <!--  -->
           </div>
+        </el-col>
 
-      </el-col>
-
-      <el-col :span="12">
-
+        <el-col :span="12">
           <div style="padding-left:25%">
-
             <div>
               <p class="panelinfofont">地区人数统计</p>
             </div>
 
             <div style="transform:translate(60%, -150%)">
-              <el-button size="mini" icon="el-icon-caret-top" circle @click="barchart_sort_ascend()" style="background:#212232; color:white; border: 0px"></el-button>
-              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="barchart_sort_desascend()" style="background:#212232; color:white; border: 0px; transform:translate(-50%, 0)"></el-button>
+              <el-button
+                size="mini"
+                icon="el-icon-caret-top"
+                circle
+                @click="barchart_sort_ascend()"
+                style="background:#212232; color:white; border: 0px"
+              ></el-button>
+              <el-button
+                size="mini"
+                icon="el-icon-caret-bottom"
+                circle
+                @click="barchart_sort_desascend()"
+                style="background:#212232; color:white; border: 0px; transform:translate(-50%, 0)"
+              ></el-button>
             </div>
-
           </div>
-
-      </el-col>
-    </el-row>
+        </el-col>
+      </el-row>
     </div>
 
     <div id="facet"></div>
     <div id="gpbar"></div>
-
   </div>
 </template>
 
@@ -102,11 +112,11 @@ export default {
       acc_confirmed: null,
       acc_dead: null,
       acc_cure: null,
-      infopanel_title: '四川省截止至 ',
+      infopanel_title: "四川省截止至 ",
       panel_info: {},
       chart_data: {},
-      datastore:[], //sort data container
-      placesort:[],
+      datastore: [], //sort data container
+      placesort: []
     };
   },
   mounted() {
@@ -146,18 +156,18 @@ export default {
         },
         legend: {
           data: ["本地发展阶段", "输入阶段", "境外输入阶段"],
-          left: 'right',
-          top: 'bottom',
-          orient: 'vertical',
+          left: "right",
+          top: "bottom",
+          orient: "vertical",
           textStyle: {
-            color: '#FFF'
+            color: "#FFF"
           }
         },
         grid: {
           left: "0%",
           right: "10%",
           bottom: "0%",
-          top:"0%",
+          top: "0%",
           height: "180%",
           containLabel: true
         },
@@ -171,7 +181,7 @@ export default {
             margin: 20
           },
           nameTextStyle: {
-            color: '#13142A'
+            color: "#13142A"
           },
           axisLine: {
             show: false
@@ -185,7 +195,7 @@ export default {
             barWidth: "90%",
             label: {
               show: false,
-              position: "insideRight",
+              position: "insideRight"
             },
             data: that.chart_data.local
           },
@@ -196,7 +206,7 @@ export default {
             barWidth: "90%",
             label: {
               show: false,
-              position: "insideRight",
+              position: "insideRight"
             },
             data: that.chart_data.input
           },
@@ -210,8 +220,7 @@ export default {
               position: "insideRight"
             },
             data: that.chart_data.unknown
-            }
-
+          }
         ]
       };
       myChart.setOption(option, true);
@@ -222,18 +231,26 @@ export default {
       if (that.chart) {
         that.chart.destroy();
       }
-      let data = []
+      let data = [];
 
-      for(let i = this.chart_data.region.length-1; i>=0 ; i--){
-        data.push({'region': this.chart_data.region[i], type: 'local', count: that.chart_data.local[i]})
-        data.push({'region': this.chart_data.region[i], type: 'input', count: that.chart_data.input[i]})
+      for (let i = this.chart_data.region.length - 1; i >= 0; i--) {
+        data.push({
+          region: this.chart_data.region[i],
+          type: "local",
+          count: that.chart_data.local[i]
+        });
+        data.push({
+          region: this.chart_data.region[i],
+          type: "input",
+          count: that.chart_data.input[i]
+        });
       }
 
       that.chart = new G2.Chart({
         container: "facet",
-        padding: [0,0,0,0],
-        height: (1.7 * document.getElementById('facet').offsetHeight),
-        width: document.getElementById('facet').offsetWidth
+        padding: [0, 0, 0, 0],
+        height: 1.7 * document.getElementById("facet").offsetHeight,
+        width: document.getElementById("facet").offsetWidth
       });
 
       that.chart.source(data);
@@ -273,61 +290,66 @@ export default {
           view
             .interval()
             .position("percent")
-            .color("type", ["#d21222","#dd6b66"])
+            .color("type", ["#d21222", "#dd6b66"])
             .adjust("stack");
         }
       });
 
       that.chart.render();
     },
-    create_raw_paneldata(scmergedata){
-      let that = this
-      scmergedata.forEach((d,i) => {
-          if(d.type == '省级'){
-            let year = '2020',
-              month = d.date.split('月')[0],
-              day = d.date.split('月')[1].split('日')[0],
-              date = yyyymmdd(year+'-'+month+'-'+day)
+    create_raw_paneldata(scmergedata) {
+      let that = this;
+      scmergedata.forEach((d, i) => {
+        if (d.type == "省级") {
+          let year = "2020",
+            month = d.date.split("月")[0],
+            day = d.date.split("月")[1].split("日")[0],
+            date = yyyymmdd(year + "-" + month + "-" + day);
 
-              let accumulativeDiagnosis = +d.accumulativeDiagnosis,
-                accumulativeHeath = +d.accumulativeHeath,
-                accumulativeDeath = +d.accumulativeDeath,
-                nowDiagnosis = accumulativeDiagnosis - accumulativeHeath - accumulativeDeath
-              if(!(date in that.panel_info)){
-                that.panel_info[date] = {}
-                that.panel_info[date]['now_confirmed'] = nowDiagnosis
-                that.panel_info[date]['acc_confirmed'] = accumulativeDiagnosis
-                that.panel_info[date]['acc_dead'] = accumulativeHeath
-                that.panel_info[date]['acc_cure'] = accumulativeDeath
-              }
+          let accumulativeDiagnosis = +d.accumulativeDiagnosis,
+            accumulativeHeath = +d.accumulativeHeath,
+            accumulativeDeath = +d.accumulativeDeath,
+            nowDiagnosis =
+              accumulativeDiagnosis - accumulativeHeath - accumulativeDeath;
+          if (!(date in that.panel_info)) {
+            that.panel_info[date] = {};
+            that.panel_info[date]["now_confirmed"] = nowDiagnosis;
+            that.panel_info[date]["acc_confirmed"] = accumulativeDiagnosis;
+            that.panel_info[date]["acc_dead"] = accumulativeHeath;
+            that.panel_info[date]["acc_cure"] = accumulativeDeath;
           }
-      })
+        }
+      });
 
-      this.updateInfoPanel()
+      this.updateInfoPanel();
       function yyyymmdd(str) {
-          var x = new Date(str);
-          var y = x.getFullYear().toString();
-          var m = (x.getMonth() + 1).toString();
-          var d = x.getDate().toString();
-          (d.length == 1) && (d = '0' + d);
-          (m.length == 1) && (m = '0' + m);
-          var yyyymmdd = y + '-' + m + '-' + d;
-          return yyyymmdd;
+        var x = new Date(str);
+        var y = x.getFullYear().toString();
+        var m = (x.getMonth() + 1).toString();
+        var d = x.getDate().toString();
+        d.length == 1 && (d = "0" + d);
+        m.length == 1 && (m = "0" + m);
+        var yyyymmdd = y + "-" + m + "-" + d;
+        return yyyymmdd;
       }
     },
-    create_raw_chartdata(scmergedata){
-
-    },
-    updateInfoPanel(){
-      this.now_confirmed = this.panel_info[this.timeRange[1]].now_confirmed,
-      this.acc_confirmed = this.panel_info[this.timeRange[1]].acc_confirmed,
-      this.acc_dead = this.panel_info[this.timeRange[1]].acc_dead,
-      this.acc_cure = this.panel_info[this.timeRange[1]].acc_cure
-      this.infopanel_title = '四川省截止至 ' + this.timeRange[1]
+    create_raw_chartdata(scmergedata) {},
+    updateInfoPanel() {
+      (this.now_confirmed = this.panel_info[this.timeRange[1]].now_confirmed),
+        (this.acc_confirmed = this.panel_info[this.timeRange[1]].acc_confirmed),
+        (this.acc_dead = this.panel_info[this.timeRange[1]].acc_dead),
+        (this.acc_cure = this.panel_info[this.timeRange[1]].acc_cure);
+      this.infopanel_title = "四川省截止至 " + this.timeRange[1];
     },
     datachange: function(newval) {
-      let _region = Array.from(new Set(newval.map((d,i)=> {return d.city})))
-        this.placesort = _region
+      let _region = Array.from(
+        new Set(
+          newval.map((d, i) => {
+            return d.city;
+          })
+        )
+      );
+      this.placesort = _region;
 
       var citydata = {
         region: _region,
@@ -403,28 +425,27 @@ export default {
 
       this.$store.commit("setgroupbardata", citydata);
     },
-    dispatchdata: function(){
-      let that = this
-        //init
+    dispatchdata: function() {
+      let that = this;
+      //init
 
-        this.chart_data.region = []
-        this.chart_data.local = []
-        this.chart_data.input = []
-        this.chart_data.percent = []
-        this.chart_data.unknown = []
+      this.chart_data.region = [];
+      this.chart_data.local = [];
+      this.chart_data.input = [];
+      this.chart_data.percent = [];
+      this.chart_data.unknown = [];
 
-        that.placesort = []
+      that.placesort = [];
 
-        this.datastore.forEach(function(d,i){
+      this.datastore.forEach(function(d, i) {
+        that.chart_data.region.push(d["regionData"]);
+        that.chart_data.local.push(d["localData"]);
+        that.chart_data.input.push(d["inputData"]);
+        that.chart_data.percent.push(d["percentData"]);
+        that.chart_data.unknown.push(d["unknownData"]);
 
-          that.chart_data.region.push(d['regionData'])
-          that.chart_data.local.push(d['localData'])
-          that.chart_data.input.push(d['inputData'])
-          that.chart_data.percent.push(d['percentData'])
-          that.chart_data.unknown.push(d['unknownData'])
-
-          that.placesort.push(d['regionData'])
-        })
+        that.placesort.push(d["regionData"]);
+      });
 
       this.chartInit();
       this.chartFacet();
@@ -494,16 +515,15 @@ export default {
       this.inputData = newval.input;
       this.percentData = newval.percent;
       this.unknownData = newval.unknown;
-      this.placesort = newval.region
+      this.placesort = newval.region;
 
       this.chart_data = {
-        'region': newval.region,
-        'local': newval.local,
-        'input': newval.input,
-        'percent': newval.percent,
-        'unknown': newval.unknown
-      }
-
+        region: newval.region,
+        local: newval.local,
+        input: newval.input,
+        percent: newval.percent,
+        unknown: newval.unknown
+      };
 
       this.chartInit();
       this.chartFacet();
@@ -513,27 +533,27 @@ export default {
         let patientsum =
           newval["local"][i] + newval["input"][i] + newval["unknown"][i];
         this.datastore.push({
-          'regionData': newval['region'][i],
-          'localData': newval['local'][i],
-          'inputData': newval['input'][i],
-          'percentData': newval['percent'][i],
-          'unknownData': newval['unknown'][i],
-          'local': newval['local'][i],
-          'input': newval['input'][i],
-          'patientsum': patientsum
-        })
+          regionData: newval["region"][i],
+          localData: newval["local"][i],
+          inputData: newval["input"][i],
+          percentData: newval["percent"][i],
+          unknownData: newval["unknown"][i],
+          local: newval["local"][i],
+          input: newval["input"][i],
+          patientsum: patientsum
+        });
       }
     },
     timeRange: function(newval, oldval) {
-      this.updateInfoPanel()
+      this.updateInfoPanel();
       this.datachange(this.$store.getters.getscTrackData);
     },
     ScTrackData: function(newval, oldval) {
       this.datachange(newval);
     },
-    scMergerData: function(newval, oldVal){
-      this.create_raw_paneldata(newval)
-      this.create_raw_chartdata(newval)
+    scMergerData: function(newval, oldVal) {
+      this.create_raw_paneldata(newval);
+      this.create_raw_chartdata(newval);
     }
   }
 };
@@ -546,11 +566,10 @@ export default {
   left: 0.1%;
   width: 24.8%;
   height: 56%;
-  border: 1px solid #dededd;
-  background-color: #30313a;
+  /* //border: 1px solid #dededd; */
 }
-.bar-angel{
-  padding-top: 2%
+.bar-angel {
+  padding-top: 2%;
 }
 #gpbar {
   height: 68%;
@@ -565,44 +584,43 @@ export default {
   overflow: hidden;
 }
 
-  .el-col {
-    border-radius: 4px;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 20px;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
-  }
+.el-col {
+  border-radius: 4px;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 20px;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
 
-.panelinfo{
-  margin-left:5% !important;
+.panelinfo {
+  margin-left: 5% !important;
   margin-right: 0 !important;
-  width:90%;
-  float:left;
-  border:2px solid #00000002;
-  border-radius:8px;
-  box-shadow:2px 2px 2px #00000020;
-  text-align:center
+  width: 90%;
+  float: left;
+  border: 2px solid #00000002;
+  border-radius: 8px;
+  box-shadow: 2px 2px 2px #00000020;
+  text-align: center;
 }
-.panelinfofont{
-  color: #FFF
+.panelinfofont {
+  color: #fff;
 }
-.bar-angel{
-
+.bar-angel {
   background: linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) right bottom,
-  linear-gradient(#00faff, #00faff) right bottom;
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
   background-repeat: no-repeat;
   background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
-  0.6rem 0.15rem;
+    0.6rem 0.15rem;
   background-color: rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   /* border:3px solid #ffffff; */
@@ -610,5 +628,4 @@ export default {
   margin: 0.1% 0 0 0.1%;
   z-index: 1;
 }
-
 </style>

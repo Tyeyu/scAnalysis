@@ -1,13 +1,13 @@
 <template>
   <div id="app">
     <headers></headers>
-    <!-- <madeup></madeup> 
+    <!-- <madeup></madeup>
     2020/4/27 cancel
     -->
     <div>
       <el-tabs v-model="activeTab" :stretch="true" class="eltabs">
         <el-tab-pane label="疫情分析" name="first">
-          <groupbar></groupbar>
+          <groupbar style="background-color: #30313a"></groupbar>
           <!--放下面的三幅图-->
           <AddedDaily />
           <Relationship />
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+
 //import mapview from "./components/MapView";
 import madeup from "./components/MadeUp";
 import groupbar from "./components/GroupBar";
@@ -88,28 +89,27 @@ export default {
     }
   }
 };
+
 </script>
 
 <style>
-body {
-  background-color: #13142a;
-  opacity: 0.5;
-}
-
-#app {
-  width: 100%;
-  height: 100%;
-}
-.el-tabs__content {
-  overflow: auto !important;
-  position: unset !important;
-}
-.el-tabs__header {
-  width: 24%;
-  padding-top: 2%;
-}
-
-.eltabs {
-  padding-top: 0.5%;
-}
+  body {
+    background-color: #13142a;
+    opacity: 0.5;
+  }
+  #app {
+    width: 100%;
+    height: 100%;
+  }
+  .el-tabs__content {
+    overflow: auto !important;
+    position: unset !important;
+  }
+  .el-tabs__header {
+    width: 24%;
+    padding-top: 2%;
+  }
+  .eltabs {
+    padding-top: 0.5%;
+  }
 </style>

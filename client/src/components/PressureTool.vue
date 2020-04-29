@@ -1,5 +1,5 @@
 <template>
-  <div id="Ptool">
+  <div id="Ptool" class="Ptool-angel">
     <div>
       <span>城市选择:</span>
       <el-select v-model="cityname" placeholder>
@@ -129,6 +129,7 @@ export default {
   width: 20%;
   height: 30%;
   z-index: 1;
+  background-color: #30313a;
 }
 #Ptool span {
   color: #ffffff;
@@ -148,6 +149,23 @@ export default {
   font-size: 14px;
   /* color: #8492a6; */
   line-height: 44px;
+}
+.Ptool-angel{
+  z-index: 2;
+  background: linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) right bottom,
+  linear-gradient(#00faff, #00faff) right bottom;
+  background-repeat: no-repeat;
+  background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+  0.6rem 0.15rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  margin: 0.1% 0 0 0.1%;
 }
 #Pplay .el-icon-video-play,
 .el-icon-video-pause {
