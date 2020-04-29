@@ -709,13 +709,13 @@ export default {
 #map {
   position: absolute;
   top: 5.1%;
-  left: 24.9%;
-  width: 74.9%;
-  height: 60%;
+  left: 0.3%;
+  width: 99.7%;
+  height: 94%;
   border: 1px #7a7a7a;
 }
 canvas.mapboxgl-canvas {
-  filter: invert(1); 
+  filter: invert(1);
 }
 .mapboxgl-popup {
   max-width: 400px;

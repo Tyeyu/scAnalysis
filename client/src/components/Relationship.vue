@@ -535,10 +535,11 @@ export default {
 #Relation {
   position: absolute;
   top: 65.1%;
-  left: 33.4%;
-  width: 33.2%;
+  left: 33.9%;
+  width: 33.0%;
   height: 34%;
-  border: 1px solid solid #dededd;
+  background-color: #30313a;
+ //border: 1px solid solid #dededd;
 }
 #Rtooltip {
   position: absolute;

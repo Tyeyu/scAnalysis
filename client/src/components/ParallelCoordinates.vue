@@ -293,10 +293,10 @@ export default {
 #Coordinates {
   position: absolute;
   top: 65.1%;
-  right: 0.1%;
-  width: 33.2%;
+  right: 0.5%;
+  width: 32.0%;
   height: 34%;
-  border: 1pt solid #dededd;
+  background-color: #30313a;
 }
 .Coordinates-angel{
 
@@ -316,6 +316,6 @@ export default {
   /* border:3px solid #ffffff; */
 
   margin: 0.1% 0 0 0.1%;
-  z-index: 2;
+  z-index: 5;
 }
 </style>

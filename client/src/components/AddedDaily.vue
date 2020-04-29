@@ -24,7 +24,7 @@ export default {
       let that = this;
       that.myChart = echarts.init(document.getElementById("Daily"));
       that.option = {
-        color:['#dd6b66','#73B9BC','#E69D87','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
+        color:['#FF2B13','#E7E8D1','#1FFF48','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
         textStyle: {
           color: "#ffffff"
         },
@@ -189,7 +189,7 @@ export default {
   left: 0.1%;
   width: 33.2%;
   height: 34%;
-  border: 1px solid #dededd;
+  background-color: #30313a;
 }
 .Daily-angel{
 
