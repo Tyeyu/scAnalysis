@@ -155,6 +155,7 @@ export default {
   width: 33.2%;
   height: 34%;
   border: 1px solid #dededd;
+  z-index: 1;
 }
 #Seir {
   position: absolute;
