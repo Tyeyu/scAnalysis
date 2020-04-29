@@ -49,8 +49,8 @@
             </div>
 
             <div style="transform:translate(50%, -150%)">
-              <el-button size="mini" icon="el-icon-caret-top" circle @click="piechart_sort_ascend()" style="background:#13142A; color:white; border: 0px"></el-button>
-              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="piechart_sort_desascend()" style="background:#13142A; color:white; border: 0px; transform:translate(-50%, 0)"></el-button>
+              <el-button size="mini" icon="el-icon-caret-top" circle @click="piechart_sort_ascend()" style="background:#212232; color:white; border: 0px"></el-button>
+              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="piechart_sort_desascend()" style="background:#212232; color:white; border: 0px; transform:translate(-50%, 0)"></el-button>
             </div>
           <!--  -->
           </div>
@@ -66,8 +66,8 @@
             </div>
 
             <div style="transform:translate(60%, -150%)">
-              <el-button size="mini" icon="el-icon-caret-top" circle @click="barchart_sort_ascend()" style="background:#13142A; color:white; border: 0px"></el-button>
-              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="barchart_sort_desascend()" style="background:#13142A; color:white; border: 0px; transform:translate(-50%, 0)"></el-button>
+              <el-button size="mini" icon="el-icon-caret-top" circle @click="barchart_sort_ascend()" style="background:#212232; color:white; border: 0px"></el-button>
+              <el-button size="mini" icon="el-icon-caret-bottom" circle @click="barchart_sort_desascend()" style="background:#212232; color:white; border: 0px; transform:translate(-50%, 0)"></el-button>
             </div>
 
           </div>
@@ -608,7 +608,7 @@ export default {
   /* border:3px solid #ffffff; */
 
   margin: 0.1% 0 0 0.1%;
-  z-index: 2;
+  z-index: 1;
 }
 
 </style>
