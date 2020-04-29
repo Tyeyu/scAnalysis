@@ -9,36 +9,36 @@
         <div class="grid-content ">
           <p>{{now_confirmed}}</p>
           <p style="color:#F74C30; font-size:smaller">现存确诊</p>
-          
+
         </div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content ">
           <p>{{acc_confirmed}}</p>
           <p style="color:#B0202C; font-size:smaller">累计确诊</p>
-          
+
         </div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content">
           <p>{{acc_dead}}</p>
           <p style="color:#5D6F96; font-size:smaller">累计死亡</p>
-          
+
         </div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content ">
           <p>{{acc_cure}}</p>
           <p style="color:#28B8AB; font-size:smaller">累计治愈</p>
-          
+
         </div>
       </el-col>
     </el-row>
-    
+
     <el-row :gutter="20" class="chartinfo" >
 
       <el-col :span="12">
-          
+
           <div style="padding-left:25%">
 
             <div>
@@ -75,7 +75,7 @@
 
     <div id="facet"></div>
     <div id="gpbar"></div>
-    
+
   </div>
 </template>
 
@@ -201,17 +201,17 @@ export default {
       };
       myChart.setOption(option, true);
     },
-    
+
     chartFacet() {
       let that = this;
       if (that.chart) {
         that.chart.destroy();
       }
       let data = []
-      
+
 
       for(let i = this.chart_data.region.length-1; i>=0 ; i--){
-        
+
         data.push({'region': this.chart_data.region[i], type: 'local', count: that.chart_data.local[i]})
         data.push({'region': this.chart_data.region[i], type: 'input', count: that.chart_data.input[i]})
       }
@@ -269,7 +269,7 @@ export default {
     },
     create_raw_paneldata(scmergedata){
       let that = this
-      scmergedata.forEach((d,i) => {          
+      scmergedata.forEach((d,i) => {
           if(d.type == '省级'){
             let year = '2020',
               month = d.date.split('月')[0],
@@ -303,7 +303,7 @@ export default {
       }
     },
     create_raw_chartdata(scmergedata){
-      
+
     },
     updateInfoPanel(){
       this.now_confirmed = this.panel_info[this.timeRange[1]].now_confirmed,
@@ -393,7 +393,7 @@ export default {
     dispatchdata: function(){
       let that = this
         //init
-        
+
         this.chart_data.region = []
         this.chart_data.local = []
         this.chart_data.input = []
@@ -412,7 +412,7 @@ export default {
 
           that.placesort.push(d['regionData'])
         })
-      
+
       this.chartInit();
       this.chartFacet();
     },
@@ -488,9 +488,9 @@ export default {
         'local': newval.local,
         'input': newval.input,
         'percent': newval.percent,
-        'unknown': newval.unknown 
+        'unknown': newval.unknown
       }
-      
+
 
       this.chartInit();
       this.chartFacet();
@@ -500,9 +500,9 @@ export default {
         let patientsum =
           newval["local"][i] + newval["input"][i] + newval["unknown"][i];
         this.datastore.push({
-          'regionData': newval['region'][i], 
-          'localData': newval['local'][i], 
-          'inputData': newval['input'][i], 
+          'regionData': newval['region'][i],
+          'localData': newval['local'][i],
+          'inputData': newval['input'][i],
           'percentData': newval['percent'][i],
           'unknownData': newval['unknown'][i],
           'local': newval['local'][i],
@@ -533,7 +533,7 @@ export default {
   left: 0.1%;
   width: 24.8%;
   height: 59%;
-  border: 1px solid #dededd;
+  background-color: #30313a;
 }
 #gpbar {
   height: 58%;
@@ -563,14 +563,34 @@ export default {
   }
 
 .panelinfo{
-  margin-left:5% !important; 
+  margin-left:5% !important;
   margin-right: 0 !important;
-  width:90%; 
-  float:left; 
-  border:2px solid #00000002; 
-  border-radius:8px; 
-  box-shadow:2px 2px 2px #00000020; 
+  width:90%;
+  float:left;
+  border:2px solid #00000002;
+  border-radius:8px;
+  box-shadow:2px 2px 2px #00000020;
   text-align:center
+}
+.bar-angel{
+
+  background: linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) right bottom,
+  linear-gradient(#00faff, #00faff) right bottom;
+  background-repeat: no-repeat;
+  background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+  0.6rem 0.15rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  /* border:3px solid #ffffff; */
+
+  margin: 0.1% 0 0 0.1%;
+  z-index: 2;
 }
 
 </style>

@@ -189,7 +189,7 @@ export default {
   left: 0.1%;
   width: 33.2%;
   height: 34%;
-  border: 1px solid #dededd;
+  background-color: #30313a;
 }
 .Daily-angel{
 
