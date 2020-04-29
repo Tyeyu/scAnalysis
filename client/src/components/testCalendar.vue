@@ -1,5 +1,5 @@
 <template>
-  <div id="testCalendar"></div>
+  <div id="testCalendar" class="testCalender-angel"></div>
 </template>
 <script>
 import * as d3 from "d3";
@@ -62,10 +62,26 @@ export default {
 #testCalendar {
   position: absolute;
   top: 65.1%;
-  right: 0.1%;
-  width: 33.2%;
+  right: 0.5%;
+  width: 32.0%;
   height: 34%;
-  border: 1pt solid #dededd;
-  z-index: 1;
+  background-color: #30313a;
 }
+  .testCalender-angel{
+    z-index: 2;
+    background: linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
+    background-repeat: no-repeat;
+    background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+    0.6rem 0.15rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+    margin: 0.1% 0 0 0.1%;
+  }
 </style>

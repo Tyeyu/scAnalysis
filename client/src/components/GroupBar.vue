@@ -2,7 +2,7 @@
   <div id="bar" class="bar-angel">
     <div id="groupbar_title">
 
-      <!--       
+      <!--
       <div id='panel_time'>
         <p style="padding-left: 6%; padding-top: 5%; font-weight: 500; margin-bottom: 1px">{{infopanel_title}}</p>
       </div> -->
@@ -546,8 +546,7 @@ export default {
   left: 0.1%;
   width: 24.8%;
   height: 56%;
-  border: 1px solid #dededd;
-  background-color: #30313a;
+  //border: 1px solid #dededd;
 }
 .bar-angel{
   padding-top: 2%

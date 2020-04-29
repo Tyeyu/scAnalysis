@@ -1,5 +1,5 @@
 <template>
-  <div id="testTotal"></div>
+  <div id="testTotal" class="testTotal-angel"></div>
 </template>
 <script>
 import echarts from "echarts";
@@ -101,10 +101,26 @@ export default {
 #testTotal {
   position: absolute;
   top: 65.1%;
-  left: 33.4%;
-  width: 33.2%;
+  left: 33.9%;
+  width: 33%;
   height: 34%;
-  border: 1px solid solid #dededd;
-  z-index: 3;
+  background-color: #30313a;
 }
+  .testTotal-angel{
+    z-index: 2;
+    background: linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
+    background-repeat: no-repeat;
+    background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+    0.6rem 0.15rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+    margin: 0.1% 0 0 0.1%;
+  }
 </style>
