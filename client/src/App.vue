@@ -1,17 +1,32 @@
 <template>
   <div id="app">
     <headers></headers>
-    <madeup></madeup>
-    <groupbar></groupbar>
+    <!-- <madeup></madeup> 
+    2020/4/27 cancel
+    -->
+    <div>
+      <el-tabs v-model="activeTab" :stretch="true" class="eltabs">
+        <el-tab-pane label="疫情分析" name="first">
+          <groupbar></groupbar>
+          <!--放下面的三幅图-->
+          <AddedDaily />
+          <Relationship />
+          <PCooordinates />
+        </el-tab-pane>
+        <el-tab-pane label="抗压力分析" name="second">
+          抗压力分析
+          <pressuretool></pressuretool>
+          <seir></seir>
+          <testTotal></testTotal>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+
     <!-- <voronoichart></voronoichart> -->
     <test></test>
     <mapview></mapview>
     <maptool></maptool>
     <timeline></timeline>
-    <!--放下面的三幅图-->
-    <AddedDaily />
-    <Relationship />
-    <PCooordinates />
   </div>
 </template>
 
@@ -29,8 +44,16 @@ import timeline from "./components/TimeLine";
 import mapview from "./components/MapView";
 import readcsv from "./tool/readcsv";
 import test from "./components/test";
+import pressuretool from "./components/PressureTool";
+import seir from "./components/SEIR";
+import testTotal from "./components/testTotal";
 export default {
   name: "App",
+  data() {
+    return {
+      activeTab: "first"
+    };
+  },
   components: {
     //mapview,
     madeup,
@@ -43,7 +66,10 @@ export default {
     maptool,
     timeline,
     mapview,
-    test
+    test,
+    pressuretool,
+    seir,
+    testTotal
   },
   mounted: function() {
     /*
@@ -57,11 +83,24 @@ export default {
 
 <style>
 body {
-  background-color: #f0f0ef;
+  background-color: #13142a;
+  opacity: 0.5;
 }
 
 #app {
   width: 100%;
   height: 100%;
+}
+.el-tabs__content {
+  overflow: auto !important;
+  position: unset !important;
+}
+.el-tabs__header {
+  width: 24%;
+  padding-top: 2%;
+}
+
+.eltabs {
+  padding-top: 0.5%;
 }
 </style>

@@ -162,7 +162,7 @@ export default {
 
       this.map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v10",
+        style: "mapbox://styles/mapbox/streets-v9",
         center: [101.9199, 30.1904],
         zoom: 5
       });
@@ -184,7 +184,7 @@ export default {
         drawPoints.push({
           type: "Feature",
           properties: {
-            color: "red",
+            color: "cyan",
             opacity: 0.5,
             radius: 5,
             description: d.address
@@ -279,7 +279,7 @@ export default {
         type: "fill",
         source: "city_json",
         paint: {
-          "fill-color": "red",
+          "fill-color": "cyan",
           "fill-opacity": ["get", "opt"]
         },
         maxzoom: 8.5
@@ -393,7 +393,6 @@ export default {
       let toggleableLayerIds = that.toggleableLayerIds;
       let clickedLayer1 = "points_layer";
       let clickedLayer2 = "voronoi-outline";
-      let clickedLayer3 = "voronoi-overlay";
       let stateOfPOA = data.indexOf("POA");
       let stateOfCon = data.indexOf("contours");
       let stateOfVor = data.indexOf("voronoi-outline");
@@ -431,10 +430,8 @@ export default {
         }
         if (stateOfVor !== -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
-          that.map.setLayoutProperty(clickedLayer3, "visibility", "visible");
         } else if (stateOfVor == -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "none");
-          that.map.setLayoutProperty(clickedLayer3, "visibility", "none");
         }
         if (statePopu != -1) {
           that.map.setLayoutProperty("population", "visibility", "visible");
@@ -590,23 +587,7 @@ export default {
     },
     vorfeaters: function(newval, oldval) {
       let that = this;
-      var area_arry = [];
-      newval.forEach(d=>{
-        area_arry.push(d.properties.area)
-      })
-      var Ascale = d3
-        .scaleLinear()
-        .domain([
-          d3.min(area_arry),
-          d3.max(area_arry)
-        ])
-        .range([0, 1]);
-      newval.forEach(d=>{
-        d.properties["asc"] = Ascale(d.properties.area);
-      })
-
       this.map.on("load", function() {
-
         that.map.addSource("voronoi", {
           type: "geojson",
           data: {
@@ -614,32 +595,19 @@ export default {
             features: newval
           }
         });
-        console.log("newval:",newval)
         that.map.addLayer({
-          id:"voronoi-outline",
-          type:"line",
-          source:"voronoi",
-          layout:{
-            visibility:"none"
-          },
-          paint:{
+          id: "voronoi-outline",
+          type: "line",
+          source: "voronoi",
+          layout: {
+            visibility: "none"
+          }, //指渲染位置和可见性
+          paint: {
             "line-width": 1,
             "line-color": "#000",
             "line-opacity": 1
-          }
-        })
-        that.map.addLayer({
-          id: "voronoi-overlay",
-          type: "fill",
-          source: "voronoi",
-          // layout: {
-          //   visibility: "none"
-          // }, //指渲染位置和可见性
-          paint: {
-            "fill-color": "orange",
-            "fill-opacity": ["get", "asc"]
           },
-          maxzoom: 8.5
+          maxzoom: 10.5
         });
       });
     },
@@ -741,10 +709,13 @@ export default {
 #map {
   position: absolute;
   top: 5.1%;
-  left: 24.9%;
-  width: 74.9%;
-  height: 60%;
+  left: 0.3%;
+  width: 99.7%;
+  height: 94%;
   border: 1px #7a7a7a;
+}
+canvas.mapboxgl-canvas {
+  filter: invert(1);
 }
 .mapboxgl-popup {
   max-width: 400px;

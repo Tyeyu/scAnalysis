@@ -157,7 +157,6 @@ export default {
         .append("path")
         .attr("d", path);
 
-
       //境界表示
       voronoiLayer
         .selectAll(".cell")

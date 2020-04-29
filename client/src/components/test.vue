@@ -66,9 +66,7 @@ export default {
       });
       const _voronoi = d3.voronoi();
       var posvor = _voronoi(pos).polygons();
-      //console.log("posvor:", posvor);
       var scmapdata = CordData.geometry.coordinates[0];
-      // console.log("scmapdata:",scmapdata);
       // var testmapd = [];
       // for (var i = 0; i < scmapdata.length; i++) {
       //   // console.log(scmapdata[i]);
@@ -82,33 +80,20 @@ export default {
       for (var i = 0; i < posvor.length; i++) {
         if (posvor[i] != null) {
           let x = [];
-          let y = [];
           for (var j = 0; j < posvor[i].length; j++) {
             if (posvor[i][j] != null) {
               x.push(posvor[i][j]);
-              y.push(posvor[i][j])
             }
           }
-          y.push(y[0]);
-          let poly1 = turf.polygon([y]);
-          let poly2 = turf.polygon(CordData.geometry.coordinates);
-          var intersection = turf.intersect(poly1, poly2);
-          if (intersection) {
-            var area_intersection = turf.area(intersection);
-            posvor[i].area = area_intersection / 1000;
-          } else {
-            posvor[i].area = turf.area(poly1 / 1000);
-          }
-          console.log("area:",posvor[i].area)
-
+          // console.log(x);
+          // console.log(scmapdata);
           var gs = greinerHormann.intersection(scmapdata, x);
           if (gs != null) {
             var feature = {
               type: "Feature",
               properties: {
                 name: posvor[i].data.name,
-                cp: [posvor[i].data[0], posvor[i].data[1]],
-                area: posvor[i].area
+                cp: [posvor[i].data[0], posvor[i].data[1]]
               },
               geometry: {
                 type: "Polygon",
@@ -130,9 +115,6 @@ export default {
           }
         }
       }
-
-      console.log(posvor);
-      
       this.$store.commit("setvorfeaters", that.mapfeaters);
       // console.log(hospitals);
       this.$store.commit("sethosImageData", hospitals);

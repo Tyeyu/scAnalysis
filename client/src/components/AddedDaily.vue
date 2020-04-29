@@ -1,5 +1,5 @@
 <template>
-  <div id="Daily"></div>
+  <div id="Daily" class="Daily-angel"></div>
 </template>
 
 <script>
@@ -24,8 +24,15 @@ export default {
       let that = this;
       that.myChart = echarts.init(document.getElementById("Daily"));
       that.option = {
+        color:['#FF2B13','#E7E8D1','#1FFF48','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
+        textStyle: {
+          color: "#ffffff"
+        },
         title: {
           text: that.cityname + "每日新增",
+          textStyle: {
+          color: "#ffffff"
+        },
           left: "7%",
           top: "10px"
         },
@@ -34,6 +41,9 @@ export default {
         },
         legend: {
           data: ["确诊", "死亡", "治愈"],
+          textStyle: {
+          color: "#ffffff"
+        },
           right: "9%",
           top: "30px"
         },
@@ -179,6 +189,26 @@ export default {
   left: 0.1%;
   width: 33.2%;
   height: 34%;
-  border: 1px solid #dededd;
+  background-color: #30313a;
+}
+.Daily-angel{
+
+  background: linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) left top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) right top,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) left bottom,
+  linear-gradient(#00faff, #00faff) right bottom,
+  linear-gradient(#00faff, #00faff) right bottom;
+  background-repeat: no-repeat;
+  background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+  0.6rem 0.15rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  /* border:3px solid #ffffff; */
+
+  margin: 0.1% 0 0 0.1%;
+  z-index: 2;
 }
 </style>
