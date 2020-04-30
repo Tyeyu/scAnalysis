@@ -159,7 +159,6 @@ export default {
         that.interval.round(that.xscale.invert(d))
       );
 
-      console.log([x0, x1]);
     },
     dateFormat: function(fmt, date) {
       let ret;

@@ -304,41 +304,48 @@ export default {
           let year = "2020",
             month = d.date.split("月")[0],
             day = d.date.split("月")[1].split("日")[0],
-            date = yyyymmdd(year + "-" + month + "-" + day);
+            date = that.yyyymmdd(year + "-" + month + "-" + day);
 
           let accumulativeDiagnosis = +d.accumulativeDiagnosis,
             accumulativeHeath = +d.accumulativeHeath,
             accumulativeDeath = +d.accumulativeDeath,
-            nowDiagnosis =
-              accumulativeDiagnosis - accumulativeHeath - accumulativeDeath;
+            nowDiagnosis = (accumulativeDiagnosis - accumulativeHeath - accumulativeDeath) < 0 ? 0 : (accumulativeDiagnosis - accumulativeHeath - accumulativeDeath);
           if (!(date in that.panel_info)) {
             that.panel_info[date] = {};
             that.panel_info[date]["now_confirmed"] = nowDiagnosis;
             that.panel_info[date]["acc_confirmed"] = accumulativeDiagnosis;
-            that.panel_info[date]["acc_dead"] = accumulativeHeath;
-            that.panel_info[date]["acc_cure"] = accumulativeDeath;
+            that.panel_info[date]["acc_dead"] = accumulativeDeath;
+            that.panel_info[date]["acc_cure"] = accumulativeHeath;
           }
         }
       });
 
       this.updateInfoPanel();
-      function yyyymmdd(str) {
-        var x = new Date(str);
-        var y = x.getFullYear().toString();
-        var m = (x.getMonth() + 1).toString();
-        var d = x.getDate().toString();
-        d.length == 1 && (d = "0" + d);
-        m.length == 1 && (m = "0" + m);
-        var yyyymmdd = y + "-" + m + "-" + d;
-        return yyyymmdd;
+    },
+    yyyymmdd(str){
+      let x = ''
+      if(typeof str == 'object'){
+        x = str
+      } else {
+        x = new Date(str)
       }
+
+      let y = x.getFullYear().toString();
+      let m = (x.getMonth() + 1).toString();
+      let d = x.getDate().toString();
+      d.length == 1 && (d = "0" + d);
+      m.length == 1 && (m = "0" + m);
+      let yyyymmdd = y + "-" + m + "-" + d;
+      return yyyymmdd;
     },
     create_raw_chartdata(scmergedata) {},
     updateInfoPanel() {
-      (this.now_confirmed = this.panel_info[this.timeRange[1]].now_confirmed),
-        (this.acc_confirmed = this.panel_info[this.timeRange[1]].acc_confirmed),
-        (this.acc_dead = this.panel_info[this.timeRange[1]].acc_dead),
-        (this.acc_cure = this.panel_info[this.timeRange[1]].acc_cure);
+
+      this.now_confirmed = this.panel_info[this.timeRange[1]].now_confirmed
+      this.acc_confirmed = this.panel_info[this.timeRange[1]].acc_confirmed
+      this.acc_dead = this.panel_info[this.timeRange[1]].acc_dead
+      this.acc_cure = this.panel_info[this.timeRange[1]].acc_cure
+
       this.infopanel_title = "四川省截止至 " + this.timeRange[1];
     },
     datachange: function(newval) {
@@ -499,7 +506,15 @@ export default {
       return this.$store.getters.getscTrackData;
     },
     timeRange() {
-      return this.$store.getters.gettimeRange;
+      let temp_timeRange = this.$store.getters.gettimeRange;
+      if(typeof temp_timeRange[0] == 'object'){
+        let time0 = this.yyyymmdd(temp_timeRange[0]),
+          time1 = this.yyyymmdd(temp_timeRange[1]),
+          timelist = [time0, time1]
+          return timelist
+      } else {
+        return temp_timeRange
+      }
     },
     scMergerData() {
       return this.$store.getters.getscMergerData;
