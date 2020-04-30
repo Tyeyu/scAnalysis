@@ -35,6 +35,7 @@
       <el-button id="Pplay" size="medium" v-bind:icon="playicon" circle @click="startclick"></el-button>
       <div style="float: right">
         <el-button class="stopbt" @click="stopclick" >结束模拟</el-button>
+
       </div>
     </div>
   </div>
