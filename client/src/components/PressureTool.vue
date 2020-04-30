@@ -30,10 +30,13 @@
       <span class="demonstration">人口密度:</span>
       <el-slider v-model="midu" class="myslider" :max="midumax"></el-slider>
     </div>
-    <div>
+    <div class="button-angel">
       <span>开始模拟</span>
       <el-button id="Pplay" size="medium" v-bind:icon="playicon" circle @click="startclick"></el-button>
-      <el-button class="stopbt" @click="stopclick">结束模拟</el-button>
+      <div style="float: right">
+        <el-button class="stopbt" @click="stopclick" >结束模拟</el-button>
+
+      </div>
     </div>
   </div>
 </template>
@@ -127,7 +130,7 @@ export default {
   top: 14.5%;
   left: 0.5%;
   width: 20%;
-  height: 30%;
+  height: 32%;
   z-index: 1;
   background-color: #30313a;
 }
@@ -137,6 +140,7 @@ export default {
 .stopbt span {
   color: black !important;
 }
+
 .el-slider__bar {
   left: 1%;
 }
@@ -171,4 +175,21 @@ export default {
 .el-icon-video-pause {
   font-size: 20px;
 }
+  .button-angel{
+    z-index: 2;
+    background: linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
+    background-repeat: no-repeat;
+    background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+    0.6rem 0.15rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+    margin: 0.1% 0 0 0.1%;
+  }
 </style>
