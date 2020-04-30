@@ -158,8 +158,6 @@ export default {
       const [x0, x1] = selection.map(d =>
         that.interval.round(that.xscale.invert(d))
       );
-
-      console.log([x0, x1]);
     },
     dateFormat: function(fmt, date) {
       let ret;
