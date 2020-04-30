@@ -101,6 +101,9 @@ export default {
     width: 100%;
     height: 100%;
   }
+  .el-tabs__item{
+    color:aliceblue
+  }
   .el-tabs__content {
     overflow: auto !important;
     position: unset !important;
