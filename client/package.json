@@ -21,7 +21,7 @@
     "element-ui": "^2.13.0",
     "geojson-area": "^0.2.1",
     "greiner-hormann": "^1.4.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "mapbox-gl": "^1.9.0",
     "turf": "^3.0.14",
     "vue": "^2.5.2",
