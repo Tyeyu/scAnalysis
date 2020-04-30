@@ -24,7 +24,7 @@ export default {
       let that = this;
       that.myChart = echarts.init(document.getElementById("Daily"));
       that.option = {
-        color:['#FF2B13','#E7E8D1','#1FFF48','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
+        color:['#B34F48','#E7E8D1','#57B37D','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
         textStyle: {
           color: "#ffffff"
         },

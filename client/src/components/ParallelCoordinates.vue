@@ -43,7 +43,8 @@ export default {
         textStyle: {
           color: "#ffffff"
         },
-        color:['#dd6b66','#73B9BC','#E69D87','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
+        // color:['#dd6b66','#73B9BC','#E69D87','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
+        color:['#F78BA9','#29B357','#eeb8c3','#11659a','#96c24e','#d2b116','#f2481b','#77D4BC','#8AF3F6','#A28EF5','#C2F3E6','#7B9ED6'],
         parallelAxis: [
           {
             dim: 0,
