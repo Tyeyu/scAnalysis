@@ -537,7 +537,7 @@ export default {
           });
         });
       });
-      this.popUp("hospitalImage")
+      this.popUp("hospitalImage");
     },
     popUp(id) {
       let that = this;
@@ -550,13 +550,13 @@ export default {
           .setHTML(description)
           .addTo(that.map);
       });
-      this.map.on("mouseenter",id, function() {
+      this.map.on("mouseenter", id, function() {
         that.map.getCanvas().style.cursor = "pointer";
       });
-      this.map.on("mouseleave",id, function() {
+      this.map.on("mouseleave", id, function() {
         that.map.getCanvas().style.cursor = "";
       });
-    },
+    }
   },
   computed: {
     mapdata() {
@@ -618,7 +618,29 @@ export default {
         new Date(this.$store.getters.gettimeRange[1])
       ];
       this.quezheng = [];
-      var citys = [];
+      var citys = [
+        "成都",
+        "自贡",
+        "攀枝花",
+        "泸州",
+        "德阳",
+        "绵阳",
+        "广元",
+        "遂宁",
+        "内江",
+        "乐山",
+        "南充",
+        "宜宾",
+        "广安",
+        "达州",
+        "巴中",
+        "雅安",
+        "眉山",
+        "资阳",
+        "阿坝",
+        "甘孜",
+        "凉山"
+      ];
       for (var i = 0; i < mergerdata.length; i++) {
         // console.log(newval[i].city);
         var dates = mergerdata[i].date;
@@ -627,17 +649,23 @@ export default {
           parseInt(dates.split("月")[0]) - 1,
           dates.split("月")[1].split("日")[0]
         );
-        if (dates.getTime() == timeRange[0].getTime()) {
-          citys.push(mergerdata[i]);
-        }
-        if (dates.getTime() == timeRange[1].getTime()) {
+        // if (dates.getTime() == timeRange[0].getTime()) {
+        //   citys.push(mergerdata[i]);
+        // }
+        var x = new Date("2020-1-20");
+        x.getDate();
+        console.log(dates, timeRange[1]);
+        console.log(dates.getMonth() == timeRange[1].getMonth());
+        if (
+          dates.getMonth() == timeRange[1].getMonth() &&
+          dates.getDate() == timeRange[1].getDate()
+        ) {
           // console.log(mergerdata[i]);
           if (mergerdata[i].city != "") {
             for (var j = 0; j < citys.length; j++) {
-              if (citys[j].city == mergerdata[i].city) {
-                var value =
-                  parseInt(mergerdata[i].accumulativeDiagnosis) -
-                  parseInt(citys[j].accumulativeDiagnosis);
+              if (citys[j] == mergerdata[i].city) {
+                var value = parseInt(mergerdata[i].accumulativeDiagnosis);
+                // parseInt(citys[j].accumulativeDiagnosis);
                 if (isNaN(value)) {
                   value = 0;
                 }
