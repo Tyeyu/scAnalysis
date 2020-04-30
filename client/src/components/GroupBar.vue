@@ -130,9 +130,9 @@ export default {
       var option = {
         // color:['#5b7fa7','#508da3','#a5def1','ffffff'],
         color: [
-          "#d21222",
+          "#96FFC2",
           "#dd6b66",
-          "#73B9BC",
+          "#B3303A",
           "#E69D87",
           "#8DC1A9",
           "#EA7E53",
