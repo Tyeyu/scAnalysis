@@ -16,10 +16,9 @@ module.exports = {
     		changeOrigin: true,
     		pathRewrite: {
     		'^/api': '/static'
-    
    		}
    		} ,
-	},
+	  },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

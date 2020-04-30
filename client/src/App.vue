@@ -110,7 +110,7 @@ export default {
   }
   .el-tabs__header {
     width: 24%;
-    padding-top: 2%;
+    padding-top: 2% !important;
   }
   .eltabs {
     padding-top: 0.5%;

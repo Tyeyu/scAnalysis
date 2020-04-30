@@ -165,7 +165,7 @@ export default {
         },
         grid: {
           left: "0%",
-          right: "10%",
+          right: "30%",
           bottom: "0%",
           top: "0%",
           height: "180%",
@@ -177,6 +177,8 @@ export default {
         yAxis: {
           type: "category",
           data: that.chart_data.region,
+          position: 'right',
+          offset: -10,
           axisLabel: {
             margin: 20
           },
@@ -236,12 +238,12 @@ export default {
       for (let i = this.chart_data.region.length - 1; i >= 0; i--) {
         data.push({
           region: this.chart_data.region[i],
-          type: "local",
+          type: "本地发展阶段",
           count: that.chart_data.local[i]
         });
         data.push({
           region: this.chart_data.region[i],
-          type: "input",
+          type: "输入阶段",
           count: that.chart_data.input[i]
         });
       }
@@ -265,7 +267,7 @@ export default {
       that.chart.facet("list", {
         fields: ["region"],
         cols: 1,
-        padding: 0.3,
+        padding: 0,
         line: {
           stroke: "#00a3d7"
         },
@@ -587,7 +589,7 @@ export default {
   padding-top: 2%;
 }
 #gpbar {
-  height: 68%;
+  height: 70%;
   width: 80%;
   float: left;
 }
