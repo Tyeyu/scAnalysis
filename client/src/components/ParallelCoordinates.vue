@@ -35,8 +35,8 @@ export default {
         { name: "PM25", index: 2, text: "治愈率" },
         { name: "PM10", index: 3, text: "死亡率" },
         { name: "CO", index: 4, text: "活跃度" },
-        { name: "SO2", index: 5, text: "医院" },
-        { name: "等级", index: 6, text: "门诊" },
+        { name: "SO2", index: 5, text: "医院数" },
+        { name: "等级", index: 6, text: "门诊数" },
         { name: "P", index: 7, text: "人口(万)" }
       ];
       var option = {
