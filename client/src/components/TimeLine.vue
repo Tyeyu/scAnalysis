@@ -35,7 +35,7 @@ export default {
         this.playcheck = true;
         this.$store.commit("setplaycheck", this.playcheck);
         this.playicon = "el-icon-video-pause"; //切换图标
-        this.playlen = this.xscale(new Date("2020-01-11"));
+        this.playlen = this.xscale(new Date("2020-01-22"));
         var clicked = false;
         this.play = self.setInterval(function() {
           if (that.playcheck && that.playend + that.playlen <= that.svgWidth) {
@@ -54,7 +54,6 @@ export default {
             that.playend += that.playlen;
           } else {
             if (that.playend + that.playlen >= that.svgWidth && !clicked) {
-              console.log("@@@@@@");
               document.getElementById("play").click();
               clicked = true;
             }
@@ -158,7 +157,6 @@ export default {
       const [x0, x1] = selection.map(d =>
         that.interval.round(that.xscale.invert(d))
       );
-
     },
     dateFormat: function(fmt, date) {
       let ret;

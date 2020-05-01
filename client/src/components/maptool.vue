@@ -2,22 +2,15 @@
   <div>
     <div id="mapcontrl">
       <el-checkbox-group v-model="checkedcontrls" @change="handleCheckedcontrlsChange">
-        <el-menu
-          class="el-menu-vertical"
-          background-color="#545c64"
-          text-color="#fff"
-        >
+        <el-menu class="el-menu-vertical" background-color="#545c64" text-color="#fff">
           <el-submenu index="1">
-            <template slot="title">确诊
-            </template>
+            <template slot="title">确诊</template>
             <el-menu-item-group>
               <el-checkbox v-for="cont in contrls1" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
-            <template slot="title">
-              小区/医院
-            </template>
+            <template slot="title">小区/医院</template>
             <el-menu-item-group>
               <el-checkbox v-for="cont in contrls2" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
             </el-menu-item-group>
@@ -27,7 +20,7 @@
               <span>人口</span>
             </template>
             <el-menu-item-group>
-            <el-checkbox v-for="cont in contrls3" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
+              <el-checkbox v-for="cont in contrls3" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -64,7 +57,7 @@ export default {
     };
   },
   mounted() {
-    this.drawColorCard();
+    // this.drawColorCard();
   },
   methods: {
     handleCheckedcontrlsChange: function(val) {
@@ -190,10 +183,10 @@ export default {
 /* .el-menu-vertical{
   border: 1px solid white;
 } */
-.el-checkbox{
+.el-checkbox {
   color: aliceblue;
 }
-.el-menu-item-group__title{
+.el-menu-item-group__title {
   padding: 0px 0 0px 0px;
 }
 #ColorCard {

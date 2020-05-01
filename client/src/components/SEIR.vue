@@ -1,6 +1,6 @@
 <template>
-  <div id= "Seir" class="dSeir">
-    //<div id="Seir"></div>
+  <div id="Seir" class="dSeir">
+    <div id="Seir"></div>
   </div>
 </template>
 <script>
@@ -170,16 +170,16 @@ export default {
 .dSeir {
   z-index: 2;
   background: linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) right bottom,
-  linear-gradient(#00faff, #00faff) right bottom;
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
   background-repeat: no-repeat;
   background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
-  0.6rem 0.15rem;
+    0.6rem 0.15rem;
   background-color: rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   margin: 0.1% 0 0 0.1%;

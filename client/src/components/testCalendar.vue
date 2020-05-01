@@ -97,7 +97,7 @@ export default {
         })
         .attr("width", height * 8)
         .attr("height", height * 8)
-        .attr("fill", "red")
+        .attr("fill", "#181830")
         .attr("stroke", "#898994")
         .attr("troke-width", 1);
       var outpg = svg.append("g");
@@ -112,7 +112,7 @@ export default {
         })
         .attr("width", height * 8)
         .attr("height", height * 8)
-        .attr("fill", "green")
+        .attr("fill", "#181830")
         .attr("stroke", "#898994")
         .attr("troke-width", 1);
       outpg
