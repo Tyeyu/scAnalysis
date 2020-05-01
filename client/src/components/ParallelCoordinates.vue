@@ -166,11 +166,18 @@ export default {
           Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
           Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
         }
+        if (Inmigration_rate > Outmigration_rate) {
+          var min = Outmigration_rate;
+          var max = Inmigration_rate;
+        } else {
+          var max = Outmigration_rate;
+          var min = Inmigration_rate;
+        }
         //求平均值，保留4位小数
         this.migraComputmap.set(migkeys[i], {
           allrate:
-            parseFloat(Inmigration_rate / kdata.length).toFixed(4) +
-            parseFloat(Outmigration_rate / kdata.length).toFixed(4)
+            parseFloat(min / kdata.length).toFixed(4) +
+            parseFloat(max / kdata.length).toFixed(4)
         });
       }
     },
