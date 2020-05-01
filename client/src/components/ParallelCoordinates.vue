@@ -18,7 +18,8 @@ export default {
       hospitalmap: null,
       migraComputmap: null,
       mergcomputmap: null,
-      populationmap: null
+      populationmap: null,
+      citys: []
     };
   },
   methods: {
@@ -133,11 +134,17 @@ export default {
       let migrations = [];
       for (var i = 0; i < migradata.length; i++) {
         var mdate = new Date(migradata[i].date);
-        if (mdate.getTime() <= timeRange[1].getTime()) {
+        if (
+          mdate.getMonth() <= timeRange[1].getMonth() &&
+          mdate.getDate() <= timeRange[1].getDate()
+        ) {
           if (playcheck) {
             migrations.push(migradata[i]);
           } else {
-            if (mdate.getTime() >= timeRange[0].getTime()) {
+            if (
+              mdate.getMonth() <= timeRange[0].getMonth() &&
+              mdate.getDate() <= timeRange[0].getDate()
+            ) {
               migrations.push(migradata[i]);
             }
           }
@@ -191,7 +198,8 @@ export default {
           dates.split("月")[1].split("日")[0]
         );
         if (
-          dates.getTime() <= timeRange[1].getTime() &&
+          dates.getMonth() <= timeRange[1].getMonth() &&
+          dates.getDate() < timeRange[1].getDate() &&
           mergerdata[i].city != ""
         ) {
           TimerangeMerdata.push(mergerdata[i]);
@@ -208,6 +216,7 @@ export default {
       var arry = [];
       for (var i = 0; i < merkeys.length; i++) {
         var kdata = mergNetsmap.get(merkeys[i]);
+
         arry.push({
           City: merkeys[i],
           Diagnosis: kdata[kdata.length - 1].accumulativeDiagnosis,
@@ -226,20 +235,26 @@ export default {
       });
 
       for (var i = 0; i < arry.length; i++) {
+        if (arry[i].City != "") this.citys.push(arry[i].City);
         this.mergcomputmap.set(arry[i].City, arry[i]);
       }
     },
     setserierdata: function() {
       //封装数据
       this.seriesdata = [];
-      var citys = this.hospitalmap.keys();
+      var citys = this.citys;
       var cActivity = []; //活跃度数据
       for (var i = 0; i < citys.length; i++) {
+        if (citys[i] == "境外输入" || citys[i] == "地区待确认") continue;
         var mergd = this.mergcomputmap.get(citys[i]);
         var migrd = this.migraComputmap.get(citys[i]);
-
         var hospd = this.hospitalmap.get(citys[i]);
         var popul = this.populationmap.get(citys[i]);
+        cActivity.push({
+          name: citys[i],
+          value: parseFloat(migrd.allrate) / 2
+        });
+        if (mergd == null || migrd == null) continue;
         var serie = {
           name: citys[i],
           type: "parallel",
@@ -250,8 +265,7 @@ export default {
               mergd.Diagnosis,
               mergd.Healthrate,
               mergd.Deathrate,
-              migrd.allrate,
-
+              parseFloat(migrd.allrate),
               hospd[0].hospital,
               hospd[0].outpatient,
               popul[0].population
@@ -259,10 +273,6 @@ export default {
           ]
         };
         this.seriesdata.push(serie);
-        cActivity.push({
-          name: citys[i],
-          value: parseFloat(migrd.allrate) / 2
-        });
       }
       this.$store.commit("setcityActivity", cActivity);
       // console.log(this.seriesdata);

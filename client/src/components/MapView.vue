@@ -654,8 +654,6 @@ export default {
         // }
         var x = new Date("2020-1-20");
         x.getDate();
-        console.log(dates, timeRange[1]);
-        console.log(dates.getMonth() == timeRange[1].getMonth());
         if (
           dates.getMonth() == timeRange[1].getMonth() &&
           dates.getDate() == timeRange[1].getDate()
