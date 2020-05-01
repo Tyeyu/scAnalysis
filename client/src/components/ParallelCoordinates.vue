@@ -33,49 +33,54 @@ export default {
         { name: "AQIindex", index: 1, text: "确诊人数" },
         { name: "PM25", index: 2, text: "治愈率" },
         { name: "PM10", index: 3, text: "死亡率" },
-        { name: "CO", index: 4, text: "迁入" },
-        { name: "NO2", index: 5, text: "迁出" },
-        { name: "SO2", index: 6, text: "定点医院个数" },
-        { name: "等级", index: 7, text: "发热门诊个数" },
-        { name: "P", index: 8, text: "常住人口(万)" }
+        { name: "CO", index: 4, text: "活跃度" },
+        { name: "SO2", index: 5, text: "医院" },
+        { name: "等级", index: 6, text: "门诊" },
+        { name: "P", index: 7, text: "人口(万)" }
       ];
       var option = {
         textStyle: {
           color: "#ffffff"
         },
         // color:['#dd6b66','#73B9BC','#E69D87','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
-        color:['#F78BA9','#29B357','#eeb8c3','#11659a','#96c24e','#d2b116','#f2481b','#77D4BC','#8AF3F6','#A28EF5','#C2F3E6','#7B9ED6'],
+        color: [
+          "#F78BA9",
+          "#29B357",
+          "#eeb8c3",
+          "#11659a",
+          "#96c24e",
+          "#d2b116",
+          "#f2481b",
+          "#77D4BC",
+          "#8AF3F6",
+          "#A28EF5",
+          "#C2F3E6",
+          "#7B9ED6"
+        ],
         parallelAxis: [
           {
             dim: 0,
             name: schema[0].text,
             textStyle: {
-          color: "#ffffff"
-        },
+              color: "#ffffff"
+            },
             type: "category"
           },
           {
             dim: 1,
-            name: schema[1].text,
-            inverse: true,
-            textStyle: {
-          color: "#ffffff"
-        },
-            // max: 101,
-            nameLocation: "start"
+            name: schema[1].text
           },
           { dim: 2, name: schema[2].text },
           { dim: 3, name: schema[3].text },
           { dim: 4, name: schema[4].text },
           { dim: 5, name: schema[5].text },
           { dim: 6, name: schema[6].text },
-          { dim: 7, name: schema[7].text },
-          { dim: 8, name: schema[8].text }
+          { dim: 7, name: schema[7].text }
         ],
         parallel: {
           top: "20%",
-          left: "5%",
-          right: "7%",
+          left: "3%",
+          right: "10%",
           height: "76%",
           bottom: 100,
           parallelAxisDefault: {
@@ -156,8 +161,9 @@ export default {
         }
         //求平均值，保留4位小数
         this.migraComputmap.set(migkeys[i], {
-          Inrate: parseFloat(Inmigration_rate / kdata.length).toFixed(4),
-          Outrate: parseFloat(Outmigration_rate / kdata.length).toFixed(4)
+          allrate:
+            parseFloat(Inmigration_rate / kdata.length).toFixed(4) +
+            parseFloat(Outmigration_rate / kdata.length).toFixed(4)
         });
       }
     },
@@ -199,22 +205,28 @@ export default {
         .map(TimerangeMerdata);
       this.mergcomputmap = d3.map();
       var merkeys = mergNetsmap.keys();
+      var arry = [];
       for (var i = 0; i < merkeys.length; i++) {
         var kdata = mergNetsmap.get(merkeys[i]);
-        var Diagnosis = kdata[kdata.length - 1].accumulativeDiagnosis;
-        var healthrate = parseFloat(
-          kdata[kdata.length - 1].accumulativeHeath /
-            kdata[kdata.length - 1].accumulativeDiagnosis
-        ).toFixed(4);
-        var deathrate = parseFloat(
-          kdata[kdata.length - 1].accumulativeDeath /
-            kdata[kdata.length - 1].accumulativeDiagnosis
-        ).toFixed(4);
-        this.mergcomputmap.set(merkeys[i], {
-          Diagnosis: Diagnosis,
-          Healthrate: healthrate,
-          Deathrate: deathrate
+        arry.push({
+          City: merkeys[i],
+          Diagnosis: kdata[kdata.length - 1].accumulativeDiagnosis,
+          Healthrate: parseFloat(
+            kdata[kdata.length - 1].accumulativeHeath /
+              kdata[kdata.length - 1].accumulativeDiagnosis
+          ).toFixed(4),
+          Deathrate: parseFloat(
+            kdata[kdata.length - 1].accumulativeDeath /
+              kdata[kdata.length - 1].accumulativeDiagnosis
+          ).toFixed(4)
         });
+      }
+      arry = arry.sort(function(a, b) {
+        return a.Diagnosis > b.Diagnosis ? -1 : 1;
+      });
+
+      for (var i = 0; i < arry.length; i++) {
+        this.mergcomputmap.set(arry[i].City, arry[i]);
       }
     },
     setserierdata: function() {
@@ -238,8 +250,8 @@ export default {
               mergd.Diagnosis,
               mergd.Healthrate,
               mergd.Deathrate,
-              migrd.Inrate,
-              migrd.Outrate,
+              migrd.allrate,
+
               hospd[0].hospital,
               hospd[0].outpatient,
               popul[0].population
@@ -249,7 +261,7 @@ export default {
         this.seriesdata.push(serie);
         cActivity.push({
           name: citys[i],
-          value: (parseFloat(migrd.Inrate) + parseFloat(migrd.Outrate)) / 2
+          value: parseFloat(migrd.allrate) / 2
         });
       }
       this.$store.commit("setcityActivity", cActivity);
@@ -295,23 +307,22 @@ export default {
   position: absolute;
   top: 65.1%;
   right: 0.5%;
-  width: 32.0%;
+  width: 32%;
   height: 34%;
   background-color: #30313a;
 }
-.Coordinates-angel{
-
+.Coordinates-angel {
   background: linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) right bottom,
-  linear-gradient(#00faff, #00faff) right bottom;
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
   background-repeat: no-repeat;
   background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
-  0.6rem 0.15rem;
+    0.6rem 0.15rem;
   background-color: rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   /* border:3px solid #ffffff; */
