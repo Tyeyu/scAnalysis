@@ -26,7 +26,7 @@ const store = new Vuex.Store({
     //平行坐标原始数据包括医院门诊数据，人口迁徙数据
     scCoordata: null,
     //时间轴范围
-    timeRange: ["2020-01-21", "2020-03-20"],
+    timeRange: ["2020-01-21", "2020-03-15"],
     vorfeaters: "",
     //医院门诊的图标的经纬度数据
     hosImageData: null,
