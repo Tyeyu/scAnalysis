@@ -192,6 +192,7 @@ export default {
   position: absolute;
   left: 25.9%;
   top: 50%;
+  z-index: 3;
 }
 #play .el-icon-video-play,
 .el-icon-video-pause {
@@ -203,6 +204,7 @@ export default {
   top: 56%;
   width: 70%;
   height: 5%;
+  z-index: 3;
   /* border: 1px solid black; */
 }
 #timeLine .selection {

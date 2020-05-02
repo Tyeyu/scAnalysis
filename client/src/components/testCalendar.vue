@@ -62,7 +62,7 @@ export default {
         .attr("width", this.svgwidth)
         .attr("height", this.svgheight);
       var height = this.svgwidth / 100;
-      console.log(height);
+      // console.log(height);
       var incityg = svg.append("g");
       incityg
         .selectAll("text")

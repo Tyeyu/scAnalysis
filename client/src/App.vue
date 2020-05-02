@@ -12,6 +12,10 @@
           <AddedDaily />
           <Relationship />
           <PCooordinates />
+          <test></test>
+
+          <maptool></maptool>
+          <timeline></timeline>
         </el-tab-pane>
         <el-tab-pane label="抗压力分析" name="second">
           抗压力分析
@@ -24,15 +28,11 @@
     </div>
 
     <!-- <voronoichart></voronoichart> -->
-    <test></test>
     <mapview></mapview>
-    <maptool></maptool>
-    <timeline></timeline>
   </div>
 </template>
 
 <script>
-
 //import mapview from "./components/MapView";
 import madeup from "./components/MadeUp";
 import groupbar from "./components/GroupBar";
@@ -89,30 +89,29 @@ export default {
     }
   }
 };
-
 </script>
 
 <style>
-  body {
-    background-color: #13142a;
-    opacity: 0.5;
-  }
-  #app {
-    width: 100%;
-    height: 100%;
-  }
-  .el-tabs__item{
-    color:aliceblue
-  }
-  .el-tabs__content {
-    overflow: auto !important;
-    position: unset !important;
-  }
-  .el-tabs__header {
-    width: 24%;
-    padding-top: 2% !important;
-  }
-  .eltabs {
-    padding-top: 0.5%;
-  }
+body {
+  background-color: #13142a;
+  opacity: 0.5;
+}
+#app {
+  width: 100%;
+  height: 100%;
+}
+.el-tabs__item {
+  color: aliceblue;
+}
+.el-tabs__content {
+  overflow: auto !important;
+  position: unset !important;
+}
+.el-tabs__header {
+  width: 24%;
+  padding-top: 2% !important;
+}
+.eltabs {
+  padding-top: 0.5%;
+}
 </style>

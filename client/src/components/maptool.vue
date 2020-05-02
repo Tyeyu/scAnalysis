@@ -179,6 +179,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   font-family: sans-serif;
   font-size: 12;
+  z-index: 3;
 }
 /* .el-menu-vertical{
   border: 1px solid white;
