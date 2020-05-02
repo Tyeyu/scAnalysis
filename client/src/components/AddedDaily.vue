@@ -40,7 +40,7 @@ export default {
           trigger: "axis"
         },
         legend: {
-          data: ["确诊", "死亡", "治愈"],
+          data: ["确诊", "治愈", "死亡"],
           textStyle: {
           color: "#ffffff"
         },
