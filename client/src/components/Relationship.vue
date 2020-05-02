@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div id="Relation" class="Relationship-angel"></div>
+    <div id="Relation" class="Relationship-angel">
+      <div>
+        <span>病人时间</span>
+      </div>
+    </div>
     <div id="Rtooltip"></div>
   </div>
 </template>
@@ -63,7 +67,7 @@ export default {
       let that = this;
       this.chartSvgwidth = document.getElementById("Relation").clientWidth - 10;
       this.chartSVgheight =
-        document.getElementById("Relation").clientHeight - 10;
+        document.getElementById("Relation").clientHeight - 30;
 
       // this.data=
     },
@@ -531,6 +535,10 @@ export default {
 <style>
 #Relation .axis path {
   stroke: white;
+}
+#Relation span {
+  color: white;
+  font: 18px "Microsoft YaHei";
 }
 #Relation {
   position: absolute;

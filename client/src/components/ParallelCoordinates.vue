@@ -1,5 +1,10 @@
 <template>
-  <div id="Coordinates" class="Coordinates-angel"></div>
+  <div id="Coordinates" class="Coordinates-angel">
+    <div>
+      <span>相关因素</span>
+    </div>
+    <div id="CoorEcharts"></div>
+  </div>
 </template>
 <script>
 //平行坐标图
@@ -25,7 +30,7 @@ export default {
   methods: {
     initchart: function() {
       let that = this;
-      var echartDom = document.getElementById("Coordinates");
+      var echartDom = document.getElementById("CoorEcharts");
       //初始化
       var myChart = echarts.init(echartDom);
 
@@ -231,9 +236,8 @@ export default {
         });
       }
       arry = arry.sort(function(a, b) {
-        return a.Diagnosis > b.Diagnosis ? -1 : 1;
+        return parseInt(a.Diagnosis) > parseInt(b.Diagnosis) ? 1 : -1;
       });
-
       for (var i = 0; i < arry.length; i++) {
         if (arry[i].City != "") this.citys.push(arry[i].City);
         this.mergcomputmap.set(arry[i].City, arry[i]);
@@ -313,6 +317,10 @@ export default {
 };
 </script>
 <style>
+#Coordinates span {
+  color: white;
+  font: 18px "Microsoft YaHei";
+}
 #Coordinates {
   position: absolute;
   top: 65.1%;
@@ -320,6 +328,10 @@ export default {
   width: 32%;
   height: 34%;
   background-color: #30313a;
+}
+#CoorEcharts {
+  width: 100%;
+  height: 90%;
 }
 .Coordinates-angel {
   background: linear-gradient(#00faff, #00faff) left top,
