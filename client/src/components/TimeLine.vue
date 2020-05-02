@@ -1,6 +1,7 @@
 <template>
   <div>
     <div>
+      <div id="playText"></div>
       <el-button id="play" size="medium" v-bind:icon="playicon" circle @click="playclick"></el-button>
     </div>
 
@@ -45,12 +46,22 @@ export default {
                 that.playstart,
                 that.playend + that.playlen
               ]);
-            that.$store.commit("settimeRange", [
-              that.interval.round(that.xscale.invert(that.playstart)),
+
+            var Sdate = that.dateFormat(
+              "YYYY-mm-dd",
+              that.interval.round(that.xscale.invert(that.playstart))
+            );
+            var Edate = that.dateFormat(
+              "YYYY-mm-dd",
               that.interval.round(
                 that.xscale.invert(that.playend + that.playlen)
               )
-            ]);
+            );
+            that.$store.commit("settimeRange", [Sdate, Edate]);
+            d3.select("#playText")
+              .style("display", "inline")
+              .html(Sdate + "-" + Edate);
+
             that.playend += that.playlen;
           } else {
             if (that.playend + that.playlen >= that.svgWidth && !clicked) {
@@ -60,6 +71,7 @@ export default {
           }
         }, 3000);
       } else {
+        d3.select("#playText").style("display", "none");
         this.playicon = "el-icon-video-play";
         this.playcheck = false;
         this.$store.commit("setplaycheck", this.playcheck);
@@ -198,6 +210,12 @@ export default {
 .el-icon-video-pause {
   font-size: 20px;
 }
+#playText {
+  position: absolute;
+  left: 29%;
+  top: 50.5%;
+  z-index: 3;
+}
 #timeLine {
   position: absolute;
   left: 25.9%;
@@ -210,6 +228,7 @@ export default {
 #timeLine .selection {
   fill: aqua;
 }
+#playText,
 #timeLineText {
   position: absolute;
   display: none;
