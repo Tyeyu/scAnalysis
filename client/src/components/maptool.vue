@@ -20,10 +20,10 @@ export default {
       contrls1: [
         { name: "累计确诊", id: "contours" },
         { name: "现有确诊", id: "exist" },
-        { name: "新增确诊", id: "newAdd" }
+        { name: "新增确诊", id: "newAdd" },
+        { name: "病例小区", id: "POA" },
       ],
       contrls2: [
-        { name: "病例小区", id: "POA" },
         { name: "医院定点", id: "hospitalImage" },
         { name: "发热门诊", id: "clinic" },
         { name: "医院覆盖范围", id: "voronoi-outline" }
