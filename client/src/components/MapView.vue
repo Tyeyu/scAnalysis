@@ -163,7 +163,7 @@ export default {
       this.map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v9",
-        center: [101.9199, 30.1904],
+        center: [99.031472,26.515927],
         zoom: 5
       });
       //修改语言

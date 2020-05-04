@@ -2,28 +2,11 @@
   <div>
     <div id="mapcontrl">
       <el-checkbox-group v-model="checkedcontrls" @change="handleCheckedcontrlsChange">
-        <el-menu class="el-menu-vertical" background-color="#545c64" text-color="#fff">
-          <el-submenu index="1">
-            <template slot="title">确诊</template>
-            <el-menu-item-group>
               <el-checkbox v-for="cont in contrls1" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">小区/医院</template>
-            <el-menu-item-group>
+              <el-divider></el-divider>
               <el-checkbox v-for="cont in contrls2" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="3">
-            <template slot="title">
-              <span>人口</span>
-            </template>
-            <el-menu-item-group>
+              <el-divider></el-divider>
               <el-checkbox v-for="cont in contrls3" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
-            </el-menu-item-group>
-          </el-submenu>
-        </el-menu>
       </el-checkbox-group>
     </div>
     <div id="ColorCard"></div>
@@ -37,10 +20,10 @@ export default {
       contrls1: [
         { name: "累计确诊", id: "contours" },
         { name: "现有确诊", id: "exist" },
-        { name: "新增确诊", id: "newAdd" }
+        { name: "新增确诊", id: "newAdd" },
+        { name: "病例小区", id: "POA" },
       ],
       contrls2: [
-        { name: "病例小区", id: "POA" },
         { name: "医院定点", id: "hospitalImage" },
         { name: "发热门诊", id: "clinic" },
         { name: "医院覆盖范围", id: "voronoi-outline" }
@@ -57,7 +40,7 @@ export default {
     };
   },
   mounted() {
-    // this.drawColorCard();
+    this.drawColorCard();
   },
   methods: {
     handleCheckedcontrlsChange: function(val) {
@@ -126,9 +109,6 @@ export default {
           inRange: {
             colorLightness: [1, 0.5]
           },
-          // outOfRange: {
-          //   color: ["red"]
-          // },
           controller: {
             inRange: {
               color: ["cyan"]
@@ -172,30 +152,31 @@ export default {
   padding-top: 0pt;
   top: 5.5%;
   width: 6%;
-  height: 40%;
+  height: 22%;
+  opacity: 80%;
   /* border: 1px solid white; */
-  /* background-color: #30313a; */
+  background-color: #30313a;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: sans-serif;
   font-size: 12;
   z-index: 3;
 }
-/* .el-menu-vertical{
-  border: 1px solid white;
-} */
+
+.el-divider--horizontal {
+  margin: 5px 0;
+}
 .el-checkbox {
   color: aliceblue;
 }
-.el-menu-item-group__title {
-  padding: 0px 0 0px 0px;
-}
+
 #ColorCard {
   position: absolute;
-  left: 30%;
+  z-index: 100;
+  left: 95%;
   padding-left: 5pt;
   padding-top: 10pt;
-  top: 5%;
+  top: 35%;
   width: 8.2%;
   height: 20%;
   filter: invert(1);
