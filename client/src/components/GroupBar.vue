@@ -102,11 +102,11 @@ export default {
   name: "groupbar",
   data() {
     return {
-      regionData: null,
-      localData: null,
-      inputData: null,
-      percentData: null,
-      unknownData: null,
+      region: null,
+      stage1: null,
+      stage2: null,
+      percent: null,
+
       chart: null,
       now_confirmed: null,
       acc_confirmed: null,
@@ -116,7 +116,9 @@ export default {
       panel_info: {},
       chart_data: {},
       datastore: [], //sort data container
-      placesort: []
+      placesort: [],
+      construct_citydaily_data: {},
+      is_construct_citydaily_data: 0
     };
   },
   mounted() {
@@ -126,24 +128,16 @@ export default {
   methods: {
     chartInit() {
       let that = this;
-      var myChart = echarts.init(document.getElementById("gpbar"));
-      var option = {
-        // color:['#5b7fa7','#508da3','#a5def1','ffffff'],
-        color: [
-          "#96FFC2",
-          "#dd6b66",
-          "#B3303A",
-          "#E69D87",
-          "#8DC1A9",
-          "#EA7E53",
-          "#EEDD78",
-          "#73A373",
-          "#759AA0",
-          "#7289AB",
-          "#91CA8C",
-          "#F49F42",
-          "#FFFFFF"
-        ],
+      let myChart = echarts.init(document.getElementById("gpbar"));
+      let displaycount = 11;
+
+      let _chart_data = {
+        'region': that.chart_data.region.filter((d,i) => {if(i < displaycount){return 1;} else if (i >= displaycount){return 0;}}),
+        'stage1': that.chart_data.stage1.filter((d,i) => {if(i < displaycount){return 1;} else if (i >= displaycount){return 0;}}),
+        'stage2': that.chart_data.stage2.filter((d,i) => {if(i < displaycount){return 1;} else if (i >= displaycount){return 0;}})
+      }
+
+      let option = {
         textStyle: {
           color: "#ffffff"
         },
@@ -155,7 +149,7 @@ export default {
           }
         },
         legend: {
-          data: ["本地发展阶段", "输入阶段", "境外输入阶段"],
+          data: ["本地发展期", "输入期"],
           left: "right",
           top: "bottom",
           orient: "vertical",
@@ -168,7 +162,7 @@ export default {
           right: "30%",
           bottom: "0%",
           top: "0%",
-          height: "180%",
+          height: "100%",
           containLabel: true
         },
         xAxis: {
@@ -176,7 +170,7 @@ export default {
         },
         yAxis: {
           type: "category",
-          data: that.chart_data.region,
+          data: _chart_data.region,
           position: 'right',
           offset: -10,
           axisLabel: {
@@ -191,37 +185,32 @@ export default {
         },
         series: [
           {
-            name: "本地发展阶段",
+            name: "输入期",
             type: "bar",
             stack: "总量",
             barWidth: "90%",
+            itemStyle: {
+              color: 'grey'
+            },
             label: {
               show: false,
               position: "insideRight"
             },
-            data: that.chart_data.local
+            data: _chart_data.stage1
           },
           {
-            name: "输入阶段",
+            name: "本地发展期",
             type: "bar",
             stack: "总量",
             barWidth: "90%",
+            itemStyle: {
+              color: 'white'
+            },
             label: {
               show: false,
               position: "insideRight"
             },
-            data: that.chart_data.input
-          },
-          {
-            name: "境外输入阶段",
-            type: "bar",
-            stack: "总量",
-            barWidth: "90%",
-            label: {
-              show: false,
-              position: "insideRight"
-            },
-            data: that.chart_data.unknown
+            data: _chart_data.stage2
           }
         ]
       };
@@ -235,23 +224,23 @@ export default {
       }
       let data = [];
 
-      for (let i = this.chart_data.region.length - 1; i >= 0; i--) {
+      for (let i = 10; i >= 0; i--) {
         data.push({
           region: this.chart_data.region[i],
-          type: "本地发展阶段",
-          count: that.chart_data.local[i]
+          type: "输入期",
+          count: that.chart_data.stage1[i]
         });
         data.push({
           region: this.chart_data.region[i],
-          type: "输入阶段",
-          count: that.chart_data.input[i]
+          type: "本地发展期",
+          count: that.chart_data.stage2[i]
         });
       }
 
       that.chart = new G2.Chart({
         container: "facet",
         padding: [0, 0, 0, 0],
-        height: 1.7 * document.getElementById("facet").offsetHeight,
+        height: document.getElementById("facet").offsetHeight,
         width: document.getElementById("facet").offsetWidth
       });
 
@@ -261,7 +250,7 @@ export default {
         showTitle: false
       });
       that.chart.coord("theta", {
-        radius: 0.8
+        radius: 0.7
       });
 
       that.chart.facet("list", {
@@ -292,7 +281,7 @@ export default {
           view
             .interval()
             .position("percent")
-            .color("type", ["#d21222", "#dd6b66"])
+            .color("type", ["grey", "white"])
             .adjust("stack");
         }
       });
@@ -351,6 +340,7 @@ export default {
       this.infopanel_title = "四川省截止至 " + this.timeRange[1];
     },
     datachange: function(newval) {
+      let that = this;
       let _region = Array.from(
         new Set(
           newval.map((d, i) => {
@@ -358,15 +348,9 @@ export default {
           })
         )
       );
+
       this.placesort = _region;
 
-      var citydata = {
-        region: _region,
-        local: Array.apply(null, Array(_region.length)).map(() => 0),
-        input: Array.apply(null, Array(_region.length)).map(() => 0),
-        percent: Array.apply(null, Array(_region.length)).map(() => 0),
-        unknown: Array.apply(null, Array(_region.length)).map(() => 0)
-      };
 
       var timerange = [
         new Date(this.$store.getters.gettimeRange[0]),
@@ -374,93 +358,127 @@ export default {
       ];
 
       var playcheck = this.$store.getters.getplaycheck;
-
-      for (var i = 0; i < newval.length; i++) {
-        var times = new Date(newval[i].diagnosisTime);
-        if (times.getTime() <= timerange[1].getTime()) {
-          if (playcheck) {
-            for (var k = 0; k < citydata.region.length; k++) {
-              if (
-                newval[i].city == citydata.region[k] &&
-                (newval[i].InfectionType == "二代" ||
-                  newval[i].InfectionType == "第二代" ||
-                  newval[i].InfectionType == "第三代")
-              ) {
-                citydata.local[k]++;
-              } else if (
-                newval[i].city == citydata.region[k] &&
-                (newval[i].InfectionType == "一代" ||
-                  newval[i].InfectionType == "第一代")
-              ) {
-                citydata.input[k]++;
-              } else if (
-                newval[i].city == citydata.region[k] &&
-                newval[i].InfectionType == "不明"
-              ) {
-                citydata.unknown[k]++;
-              }
-              citydata.percent[k] =
-                citydata.local[k] / (citydata.local[k] + citydata.input[k]);
-            }
-          } else {
-            if (times.getTime() >= timerange[0].getTime()) {
-              for (var k = 0; k < citydata.region.length; k++) {
-                if (
-                  newval[i].city == citydata.region[k] &&
-                  (newval[i].InfectionType == "二代" ||
-                    newval[i].InfectionType == "第二代" ||
-                    newval[i].InfectionType == "第三代")
-                ) {
-                  citydata.local[k]++;
-                } else if (
-                  newval[i].city == citydata.region[k] &&
-                  (newval[i].InfectionType == "一代" ||
-                    newval[i].InfectionType == "第一代")
-                ) {
-                  citydata.input[k]++;
-                } else if (
-                  newval[i].city == citydata.region[k] &&
-                  newval[i].InfectionType == "不明"
-                ) {
-                  citydata.unknown[k]++;
-                }
-                citydata.percent[k] =
-                  citydata.local[k] / (citydata.local[k] + citydata.input[k]);
-              }
-            }
-          }
+      
+      if(this.is_construct_citydaily_data == 0){
+        Date.prototype.addDays = function(days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
         }
+        
+        let generate_timecircle_mark = 1,
+          start_time = timerange[0],
+          end_time = timerange[1],
+          circle_time = timerange[0]
+
+        //construct container structure
+        while(generate_timecircle_mark){
+          if(circle_time.getTime() == end_time.getTime()){
+            generate_timecircle_mark = 0
+          }
+          
+          let year = '2020',
+            month = circle_time.getMonth(),
+            day = circle_time.getDate(),
+            date = that.yyyymmdd(year + '-' + month + '-' + day)
+            if(!(date in that.construct_citydaily_data)){
+              that.construct_citydaily_data[date] = {}
+            }
+          circle_time = circle_time.addDays(1)
+        }
+        //filter useless city '' & '境外输入'
+        let new_val = newval.filter((d,i) => {
+          if(d.city == '' || d.city == '境外输入'){
+            return 0;
+          }else{
+            return 1;
+            }
+        })
+
+        //fill the container with cycle
+        let last_accmulativeDiagnosis = {},
+          divide_time = new Date('2020-02-06'),
+          divide_city_time_stage1 = {}
+
+        new_val.forEach(function(d,i){
+          let _date = function(){return new Date('2020-' + d.date.split('月')[0] + '-' + d.date.split('月')[1].split('日')[0])}(),
+            _date_str = that.yyyymmdd(_date),
+            _city = d.city
+          //划分时间 以2月7日(不包括2月7日)为界限，2月7日以前的是输入期，2月7日后为本地发展阶段
+            if(!(_date_str in last_accmulativeDiagnosis)){
+              last_accmulativeDiagnosis[_date_str] = {}
+            }
+            last_accmulativeDiagnosis[_date_str][_city] = {}
+
+          if (that.yyyymmdd(_date) == that.yyyymmdd(divide_time)){
+            // 2020-02-06 -> 
+            // store the accmulativeDiagnosis
+              last_accmulativeDiagnosis[_date_str][_city]['stage1'] = +d.accumulativeDiagnosis
+              last_accmulativeDiagnosis[_date_str][_city]['stage2'] = 0
+              divide_city_time_stage1[_city] = +d.accumulativeDiagnosis              
+          }
+
+          if(_date.getTime() < divide_time.getTime()){
+              last_accmulativeDiagnosis[_date_str][_city]['stage1'] = +d.accumulativeDiagnosis
+              // input period
+              last_accmulativeDiagnosis[_date_str][_city]['stage2'] = 0
+              // local development period
+          } 
+          else if (_date.getTime() > divide_time.getTime()){
+            // after 2020-02-06
+              last_accmulativeDiagnosis[_date_str][_city]['stage1'] = divide_city_time_stage1[_city]
+              last_accmulativeDiagnosis[_date_str][_city]['stage2'] = +d.accumulativeDiagnosis - divide_city_time_stage1[_city]
+          }
+        })
+        that.construct_citydaily_data = last_accmulativeDiagnosis
       }
 
+      
+      //todo fill the stage1, stage2, percent
+
+      let _regionlist = Array.from(new Set(Object.keys(that.construct_citydaily_data[that.yyyymmdd(timerange[1])])))  
+
+      let citydata = {
+        region: _regionlist,
+        stage1: _regionlist.map((d,i) => {return that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage1']}),
+        stage2: _regionlist.map((d,i) => {return that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage2']}),
+        percent: _regionlist.map((d,i) => {
+          if(that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage2'] == 0){
+            return 0;
+          }
+          else{
+            return that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage1'] / (that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage1'] + that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage2'] )
+            }
+          })
+      };
+
+
       this.$store.commit("setgroupbardata", citydata);
+      
     },
     dispatchdata: function() {
       let that = this;
       //init
-
       this.chart_data.region = [];
-      this.chart_data.local = [];
-      this.chart_data.input = [];
-      this.chart_data.percent = [];
-      this.chart_data.unknown = [];
+      this.chart_data.stage1 = [];
+      this.chart_data.stage2 = [];
+      this.percent = [];
 
       that.placesort = [];
 
       this.datastore.forEach(function(d, i) {
-        that.chart_data.region.push(d["regionData"]);
-        that.chart_data.local.push(d["localData"]);
-        that.chart_data.input.push(d["inputData"]);
-        that.chart_data.percent.push(d["percentData"]);
-        that.chart_data.unknown.push(d["unknownData"]);
-
-        that.placesort.push(d["regionData"]);
+        that.chart_data.region.push(d['region'])
+        that.chart_data.stage1.push(d['stage1'])
+        that.chart_data.stage2.push(d['stage2'])
+        that.chart_data.percent.push(d['percent'])
+        that.placesort.push(d['region'])
       });
 
       this.chartInit();
       this.chartFacet();
     },
     barchart_sort_ascend() {
-      this.datastore.sort((a, b) =>
+      this.datastore = this.datastore.sort((a, b) =>
         +a.patientsum > +b.patientsum
           ? 1
           : +b.patientsum > +a.patientsum
@@ -481,9 +499,9 @@ export default {
     },
     piechart_sort_ascend() {
       this.datastore = this.datastore.sort((a, b) =>
-        +a.percentData > +b.percentData
+        +a.percent > +b.percent
           ? -1
-          : +b.percentData > +a.percentData
+          : +b.percent > +a.percent
           ? 1
           : 0
       );
@@ -491,9 +509,9 @@ export default {
     },
     piechart_sort_desascend() {
       this.datastore = this.datastore.sort((a, b) =>
-        +a.percentData < +b.percentData
+        +a.percent < +b.percent
           ? -1
-          : +b.percentData < +a.percentData
+          : +b.percent < +a.percent
           ? 1
           : 0
       );
@@ -503,9 +521,6 @@ export default {
   computed: {
     groupbardata() {
       return this.$store.getters.getgroupbardata;
-    },
-    ScTrackData() {
-      return this.$store.getters.getscTrackData;
     },
     timeRange() {
       let temp_timeRange = this.$store.getters.gettimeRange;
@@ -527,48 +542,42 @@ export default {
     groupbardata: function(newval, oldval) {
       //图表数据变化后该执行的操作
       let that = this;
-      this.regionData = newval.region;
-      this.localData = newval.local;
-      this.inputData = newval.input;
-      this.percentData = newval.percent;
-      this.unknownData = newval.unknown;
-      this.placesort = newval.region;
+      this.region = newval.region;
+      this.stage1 = newval.stage1;
+      this.stage2 = newval.stage2;
+      this.percent = newval.percent;
 
       this.chart_data = {
         region: newval.region,
-        local: newval.local,
-        input: newval.input,
-        percent: newval.percent,
-        unknown: newval.unknown
-      };
+        stage1: newval.stage1,
+        stage2: newval.stage2,
+        percent: newval.percent
+      }
+      
 
       this.chartInit();
       this.chartFacet();
       this.datastore = [];
 
       for (let i = 0; i < newval.region.length; i++) {
-        let patientsum =
-          newval["local"][i] + newval["input"][i] + newval["unknown"][i];
+        let patientsum = newval['stage1'][i] + newval['stage2'][i];
         this.datastore.push({
-          regionData: newval["region"][i],
-          localData: newval["local"][i],
-          inputData: newval["input"][i],
-          percentData: newval["percent"][i],
-          unknownData: newval["unknown"][i],
-          local: newval["local"][i],
-          input: newval["input"][i],
+          region: newval['region'][i],
+          stage1: newval['stage1'][i],
+          stage2: newval['stage2'][i],
+          percent: newval['percent'][i],
           patientsum: patientsum
         });
       }
     },
+
     timeRange: function(newval, oldval) {
       this.updateInfoPanel();
-      this.datachange(this.$store.getters.getscTrackData);
+      this.datachange(this.$store.getters.getscMergerData);
     },
-    ScTrackData: function(newval, oldval) {
-      this.datachange(newval);
-    },
+
     scMergerData: function(newval, oldVal) {
+      this.datachange(newval)
       this.create_raw_paneldata(newval);
       this.create_raw_chartdata(newval);
     }
@@ -594,7 +603,7 @@ export default {
   float: left;
 }
 #facet {
-  height: 72%;
+  height: 67%;
   width: 20%;
   float: left;
   position: relative;
@@ -639,7 +648,6 @@ export default {
   background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
     0.6rem 0.15rem;
   background-color: rgba(255, 255, 255, 0.05);
-  white-space: nowrap;
   /* border:3px solid #ffffff; */
 
   margin: 0.1% 0 0 0.1%;
