@@ -2,6 +2,21 @@
   <div id="Coordinates" class="Coordinates-angel">
     <div>
       <span>相关因素</span>
+      <p>确诊人数排序</p>
+      <div style="transform: translate(120%, 20%); float:left"> 
+        <el-button 
+          size="mini" 
+          icon="el-icon-caret-top" 
+          circle 
+          @click="seriesdata_sort_ascend()" 
+          style="background:#212232; color:white; border: 0px"></el-button>
+        <el-button 
+          size="mini" 
+          icon="el-icon-caret-bottom" 
+          circle 
+          @click="seriesdata_sort_desascend()" 
+          style="background:#212232; color:white; border: 0px"></el-button>
+      </div>
     </div>
     <div id="CoorEcharts"></div>
   </div>
@@ -20,6 +35,8 @@ export default {
         }
       },
       seriesdata: null,
+      seriesdataStore: null,
+      sortedNum: 10,
       hospitalmap: null,
       migraComputmap: null,
       mergcomputmap: null,
@@ -253,6 +270,7 @@ export default {
     setserierdata: function() {
       //封装数据
       this.seriesdata = [];
+      this.seriesdataStore = [];
       var citys = this.citys;
       var cActivity = []; //活跃度数据
       for (var i = 0; i < citys.length; i++) {
@@ -281,12 +299,46 @@ export default {
               hospd[0].outpatient,
               popul[0].population
             ]
-          ]
+          ],
+          diagnosis: +mergd.Diagnosis
         };
         this.seriesdata.push(serie);
+        this.seriesdataStore.push(serie);
       }
+      
       this.$store.commit("setcityActivity", cActivity);
+      
       // console.log(this.seriesdata);
+    },
+    seriesdata_sort_ascend: function() {
+      let that = this;
+      this.seriesdataStore.sort(function(a,b){
+        return a.diagnosis - b.diagnosis
+      })
+      this.seriesdata = []
+      this.seriesdata = this.seriesdataStore.filter(function(d,i){
+        if(i <= that.sortedNum){
+          return 1;
+        } else if(i > that.sortedNum){
+          return 0;
+        }
+      }).reverse()
+      this.initchart()
+    },
+    seriesdata_sort_desascend: function() {
+      let that = this;
+      this.seriesdataStore.sort(function(a,b){
+        return b.diagnosis - a.diagnosis
+      })
+      this.seriesdata = []
+      this.seriesdata = this.seriesdataStore.filter(function(d,i){
+        if(i <= that.sortedNum){
+          return 1;
+        } else if(i > that.sortedNum){
+          return 0;
+        }
+      })
+      this.initchart()
     }
   },
   mounted() {},
@@ -327,6 +379,7 @@ export default {
 #Coordinates span {
   color: white;
   font: 18px "Microsoft YaHei";
+  float: left;
 }
 #Coordinates {
   position: absolute;
@@ -336,9 +389,16 @@ export default {
   height: 34%;
   background-color: #30313a;
 }
+#Coordinates p {
+  color: white;
+  font: 12px "Microsoft YaHei";
+  float: left;
+  transform: translate(100%, -10%)
+}
 #CoorEcharts {
   width: 100%;
   height: 90%;
+  padding-top: 5%;
 }
 .Coordinates-angel {
   background: linear-gradient(#00faff, #00faff) left top,
