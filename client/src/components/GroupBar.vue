@@ -295,11 +295,12 @@ export default {
     create_raw_paneldata(scmergedata) {
       let that = this;
       scmergedata.forEach((d, i) => {
-        if (d.type == "省级") {
+
           let year = "2020",
             month = d.date.split("月")[0],
             day = d.date.split("月")[1].split("日")[0],
-            date = that.yyyymmdd(year + "-" + month + "-" + day);
+            date = that.yyyymmdd(year + "-" + month + "-" + day),
+            city = d.type == '地区级' ? d.city : d.type
 
           let accumulativeDiagnosis = +d.accumulativeDiagnosis,
             accumulativeHeath = +d.accumulativeHeath,
@@ -307,15 +308,21 @@ export default {
             nowDiagnosis = (accumulativeDiagnosis - accumulativeHeath - accumulativeDeath) < 0 ? 0 : (accumulativeDiagnosis - accumulativeHeath - accumulativeDeath);
           if (!(date in that.panel_info)) {
             that.panel_info[date] = {};
-            that.panel_info[date]["now_confirmed"] = nowDiagnosis;
-            that.panel_info[date]["acc_confirmed"] = accumulativeDiagnosis;
-            that.panel_info[date]["acc_dead"] = accumulativeDeath;
-            that.panel_info[date]["acc_cure"] = accumulativeHeath;
+              that.panel_info[date][city] = {};
+              that.panel_info[date][city]["now_confirmed"] = nowDiagnosis;
+              that.panel_info[date][city]["acc_confirmed"] = accumulativeDiagnosis;
+              that.panel_info[date][city]["acc_dead"] = accumulativeDeath;
+              that.panel_info[date][city]["acc_cure"] = accumulativeHeath;
+          } else {
+              that.panel_info[date][city] = {};
+              that.panel_info[date][city]["now_confirmed"] = nowDiagnosis;
+              that.panel_info[date][city]["acc_confirmed"] = accumulativeDiagnosis;
+              that.panel_info[date][city]["acc_dead"] = accumulativeDeath;
+              that.panel_info[date][city]["acc_cure"] = accumulativeHeath;
           }
-        }
       });
 
-      this.updateInfoPanel();
+      this.updateInfoPanel('省级');
     },
     yyyymmdd(str){
       let x = ''
@@ -334,12 +341,19 @@ export default {
       return yyyymmdd;
     },
     create_raw_chartdata(scmergedata) {},
-    updateInfoPanel() {
-
-      this.now_confirmed = this.panel_info[this.timeRange[1]].now_confirmed
-      this.acc_confirmed = this.panel_info[this.timeRange[1]].acc_confirmed
-      this.acc_dead = this.panel_info[this.timeRange[1]].acc_dead
-      this.acc_cure = this.panel_info[this.timeRange[1]].acc_cure
+    updateInfoPanel(city) {
+      
+      if(city in this.panel_info[this.timeRange[1]]){
+        this.now_confirmed = this.panel_info[this.timeRange[1]][city].now_confirmed
+        this.acc_confirmed = this.panel_info[this.timeRange[1]][city].acc_confirmed
+        this.acc_dead = this.panel_info[this.timeRange[1]][city].acc_dead
+        this.acc_cure = this.panel_info[this.timeRange[1]][city].acc_cure
+      } else {
+        this.now_confirmed = 0
+        this.acc_confirmed = 0
+        this.acc_dead = 0
+        this.acc_cure = 0
+      }
 
       this.infopanel_title = "四川省截止至 " + this.timeRange[1];
     },
@@ -435,9 +449,9 @@ export default {
           }
         })
         that.construct_citydaily_data = last_accmulativeDiagnosis
+        console.log('construct_citydaily_data', that.construct_citydaily_data)
       }
 
-      
       //todo fill the stage1, stage2, percent
 
       let _regionlist = Array.from(new Set(Object.keys(that.construct_citydaily_data[that.yyyymmdd(timerange[1])])))  
@@ -455,7 +469,6 @@ export default {
             }
           })
       };
-
 
       this.$store.commit("setgroupbardata", citydata);
       
@@ -539,6 +552,9 @@ export default {
     },
     scMergerData() {
       return this.$store.getters.getscMergerData;
+    },
+    selectedCity() {
+      return this.$store.getters.getmergerCity;
     }
   },
   watch: {
@@ -576,7 +592,7 @@ export default {
     },
 
     timeRange: function(newval, oldval) {
-      this.updateInfoPanel();
+      this.updateInfoPanel('省级');
       this.datachange(this.$store.getters.getscMergerData);
     },
 
@@ -584,6 +600,10 @@ export default {
       this.datachange(newval)
       this.create_raw_paneldata(newval);
       this.create_raw_chartdata(newval);
+    },
+
+    selectedCity: function(newval, oldVal){
+      this.updateInfoPanel(newval);
     }
   }
 };
@@ -602,11 +622,11 @@ export default {
   height: 15%;
 }
 #groupbar_mark {
-  height: 5%;
+  height: 8%;
 }
 #groupby_sort {
   height: 10%;
-  padding-top: 90%;
+  padding-top: 83%;
 }
 #groupbar_mark span{
   color: white;
@@ -618,12 +638,12 @@ export default {
   padding-top: 2%;
 }
 #gpbar {
-  height: 70%;
+  height: 67%;
   width: 80%;
   float: left;
 }
 #facet {
-  height: 67%;
+  height: 65%;
   width: 20%;
   float: left;
   position: relative;
