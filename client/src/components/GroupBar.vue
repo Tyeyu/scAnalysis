@@ -32,7 +32,13 @@
           </div>
         </el-col>
       </el-row>
-
+    </div>
+    <div id="groupbar_mark">
+      <span>地区排行</span>
+    </div>
+    <div id="facet"></div>
+    <div id="gpbar"></div>
+    <div id="groupby_sort">
       <el-row :gutter="20" class="chartinfo">
         <el-col :span="12">
           <div style="padding-left:25%">
@@ -43,14 +49,14 @@
             <div style="transform:translate(50%, -150%)">
               <el-button
                 size="mini"
-                icon="el-icon-caret-top"
+                icon="el-icon-caret-bottom"
                 circle
                 @click="piechart_sort_ascend()"
-                style="background:#212232; color:white; border: 0px"
+                style="background:#212232; color:white; border: 0px;"
               ></el-button>
               <el-button
                 size="mini"
-                icon="el-icon-caret-bottom"
+                icon="el-icon-caret-top"
                 circle
                 @click="piechart_sort_desascend()"
                 style="background:#212232; color:white; border: 0px; transform:translate(-50%, 0)"
@@ -69,14 +75,15 @@
             <div style="transform:translate(60%, -150%)">
               <el-button
                 size="mini"
-                icon="el-icon-caret-top"
+                icon="el-icon-caret-bottom"
                 circle
                 @click="barchart_sort_ascend()"
                 style="background:#212232; color:white; border: 0px"
               ></el-button>
+
               <el-button
                 size="mini"
-                icon="el-icon-caret-bottom"
+                icon="el-icon-caret-top"
                 circle
                 @click="barchart_sort_desascend()"
                 style="background:#212232; color:white; border: 0px; transform:translate(-50%, 0)"
@@ -86,9 +93,6 @@
         </el-col>
       </el-row>
     </div>
-
-    <div id="facet"></div>
-    <div id="gpbar"></div>
   </div>
 </template>
 
@@ -118,7 +122,8 @@ export default {
       datastore: [], //sort data container
       placesort: [],
       construct_citydaily_data: {},
-      is_construct_citydaily_data: 0
+      is_construct_citydaily_data: 0,
+      limit_draw_item: 10
     };
   },
   mounted() {
@@ -129,12 +134,11 @@ export default {
     chartInit() {
       let that = this;
       let myChart = echarts.init(document.getElementById("gpbar"));
-      let displaycount = 11;
 
       let _chart_data = {
-        'region': that.chart_data.region.filter((d,i) => {if(i < displaycount){return 1;} else if (i >= displaycount){return 0;}}),
-        'stage1': that.chart_data.stage1.filter((d,i) => {if(i < displaycount){return 1;} else if (i >= displaycount){return 0;}}),
-        'stage2': that.chart_data.stage2.filter((d,i) => {if(i < displaycount){return 1;} else if (i >= displaycount){return 0;}})
+        'region': that.chart_data.region.filter((d,i) => {if(i <= that.limit_draw_item){return 1;} else if (i > that.limit_draw_item){return 0;}}).reverse(),
+        'stage1': that.chart_data.stage1.filter((d,i) => {if(i <= that.limit_draw_item){return 1;} else if (i > that.limit_draw_item){return 0;}}).reverse(),
+        'stage2': that.chart_data.stage2.filter((d,i) => {if(i <= that.limit_draw_item){return 1;} else if (i > that.limit_draw_item){return 0;}}).reverse()
       }
 
       let option = {
@@ -224,7 +228,7 @@ export default {
       }
       let data = [];
 
-      for (let i = 10; i >= 0; i--) {
+      for (let i = 0; i <= this.limit_draw_item; i++) {
         data.push({
           region: this.chart_data.region[i],
           type: "输入期",
@@ -447,7 +451,7 @@ export default {
             return 0;
           }
           else{
-            return that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage1'] / (that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage1'] + that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage2'] )
+            return that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage2'] / (that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage1'] + that.construct_citydaily_data[that.yyyymmdd(timerange[1])][d]['stage2'] )
             }
           })
       };
@@ -479,16 +483,6 @@ export default {
     },
     barchart_sort_ascend() {
       this.datastore = this.datastore.sort((a, b) =>
-        +a.patientsum > +b.patientsum
-          ? 1
-          : +b.patientsum > +a.patientsum
-          ? -1
-          : 0
-      );
-      this.dispatchdata();
-    },
-    barchart_sort_desascend() {
-      this.datastore = this.datastore.sort((a, b) =>
         +a.patientsum < +b.patientsum
           ? 1
           : +b.patientsum < +a.patientsum
@@ -497,11 +491,21 @@ export default {
       );
       this.dispatchdata();
     },
+    barchart_sort_desascend() {
+      this.datastore = this.datastore.sort((a, b) =>
+        +a.patientsum > +b.patientsum
+          ? 1
+          : +b.patientsum > +a.patientsum
+          ? -1
+          : 0
+      );
+      this.dispatchdata();
+    },
     piechart_sort_ascend() {
       this.datastore = this.datastore.sort((a, b) =>
-        +a.percent > +b.percent
+        +a.percent < +b.percent
           ? -1
-          : +b.percent > +a.percent
+          : +b.percent < +a.percent
           ? 1
           : 0
       );
@@ -509,9 +513,9 @@ export default {
     },
     piechart_sort_desascend() {
       this.datastore = this.datastore.sort((a, b) =>
-        +a.percent < +b.percent
+        +a.percent > +b.percent
           ? -1
-          : +b.percent < +a.percent
+          : +b.percent > +a.percent
           ? 1
           : 0
       );
@@ -593,6 +597,22 @@ export default {
   width: 24.8%;
   height: 56%;
   /* //border: 1px solid #dededd; */
+}
+#groupbar_title{
+  height: 15%;
+}
+#groupbar_mark {
+  height: 5%;
+}
+#groupby_sort {
+  height: 10%;
+  padding-top: 90%;
+}
+#groupbar_mark span{
+  color: white;
+  font: 18px "Microsoft YaHei";
+  float: left;
+  padding-left: 5%;
 }
 .bar-angel {
   padding-top: 2%;
