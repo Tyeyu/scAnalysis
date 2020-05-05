@@ -533,7 +533,7 @@ export default {
               "icon-image": "hospital",
               "icon-size": 0.04,
               visibility: "none"
-            }
+            },
           });
         });
       });
