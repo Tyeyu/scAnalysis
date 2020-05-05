@@ -182,31 +182,31 @@ export default {
         .map(migrations);
       this.migraComputmap = d3.map();
       var migkeys = migraNetsmap.keys();
-      var cxmax = -1;
-      var rxmax = -1;
-      for (var i = 0; i < parseFloat(migkeys.length); i++) {
-        var Inmigration_rate = 0;
-        var Outmigration_rate = 0;
-        var kdata = migraNetsmap.get(migkeys[i]);
-        for (var j = 0; j < parseFloat(kdata.length); j++) {
-          Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
-          Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
-        }
-        Inmigration_rate =
-          100 *
-          parseFloat(
-            parseFloat(Inmigration_rate) / parseFloat(kdata.length)
-          ).toFixed(4);
-        Outmigration_rate =
-          100 *
-          parseFloat(
-            parseFloat(Outmigration_rate) / parseFloat(kdata.length)
-          ).toFixed(4);
-        if (parseFloat(Inmigration_rate) > rxmax)
-          rxmax = parseFloat(Inmigration_rate);
-        if (parseFloat(Outmigration_rate) > cxmax)
-          cxmax = parseFloat(Outmigration_rate);
-      }
+      //var cxmax = -1;
+      // var rxmax = -1;
+      //for (var i = 0; i < parseFloat(migkeys.length); i++) {
+      //  var Inmigration_rate = 0;
+      //  var Outmigration_rate = 0;
+      //  var kdata = migraNetsmap.get(migkeys[i]);
+      // for (var j = 0; j < parseFloat(kdata.length); j++) {
+      //   Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
+      //  Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
+      // }
+      // Inmigration_rate =
+      //   100 *
+      // parseFloat(
+      //   parseFloat(Inmigration_rate) / parseFloat(kdata.length)
+      // ).toFixed(4);
+      //  Outmigration_rate =
+      // 100 *
+      //  parseFloat(
+      //   parseFloat(Outmigration_rate) / parseFloat(kdata.length)
+      // ).toFixed(4);
+      // if (parseFloat(Inmigration_rate) > rxmax)
+      // rxmax = parseFloat(Inmigration_rate);
+      // if (parseFloat(Outmigration_rate) > cxmax)
+      //cxmax = parseFloat(Outmigration_rate);
+      // }
 
       for (var i = 0; i < parseFloat(migkeys.length); i++) {
         var Inmigration_rate = 0;
@@ -216,34 +216,35 @@ export default {
           Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
           Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
         }
-        Inmigration_rate =
-          100 *
-          parseFloat(
-            parseFloat(Inmigration_rate) / parseFloat(kdata.length)
-          ).toFixed(4);
-        Outmigration_rate =
-          100 *
-          parseFloat(
-            parseFloat(Outmigration_rate) / parseFloat(kdata.length)
-          ).toFixed(4);
+        //Inmigration_rate =
+        //  100 *
+        // parseFloat(
+        //   parseFloat(Inmigration_rate) / parseFloat(kdata.length)
+        // ).toFixed(4);
+        //Outmigration_rate =
+        // 100 *
+        //  parseFloat(
+        //   parseFloat(Outmigration_rate) / parseFloat(kdata.length)
+        // ).toFixed(4);
         var rm;
         var cm;
         var rx;
         var cx;
         //console.log(Outmigration_rate);
         // console.log(cxmax);
-        rm = parseFloat(parseFloat(Inmigration_rate) / parseFloat(rxmax));
-        cm = parseFloat(parseFloat(Outmigration_rate) / parseFloat(cxmax));
+        // rm = parseFloat(parseFloat(Inmigration_rate) / parseFloat(rxmax));
+        //cm = parseFloat(parseFloat(Outmigration_rate) / parseFloat(cxmax));
 
-        rx = parseFloat(100 * parseFloat(parseFloat(cm) / parseFloat(rm)));
+        //rx = parseFloat(100 * parseFloat(parseFloat(cm) / parseFloat(rm)));
         // console.log(rx);
-        cx = parseFloat(100 * parseFloat(parseFloat(rm) / parseFloat(cm)));
+        //cx = parseFloat(100 * parseFloat(parseFloat(rm) / parseFloat(cm)));
         //console.log(cx);
         //求平均值，保留4位小数
-        //console.log(this.migraComputmap);
+        console.log(this.migraComputmap.set(migkeys[i]));
         this.migraComputmap.set(migkeys[i], {
-          allrate:
+          allrate: parseFloat(
             (100 * (parseFloat(cx).toFixed(4) + parseFloat(rx).toFixed(4))) / 2
+          )
         });
       }
     },
