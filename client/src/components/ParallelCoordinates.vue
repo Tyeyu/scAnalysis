@@ -3,19 +3,21 @@
     <div>
       <span>相关因素</span>
       <p>确诊人数排序</p>
-      <div style="transform: translate(120%, 20%); float:left"> 
-        <el-button 
-          size="mini" 
-          icon="el-icon-caret-top" 
-          circle 
-          @click="seriesdata_sort_ascend()" 
-          style="background:#212232; color:white; border: 0px"></el-button>
-        <el-button 
-          size="mini" 
-          icon="el-icon-caret-bottom" 
-          circle 
-          @click="seriesdata_sort_desascend()" 
-          style="background:#212232; color:white; border: 0px"></el-button>
+      <div style="transform: translate(120%, 20%); float:left">
+        <el-button
+          size="mini"
+          icon="el-icon-caret-top"
+          circle
+          @click="seriesdata_sort_ascend()"
+          style="background:#212232; color:white; border: 0px"
+        ></el-button>
+        <el-button
+          size="mini"
+          icon="el-icon-caret-bottom"
+          circle
+          @click="seriesdata_sort_desascend()"
+          style="background:#212232; color:white; border: 0px"
+        ></el-button>
       </div>
     </div>
     <div id="CoorEcharts"></div>
@@ -180,26 +182,69 @@ export default {
         .map(migrations);
       this.migraComputmap = d3.map();
       var migkeys = migraNetsmap.keys();
-      for (var i = 0; i < migkeys.length; i++) {
+      //var cxmax = -1;
+      // var rxmax = -1;
+      //for (var i = 0; i < parseFloat(migkeys.length); i++) {
+      //  var Inmigration_rate = 0;
+      //  var Outmigration_rate = 0;
+      //  var kdata = migraNetsmap.get(migkeys[i]);
+      // for (var j = 0; j < parseFloat(kdata.length); j++) {
+      //   Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
+      //  Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
+      // }
+      // Inmigration_rate =
+      //   100 *
+      // parseFloat(
+      //   parseFloat(Inmigration_rate) / parseFloat(kdata.length)
+      // ).toFixed(4);
+      //  Outmigration_rate =
+      // 100 *
+      //  parseFloat(
+      //   parseFloat(Outmigration_rate) / parseFloat(kdata.length)
+      // ).toFixed(4);
+      // if (parseFloat(Inmigration_rate) > rxmax)
+      // rxmax = parseFloat(Inmigration_rate);
+      // if (parseFloat(Outmigration_rate) > cxmax)
+      //cxmax = parseFloat(Outmigration_rate);
+      // }
+
+      for (var i = 0; i < parseFloat(migkeys.length); i++) {
         var Inmigration_rate = 0;
         var Outmigration_rate = 0;
         var kdata = migraNetsmap.get(migkeys[i]);
-        for (var j = 0; j < kdata.length; j++) {
+        for (var j = 0; j < parseFloat(kdata.length); j++) {
           Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
           Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
         }
-        if (Inmigration_rate > Outmigration_rate) {
-          var min = Outmigration_rate;
-          var max = Inmigration_rate;
-        } else {
-          var max = Outmigration_rate;
-          var min = Inmigration_rate;
-        }
+        //Inmigration_rate =
+        //  100 *
+        // parseFloat(
+        //   parseFloat(Inmigration_rate) / parseFloat(kdata.length)
+        // ).toFixed(4);
+        //Outmigration_rate =
+        // 100 *
+        //  parseFloat(
+        //   parseFloat(Outmigration_rate) / parseFloat(kdata.length)
+        // ).toFixed(4);
+        var rm;
+        var cm;
+        var rx;
+        var cx;
+        //console.log(Outmigration_rate);
+        // console.log(cxmax);
+        // rm = parseFloat(parseFloat(Inmigration_rate) / parseFloat(rxmax));
+        //cm = parseFloat(parseFloat(Outmigration_rate) / parseFloat(cxmax));
+
+        //rx = parseFloat(100 * parseFloat(parseFloat(cm) / parseFloat(rm)));
+        // console.log(rx);
+        //cx = parseFloat(100 * parseFloat(parseFloat(rm) / parseFloat(cm)));
+        //console.log(cx);
         //求平均值，保留4位小数
+        console.log(this.migraComputmap.set(migkeys[i]));
         this.migraComputmap.set(migkeys[i], {
-          allrate:
-            parseFloat(min / kdata.length).toFixed(4) +
-            parseFloat(max / kdata.length).toFixed(4)
+          allrate: parseFloat(
+            (100 * (parseFloat(cx).toFixed(4) + parseFloat(rx).toFixed(4))) / 2
+          )
         });
       }
     },
@@ -295,6 +340,7 @@ export default {
               mergd.Healthrate,
               mergd.Deathrate,
               parseFloat(migrd.allrate),
+
               hospd[0].hospital,
               hospd[0].outpatient,
               popul[0].population
@@ -305,40 +351,42 @@ export default {
         this.seriesdata.push(serie);
         this.seriesdataStore.push(serie);
       }
-      
+
       this.$store.commit("setcityActivity", cActivity);
-      
+
       // console.log(this.seriesdata);
     },
     seriesdata_sort_ascend: function() {
       let that = this;
-      this.seriesdataStore.sort(function(a,b){
-        return a.diagnosis - b.diagnosis
-      })
-      this.seriesdata = []
-      this.seriesdata = this.seriesdataStore.filter(function(d,i){
-        if(i <= that.sortedNum){
-          return 1;
-        } else if(i > that.sortedNum){
-          return 0;
-        }
-      }).reverse()
-      this.initchart()
+      this.seriesdataStore.sort(function(a, b) {
+        return a.diagnosis - b.diagnosis;
+      });
+      this.seriesdata = [];
+      this.seriesdata = this.seriesdataStore
+        .filter(function(d, i) {
+          if (i <= that.sortedNum) {
+            return 1;
+          } else if (i > that.sortedNum) {
+            return 0;
+          }
+        })
+        .reverse();
+      this.initchart();
     },
     seriesdata_sort_desascend: function() {
       let that = this;
-      this.seriesdataStore.sort(function(a,b){
-        return b.diagnosis - a.diagnosis
-      })
-      this.seriesdata = []
-      this.seriesdata = this.seriesdataStore.filter(function(d,i){
-        if(i <= that.sortedNum){
+      this.seriesdataStore.sort(function(a, b) {
+        return b.diagnosis - a.diagnosis;
+      });
+      this.seriesdata = [];
+      this.seriesdata = this.seriesdataStore.filter(function(d, i) {
+        if (i <= that.sortedNum) {
           return 1;
-        } else if(i > that.sortedNum){
+        } else if (i > that.sortedNum) {
           return 0;
         }
-      })
-      this.initchart()
+      });
+      this.initchart();
     }
   },
   mounted() {},
@@ -393,7 +441,7 @@ export default {
   color: white;
   font: 12px "Microsoft YaHei";
   float: left;
-  transform: translate(100%, -10%)
+  transform: translate(100%, -10%);
 }
 #CoorEcharts {
   width: 100%;
