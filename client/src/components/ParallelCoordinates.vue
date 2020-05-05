@@ -163,6 +163,8 @@ export default {
         .map(migrations);
       this.migraComputmap = d3.map();
       var migkeys = migraNetsmap.keys();
+      var cxmax = -1;
+      var rxmax = -1;
       for (var i = 0; i < migkeys.length; i++) {
         var Inmigration_rate = 0;
         var Outmigration_rate = 0;
@@ -171,18 +173,38 @@ export default {
           Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
           Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
         }
-        if (Inmigration_rate > Outmigration_rate) {
-          var min = Outmigration_rate;
-          var max = Inmigration_rate;
-        } else {
-          var max = Outmigration_rate;
-          var min = Inmigration_rate;
+        Inmigration_rate =
+          100 * parseFloat(Inmigration_rate / kdata.length).toFixed(4);
+        Outmigration_rate =
+          100 * parseFloat(Outmigration_rate / kdata.length).toFixed(4);
+        if (Inmigration_rate > rxmax) rxmax = Inmigration_rate;
+        if (Outmigration_rate > cxmax) cxmax = Outmigration_rate;
+      }
+
+      for (var i = 0; i < migkeys.length; i++) {
+        var Inmigration_rate = 0;
+        var Outmigration_rate = 0;
+        var kdata = migraNetsmap.get(migkeys[i]);
+        for (var j = 0; j < kdata.length; j++) {
+          Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
+          Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
         }
+        Inmigration_rate =
+          100 * parseFloat(Inmigration_rate / kdata.length).toFixed(4);
+        Outmigration_rate =
+          100 * parseFloat(Outmigration_rate / kdata.length).toFixed(4);
+        var rm;
+        var cm;
+        var rx;
+        var cx;
+        rm = parseFloat(Inmigration_rate / rxmax);
+        cm = parseFloat(Outmigration_rate / cxmax);
+        rx = 100 * parseFloat(cm / rm);
+        cx = 100 * parseFloat(rm / cm);
         //求平均值，保留4位小数
         this.migraComputmap.set(migkeys[i], {
           allrate:
-            parseFloat(min / kdata.length).toFixed(4) +
-            parseFloat(max / kdata.length).toFixed(4)
+            (100 * (parseFloat(cx).toFixed(4) + parseFloat(rx).toFixed(4))) / 2
         });
       }
     },
