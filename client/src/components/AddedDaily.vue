@@ -33,10 +33,10 @@ export default {
           text: "每日新增趋势",
           textStyle: {
           color: "#ffffff"
-        },
-          left: "7%",
-          top: "10px"
-        },
+          },
+            left: "7%",
+            top: "10px"
+          },
         tooltip: {
           trigger: "axis"
         },

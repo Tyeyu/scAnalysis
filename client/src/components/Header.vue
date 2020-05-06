@@ -1,6 +1,6 @@
 <template>
   <div id="headers">
-    <h4>四川新型冠状肺炎疫情可视分析系统</h4>
+    <h4>四川新型冠状病毒疫情可视分析系统</h4>
   </div>
 </template>
 <script>
@@ -23,7 +23,7 @@ export default {};
   position: absolute;
   margin: 0;
   padding: 0;
-  top: 30%;
+  top: 20%;
   left: 45%;
 }
 </style>
