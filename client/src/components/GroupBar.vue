@@ -34,7 +34,7 @@
       </el-row>
     </div>
     <div id="groupbar_mark">
-      <span>地区排行</span>
+      <span>地区排名</span>
     </div>
     <div id="facet"></div>
     <div id="gpbar"></div>

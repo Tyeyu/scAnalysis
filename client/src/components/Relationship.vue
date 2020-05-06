@@ -2,7 +2,7 @@
   <div>
     <div id="Relation" class="Relationship-angel">
       <div>
-        <span>病人时间</span>
+        <span>患者时间进展</span>
       </div>
     </div>
     <div id="Rtooltip"></div>

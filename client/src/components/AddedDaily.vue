@@ -29,7 +29,8 @@ export default {
           color: "#ffffff"
         },
         title: {
-          text: that.cityname + "每日新增",
+          //text: that.cityname + "每日新增趋势",
+          text: "每日新增趋势",
           textStyle: {
           color: "#ffffff"
         },
