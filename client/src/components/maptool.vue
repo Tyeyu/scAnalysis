@@ -21,10 +21,10 @@ export default {
         { name: "累计确诊", id: "contours" },
         { name: "现有确诊", id: "exist" },
         { name: "新增确诊", id: "newAdd" },
-        { name: "病例小区", id: "POA" },
+        { name: "病例停留小区", id: "POA" },
       ],
       contrls2: [
-        { name: "医院定点", id: "hospitalImage" },
+        { name: "定点医院", id: "hospitalImage" },
         { name: "发热门诊", id: "clinic" },
         { name: "医院覆盖范围", id: "voronoi-outline" }
       ],
@@ -148,7 +148,7 @@ export default {
 #mapcontrl {
   position: absolute;
   left: 93%;
-  padding-left: 2pt;
+  padding-left: 5pt;
   padding-top: 0pt;
   top: 5.5%;
   width: 6%;
@@ -175,9 +175,10 @@ export default {
   z-index: 100;
   left: 95%;
   padding-left: 5pt;
+  padding-right: 5pt;
   padding-top: 10pt;
   top: 35%;
-  width: 8.2%;
+  width: 8.5%;
   height: 20%;
   filter: invert(1);
 }
