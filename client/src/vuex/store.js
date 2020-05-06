@@ -36,7 +36,12 @@ const store = new Vuex.Store({
     testparam: null,
     //压力测试选择城市
     testcity: "成都",
-    tabeselect: "first"
+    tabeselect: "first",
+    //模拟的活跃度数据
+    MNactivedata: null,
+    //压力测试关联地区数据
+    Tcalendata: null,
+    TseirCity: null
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -101,6 +106,15 @@ const store = new Vuex.Store({
     },
     settabeselect: function(state, selected) {
       state.tabeselect = selected;
+    },
+    setMNactivedata: function(state, data) {
+      state.MNactivedata = data;
+    },
+    setTcalendata: function(state, data) {
+      state.Tcalendata = data;
+    },
+    setTseirCity: function(state, data) {
+      state.TseirCity = data;
     }
   },
   getters: {
@@ -163,6 +177,15 @@ const store = new Vuex.Store({
     },
     gettabeselect: state => {
       return state.tabeselect;
+    },
+    getMNactivedata: state => {
+      return state.MNactivedata;
+    },
+    getTcalendata: state => {
+      return state.Tcalendata;
+    },
+    getTseirCity: state => {
+      return state.TseirCity;
     }
   }
 });

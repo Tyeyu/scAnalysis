@@ -81,6 +81,7 @@ export default {
     /*/
     readcsv.readscTrack();
     readcsv.readscMerge();
+    readcsv.MNdata();
   },
   watch: {
     activeTab: function(newval, oldval) {

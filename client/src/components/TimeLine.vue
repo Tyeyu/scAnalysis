@@ -142,6 +142,7 @@ export default {
         );
       this.timeLineSvg
         .append("g")
+        .attr("stroke", "white")
         .attr("transform", "translate(0," + 10 + ")")
         .call(this.xAxis);
     },
@@ -227,6 +228,10 @@ export default {
 }
 #timeLine .selection {
   fill: aqua;
+}
+#timeLine .tick line,
+#timeLine path {
+  stroke: white;
 }
 #playText,
 #timeLineText {

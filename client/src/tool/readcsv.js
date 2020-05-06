@@ -26,6 +26,18 @@ const readcsv = {
       })
       .catch(function(error) {});
   },
+  MNdata: function() {
+    d3.json("../../static/四川平均迁入率.json")
+      .then(inrate => {
+        d3.json("../../static/四川平均迁出率.json").then(outrate => {
+          store.commit("setMNactivedata", {
+            inrates: inrate,
+            outrates: outrate
+          });
+        });
+      })
+      .catch(function(error) {});
+  },
   readCoordata: function() {}
 };
 export default readcsv;

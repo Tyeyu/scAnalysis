@@ -10,42 +10,8 @@ import * as d3 from "d3";
 export default {
   data() {
     return {
-      incity: [
-        { name: "成都", value: 0 },
-        { name: "自贡", value: 0 },
-        { name: "攀枝花", value: 0 },
-        { name: "泸州", value: 0 },
-        { name: "德阳", value: 0 },
-        { name: "绵阳", value: 0 },
-        { name: "广元", value: 0 },
-        { name: "遂宁", value: 0 },
-        { name: "内江", value: 0 },
-        { name: "乐山", value: 0 },
-        { name: "南充", value: 0 }
-        // { name: "宜宾", value: 0 },
-        // { name: "广安", value: 0 },
-        // { name: "达州", value: 0 },
-        // { name: "巴中", value: 0 },
-        // { name: "雅安", value: 0 },
-        // { name: "眉山", value: 0 },
-        // { name: "资阳", value: 0 },
-        // { name: "阿坝", value: 0 },
-        // { name: "甘孜", value: 0 },
-        // { name: "凉山", value: 0 }
-      ],
-      outprovinces: [
-        { name: "重庆", value: 0 },
-        { name: "云南", value: 0 },
-        { name: "陕西", value: 0 },
-        { name: "贵州", value: 0 },
-        { name: "宁夏", value: 0 },
-        { name: "西藏", value: 0 },
-        { name: "青海", value: 0 },
-        { name: "陕西", value: 0 },
-        { name: "甘肃", value: 0 },
-        { name: "湖南", value: 0 },
-        { name: "湖北", value: 0 }
-      ],
+      incity: [],
+      outprovinces: [],
       svgwidth: null,
       svgheight: null,
       tabechange: false
@@ -53,6 +19,8 @@ export default {
   },
   methods: {
     drawchart: function() {
+      this.incity = this.$store.getters.getTcalendata.city;
+      this.outprovinces = this.$store.getters.getTcalendata.province;
       this.svgwidth = document.getElementById("testCalendar").clientWidth - 10;
       this.svgheight =
         document.getElementById("testCalendar").clientHeight - 10;
@@ -136,14 +104,26 @@ export default {
   computed: {
     tabe() {
       return this.$store.getters.gettabeselect;
+    },
+    Tcalendata() {
+      return this.$store.getters.getTcalendata;
     }
   },
   watch: {
     tabe: function(newval, oldval) {
       if (!this.tabechange) {
+        d3.select("#testCalendar")
+          .selectAll("svg")
+          .remove();
         this.drawchart();
         this.tabechange = true;
       }
+    },
+    Tcalendata: function(newval, oldval) {
+      d3.select("#testCalendar")
+        .selectAll("svg")
+        .remove();
+      this.drawchart();
     }
   }
 };
