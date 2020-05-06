@@ -296,6 +296,7 @@ export default {
           ).toFixed(4)
         });
       }
+      this.citys = [];
       arry = arry.sort(function(a, b) {
         return parseInt(a.Diagnosis) > parseInt(b.Diagnosis) ? 1 : -1;
       });
@@ -343,7 +344,6 @@ export default {
         this.seriesdata.push(serie);
         this.seriesdataStore.push(serie);
       }
-
       this.$store.commit("setcityActivity", cActivity);
 
       // console.log(this.seriesdata);
@@ -371,13 +371,15 @@ export default {
         return b.diagnosis - a.diagnosis;
       });
       this.seriesdata = [];
-      this.seriesdata = this.seriesdataStore.filter(function(d, i) {
-        if (i <= that.sortedNum) {
-          return 1;
-        } else if (i > that.sortedNum) {
-          return 0;
-        }
-      }).reverse();
+      this.seriesdata = this.seriesdataStore
+        .filter(function(d, i) {
+          if (i <= that.sortedNum) {
+            return 1;
+          } else if (i > that.sortedNum) {
+            return 0;
+          }
+        })
+        .reverse();
       this.initchart();
     }
   },

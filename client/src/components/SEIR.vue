@@ -68,10 +68,9 @@ export default {
           this.I = this.Iarry[i] + this.a * this.Earry[i];
           this.R = this.Rarry[i];
         } else {
-          this.S = this.Sarry[i] - newDia - this.newYDia;
+          this.S = this.Sarry[i] - newDia - newYDia;
           if (this.S <= 0) this.S = 0;
           this.E = this.Earry[i] + newDia - this.a * this.Earry[i] + newYDia;
-
           if (this.E <= 0) this.E = 0;
           if (i - this.controltime < 10) {
             this.I =
@@ -218,10 +217,13 @@ export default {
         parseInt(this.populationmap.get(newval.cityname)[0].population) * 10000;
       // console.log(this.populationmap.get(newval.cityname), this.N);
       this.Beata = newval.Beata;
-      this.S = this.N - this.I;
+      this.I = 1;
+      this.R = 0;
+      this.S = parseFloat(this.N) - parseFloat(this.I);
       this.y = newval.health;
       this.controltime = newval.controltime;
       this.midu = newval.midu;
+      console.log(this.N, this.S, this.Beata, this.y, this.midu);
       this.initdata();
 
       this.initchart();
