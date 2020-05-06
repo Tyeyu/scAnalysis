@@ -74,7 +74,9 @@ export default {
         .select("#relatitle")
         .append("svg")
         .attr("width", this.chartSvgwidth - 10)
-        .attr("height", 20);
+        .attr("height", 20)
+        .style('transform', 'translate(10%, 30%)')
+
       titlesvg
         .selectAll("circle")
         .data([0, 1, 2, 3, 4])
@@ -98,7 +100,7 @@ export default {
         })
         .attr("y", 15)
         .attr("fill", "white")
-        .attr("font-size", 18)
+        .attr("font-size", 12)
         .text(function(d) {
           return texts[d];
         });
@@ -570,11 +572,13 @@ export default {
   stroke: white;
 }
 #relatitle {
-  height: 30px;
+  height: 10%;
 }
 #Relation span {
   color: white;
   font: 18px "Microsoft YaHei";
+  transform: translate(10%, 30%);
+  float: left;
 }
 #Relation {
   position: absolute;

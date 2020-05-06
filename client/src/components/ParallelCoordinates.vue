@@ -1,9 +1,9 @@
 <template>
   <div id="Coordinates" class="Coordinates-angel">
-    <div>
+    <div style="height: 10%">
       <span>相关因素</span>
       <p>确诊人数排序</p>
-      <div style="transform: translate(120%, 20%); float:left">
+      <div style="transform: translate(40%, 30%); float:left">
         <el-button
           size="mini"
           icon="el-icon-caret-top"
@@ -422,6 +422,8 @@ export default {
   color: white;
   font: 18px "Microsoft YaHei";
   float: left;
+  transform: translate(10%, 30%)
+
 }
 #Coordinates {
   position: absolute;
@@ -435,12 +437,11 @@ export default {
   color: white;
   font: 12px "Microsoft YaHei";
   float: left;
-  transform: translate(100%, -10%);
+  transform: translate(30%, 0%);
 }
 #CoorEcharts {
   width: 100%;
   height: 90%;
-  padding-top: 5%;
 }
 .Coordinates-angel {
   background: linear-gradient(#00faff, #00faff) left top,
