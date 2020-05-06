@@ -222,17 +222,15 @@ export default {
         var cm;
         var rx;
         var cx;
-        console.log(Outmigration_rate);
-        console.log(cxmax);
         rm = parseFloat(parseFloat(Inmigration_rate) / parseFloat(rxmax));
         cm = parseFloat(parseFloat(Outmigration_rate) / parseFloat(cxmax));
 
         rx = parseFloat(100 * parseFloat(parseFloat(cm) / parseFloat(rm)));
-        console.log(rx);
+
         cx = parseFloat(100 * parseFloat(parseFloat(rm) / parseFloat(cm)));
-        console.log(cx);
+
         //求平均值，保留4位小数
-        console.log(this.migraComputmap.set(migkeys[i]));
+
         this.migraComputmap.set(migkeys[i], {
           allrate: parseFloat(
             (parseFloat(parseFloat(cx).toFixed(4)) +
