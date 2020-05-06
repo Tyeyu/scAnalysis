@@ -379,7 +379,7 @@ export default {
         } else if (i > that.sortedNum) {
           return 0;
         }
-      });
+      }).reverse();
       this.initchart();
     }
   },

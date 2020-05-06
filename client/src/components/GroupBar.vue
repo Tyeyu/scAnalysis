@@ -626,7 +626,9 @@ export default {
 }
 #groupby_sort {
   height: 10%;
-  padding-top: 83%;
+  position:relative;
+  float: left;
+  width: 100%;
 }
 #groupbar_mark span{
   color: white;
