@@ -43,7 +43,7 @@
         <el-col :span="12">
           <div style="padding-left:25%">
             <div>
-              <p class="panelinfofont">地区输入比</p>
+              <p class="panelinfofont">本地期占比</p>
             </div>
 
             <div style="transform:translate(50%, -150%)">
@@ -69,7 +69,7 @@
         <el-col :span="12">
           <div style="padding-left:25%">
             <div>
-              <p class="panelinfofont">地区人数统计</p>
+              <p class="panelinfofont">确诊人数排序</p>
             </div>
 
             <div style="transform:translate(60%, -150%)">
@@ -194,7 +194,9 @@ export default {
             stack: "总量",
             barWidth: "90%",
             itemStyle: {
-              color: 'grey'
+              //color: 'grey'
+              color: '#1c79c0'
+              //#0984e3,#74b9ff
             },
             label: {
               show: false,
@@ -208,7 +210,8 @@ export default {
             stack: "总量",
             barWidth: "90%",
             itemStyle: {
-              color: 'white'
+              //color: 'white'
+              color: '#71DBF9'
             },
             label: {
               show: false,
@@ -285,7 +288,8 @@ export default {
           view
             .interval()
             .position("percent")
-            .color("type", ["grey", "white"])
+            //.color("type", ["#2D83BE", "#71DBF9"])
+            .color("type", ["#1c79c0", "#71DBF9"])
             .adjust("stack");
         }
       });
@@ -516,7 +520,7 @@ export default {
     },
     piechart_sort_ascend() {
       this.datastore = this.datastore.sort((a, b) =>
-        +a.percent < +b.percent
+        +a.percent > +b.percent
           ? -1
           : +b.percent < +a.percent
           ? 1
@@ -526,7 +530,7 @@ export default {
     },
     piechart_sort_desascend() {
       this.datastore = this.datastore.sort((a, b) =>
-        +a.percent > +b.percent
+        +a.percent < +b.percent
           ? -1
           : +b.percent > +a.percent
           ? 1
