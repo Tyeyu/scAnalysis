@@ -163,7 +163,7 @@ export default {
       this.map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v9",
-        center: [99.031472,26.515927],
+        center: [99.031472, 26.515927],
         zoom: 5
       });
       //修改语言
@@ -429,15 +429,14 @@ export default {
             that.map.setLayoutProperty(clickedLayer, "visibility", "none");
           }
         }
-         if (stateOfVor !== -1) {
+        if (stateOfVor !== -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
           that.map.setLayoutProperty(clickedLayer3, "visibility", "visible");
         } else if (stateOfVor == -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "none");
           that.map.setLayoutProperty(clickedLayer3, "visibility", "none");
         }
-      
-       
+
         if (statePopu != -1) {
           that.map.setLayoutProperty("population", "visibility", "visible");
           that.map.setLayoutProperty("city-outline", "visibility", "visible");
@@ -538,7 +537,7 @@ export default {
               "icon-image": "hospital",
               "icon-size": 0.04,
               visibility: "none"
-            },
+            }
           });
         });
       });
@@ -593,19 +592,16 @@ export default {
     vorfeaters: function(newval, oldval) {
       let that = this;
       var area_arry = [];
-      newval.forEach(d=>{
-        area_arry.push(d.properties.area)
-      })
+      newval.forEach(d => {
+        area_arry.push(d.properties.area);
+      });
       var Ascale = d3
         .scaleLinear()
-        .domain([
-          d3.min(area_arry),
-          d3.max(area_arry)
-        ])
+        .domain([d3.min(area_arry), d3.max(area_arry)])
         .range([0, 1]);
-      newval.forEach(d=>{
+      newval.forEach(d => {
         d.properties["asc"] = Ascale(d.properties.area);
-      })
+      });
       this.map.on("load", function() {
         that.map.addSource("voronoi", {
           type: "geojson",
@@ -632,16 +628,15 @@ export default {
           id: "voronoi-overlay",
           type: "fill",
           source: "voronoi",
-          // layout: {
-          //   visibility: "none"
-          // }, //指渲染位置和可见性
+          layout: {
+            visibility: "none"
+          }, //指渲染位置和可见性
           paint: {
             "fill-color": "orange",
             "fill-opacity": ["get", "asc"]
           },
           maxzoom: 8.5
-        })
-
+        });
       });
     },
     timeRange: function(newval, oldval) {

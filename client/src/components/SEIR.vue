@@ -1,6 +1,6 @@
 <template>
   <div id="Seir" class="dSeir">
-    <div id="Seir"></div>
+    <!-- <div id="Seir"></div> -->
   </div>
 </template>
 <script>
@@ -28,11 +28,17 @@ export default {
       Rarry: null,
       dayarry: [],
       tabechange: false,
+      hosbednum: 8000,
       hosptialarry: [],
       populationmap: null,
       citys: [],
       controltime: 10,
-      midu: 1190
+      midu: 1190,
+      sumI: [0],
+      sumR: [0],
+      sumbed: 0,
+      lostI: [0],
+      lostbed: [0]
     };
   },
   methods: {
@@ -41,7 +47,25 @@ export default {
       this.Sarry = [];
       this.Iarry = [];
       this.Rarry = [];
-      for (var i = 0; i < 100; i++) {
+      var testCalendar = this.$store.getters.getTcalendata;
+      var Tcity = null;
+      var Tpro = null;
+      if (testCalendar != null) {
+        Tcity = d3
+          .nest()
+          .key(function(d) {
+            return d.name;
+          })
+          .map(this.$store.getters.getTcalendata.city);
+        Tpro = d3
+          .nest()
+          .key(function(d) {
+            return d.name;
+          })
+          .map(this.$store.getters.getTcalendata.province);
+      }
+
+      for (var i = 0; i < 40; i++) {
         if (this.I <= 0) this.I = 0;
         if (this.R <= 0) this.R = 0;
         if (this.E <= 0) this.E = 0;
@@ -51,10 +75,11 @@ export default {
         this.Iarry.push(parseInt(this.I));
         this.Rarry.push(parseInt(this.R));
         this.dayarry[i] = i + 1 + "天";
-        // if (i >= 10) {
-        //   this.r = 5;
-        //   this.r2 = 5;
-        // }
+        if (i > 0) {
+          this.sumI[i] = this.sumI[i - 1] + parseInt(this.I);
+          this.sumR[i] = this.sumR[i - 1] + parseInt(this.R);
+        }
+
         if (this.midu > 1000) {
           this.r = parseInt(this.midu * Math.random() * 0.05);
           this.r2 = parseInt(this.midu * Math.random() * 0.1);
@@ -82,41 +107,125 @@ export default {
           this.E = this.Earry[i] + newDia - this.a * this.Earry[i] + newYDia;
           this.I = this.Iarry[i] + this.a * this.Earry[i];
           this.R = this.Rarry[i];
+          this.sumbed += parseInt(this.sumI[i] * 0.01); //自由传播阶段，有较低概率病人住院
+          if (this.hosbednum - this.sumbed < 0) {
+            this.lostbed[i] = 0;
+            this.sumbed = this.hosbednum;
+          } else {
+            this.lostbed[i] = this.hosbednum - this.sumbed;
+          }
         } else {
           this.S = this.Sarry[i] - newDia - newYDia;
 
           this.E = this.Earry[i] + newDia - this.a * this.Earry[i] + newYDia;
+          if (i == this.controltime) {
+            this.sumbed += this.sumI[i] - this.sumbed - this.sumR[i]; //将发病的病人全部转入住院
+            if (this.sumbed < 0) {
+              this.sumbed = 0;
+            }
+          }
 
           if (i - this.controltime < 10) {
             this.I =
               this.Iarry[i] +
               this.a * this.Earry[i] -
               this.y * 0.1 * this.Iarry[i];
-
-            this.R = this.Rarry[i] + this.y * 0.1 * this.Iarry[i];
+            if (this.sumbed < this.hosbednum)
+              this.R = this.Rarry[i] + ((this.y * i) / 1000) * this.Iarry[i];
+            else {
+              this.R = this.Rarry[i] + ((this.y * i) / 10000) * this.Iarry[i];
+            }
+            this.sumbed +=
+              parseInt(this.I * 0.9 * Math.random()) - parseInt(this.R);
+            if (this.sumbed < 0) {
+              this.sumbed = 0;
+            }
+            if (this.hosbednum - this.sumbed < 0) {
+              this.lostbed[i] = 0;
+              this.sumbed = this.hosbednum;
+            } else {
+              this.lostbed[i] = this.hosbednum - this.sumbed;
+            }
           } else {
             if (i - this.controltime >= 10 && i - this.controltime <= 20) {
               this.I =
                 this.Iarry[i] +
                 this.a * this.Earry[i] -
                 this.y * 0.5 * this.Iarry[i];
+              this.R = this.Rarry[i] + ((this.y * i) / 1000) * this.Iarry[i];
 
-              this.R = this.Rarry[i] + this.y * 0.5 * this.Iarry[i];
+              this.sumbed += parseInt(this.I) - parseInt(this.R);
+              if (this.sumbed < 0) {
+                this.sumbed = 0;
+              }
+              if (this.hosbednum - this.sumbed < 0) {
+                this.lostbed[i] = 0;
+                this.sumbed = this.hosbednum;
+              } else {
+                this.lostbed[i] = this.hosbednum - this.sumbed;
+              }
             } else {
               this.I =
                 this.Iarry[i] + this.a * this.Earry[i] - this.y * this.Iarry[i];
+              if (this.sumbed < this.hosbednum)
+                this.R = this.Rarry[i] + ((this.y * i) / 100) * this.Iarry[i];
+              else {
+                this.R = this.Rarry[i] + ((this.y * i) / 1000) * this.Iarry[i];
+              }
 
-              this.R = this.Rarry[i] + this.y * this.Iarry[i];
+              this.sumbed += parseInt(this.I) - parseInt(this.R);
+              if (this.sumbed < 0) {
+                this.sumbed = 0;
+              }
+              if (this.hosbednum - this.sumbed < 0) {
+                this.lostbed[i] = 0;
+                this.sumbed = this.hosbednum;
+              } else {
+                this.lostbed[i] = this.hosbednum - this.sumbed;
+              }
             }
           }
         }
+        if (testCalendar != null) {
+          for (var j = 0; j < 11; j++) {
+            Tcity.get(this.citys.city[j].name)[0].value += parseInt(
+              (this.I + this.E) * this.citys.city[j].value
+            );
+            Tpro.get(this.citys.province[j].name)[0].value += parseInt(
+              (this.I + this.E) * this.citys.province[j].value
+            );
+          }
+        }
       }
-      this.Earry.push(this.E);
-      this.Sarry.push(this.S);
-      this.Iarry.push(this.I);
-      this.Rarry.push(this.R);
-      this.dayarry.push("100天");
-      console.log(this.Earry);
+      // this.Earry.push(this.E);
+      // this.Sarry.push(this.S);
+      // this.Iarry.push(this.I);
+      // this.Rarry.push(this.R);
+      // this.dayarry.push("100天");
+
+      if (testCalendar != null) {
+        var TCalendar = { city: [], province: [] };
+        for (var k = 0; k < 11; k++) {
+          var x = this.citys.city[k];
+          var y = this.citys.province[k];
+          x.value = Tcity.get(x.name)[0].value;
+          y.value = Tpro.get(y.name)[0].value;
+          TCalendar.city.push(x);
+          TCalendar.province.push(y);
+        }
+        this.$store.commit("setTCalendar", TCalendar);
+      }
+
+      var Tdata = {
+        nowBeds: this.lostbed,
+        total: this.sumI,
+        dayarry: this.dayarry
+      };
+
+      this.$store.commit("setTtotaldata", Tdata);
+
+      // console.log(this.sumI);
+      // console.log(this.lostbed);
     },
     initchart: function() {
       var mychart = echarts.init(document.getElementById("Seir"));
@@ -223,6 +332,8 @@ export default {
     },
     TseirCity: function(newval, oldval) {
       this.citys = newval;
+
+      console.log(this.citys);
     },
     testparam: function(newval, oldval) {
       this.N =
@@ -235,7 +346,7 @@ export default {
       this.y = newval.health;
       this.controltime = newval.controltime;
       this.midu = newval.midu;
-      console.log(this.N, this.S, this.Beata, this.y, this.midu);
+      this.hosbednum = newval.hospitalbed;
       this.initdata();
 
       this.initchart();

@@ -1,5 +1,7 @@
 <template>
-  <div id="testTotal" class="testTotal-angel"></div>
+  <div id="testTotal" class="testTotal-angel">
+    <!-- <div ></div> -->
+  </div>
 </template>
 <script>
 import echarts from "echarts";
@@ -30,7 +32,7 @@ export default {
           trigger: "axis"
         },
         legend: {
-          data: ["现有确诊", "剩余病床", "累计确诊"],
+          data: ["剩余病床", "累计确诊"],
           textStyle: {
             color: "#ffffff"
           }
@@ -58,12 +60,12 @@ export default {
           }
         },
         series: [
-          {
-            name: "现有确诊",
-            type: "line",
-            smooth: true,
-            data: this.nowDia
-          },
+          // {
+          //   name: "现有确诊",
+          //   type: "line",
+          //   smooth: true,
+          //   data: this.nowDia
+          // },
           {
             name: "剩余病床",
             type: "line",
@@ -85,6 +87,9 @@ export default {
   computed: {
     tabe() {
       return this.$store.getters.gettabeselect;
+    },
+    Ttotaldata() {
+      return this.$store.getters.getTtotaldata;
     }
   },
   watch: {
@@ -93,6 +98,13 @@ export default {
         this.drawchart();
         this.tabechange = true;
       }
+    },
+    Ttotaldata: function(newval, oldval) {
+      this.dayarry = newval.dayarry;
+      this.nowBeds = newval.nowBeds;
+      this.total = newval.total;
+      if (this.tabechange) this.drawchart();
+      // console.log(newval);
     }
   }
 };
@@ -105,10 +117,11 @@ export default {
   width: 33%;
   height: 34%;
   background-color: #30313a;
+  z-index: 3;
 }
-  .testTotal-angel{
-    z-index: 2;
-    background: linear-gradient(#00faff, #00faff) left top,
+.testTotal-angel {
+  z-index: 2;
+  background: linear-gradient(#00faff, #00faff) left top,
     linear-gradient(#00faff, #00faff) left top,
     linear-gradient(#00faff, #00faff) right top,
     linear-gradient(#00faff, #00faff) right top,
@@ -116,11 +129,11 @@ export default {
     linear-gradient(#00faff, #00faff) left bottom,
     linear-gradient(#00faff, #00faff) right bottom,
     linear-gradient(#00faff, #00faff) right bottom;
-    background-repeat: no-repeat;
-    background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
+  background-repeat: no-repeat;
+  background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
     0.6rem 0.15rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    white-space: nowrap;
-    margin: 0.1% 0 0 0.1%;
-  }
+  background-color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  margin: 0.1% 0 0 0.1%;
+}
 </style>

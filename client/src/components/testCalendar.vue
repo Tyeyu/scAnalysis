@@ -14,13 +14,14 @@ export default {
       outprovinces: [],
       svgwidth: null,
       svgheight: null,
-      tabechange: false
+      tabechange: false,
+      cityScale: null,
+      prScale: null
     };
   },
   methods: {
     drawchart: function() {
-      this.incity = this.$store.getters.getTcalendata.city;
-      this.outprovinces = this.$store.getters.getTcalendata.province;
+      let that = this;
       this.svgwidth = document.getElementById("testCalendar").clientWidth - 10;
       this.svgheight =
         document.getElementById("testCalendar").clientHeight - 10;
@@ -65,7 +66,18 @@ export default {
         })
         .attr("width", height * 8)
         .attr("height", height * 8)
-        .attr("fill", "#181830")
+        .attr("fill", function(d) {
+          if (d.value == 0) {
+            return "#181830";
+          } else {
+            return "orange";
+          }
+        })
+        .attr("opacity", function(d) {
+          if (d.value == 0) {
+            return 1;
+          } else return that.cityScale(d.value);
+        })
         .attr("stroke", "#898994")
         .attr("troke-width", 1);
       var outpg = svg.append("g");
@@ -80,7 +92,18 @@ export default {
         })
         .attr("width", height * 8)
         .attr("height", height * 8)
-        .attr("fill", "#181830")
+        .attr("fill", function(d) {
+          if (d.value == 0) {
+            return "#181830";
+          } else {
+            return "yellow";
+          }
+        })
+        .attr("opacity", function(d) {
+          if (d.value == 0) {
+            return 1;
+          } else return that.prScale(d.value);
+        })
         .attr("stroke", "#898994")
         .attr("troke-width", 1);
       outpg
@@ -99,6 +122,20 @@ export default {
         .text(function(d) {
           return d.name;
         });
+    },
+    OptScale: function(data) {
+      var Qscale = d3
+        .scaleLinear()
+        .domain([
+          d3.min(data, function(d) {
+            return d.value;
+          }),
+          d3.max(data, function(d) {
+            return d.value;
+          })
+        ])
+        .range([0, 1]);
+      return Qscale;
     }
   },
   computed: {
@@ -107,6 +144,9 @@ export default {
     },
     Tcalendata() {
       return this.$store.getters.getTcalendata;
+    },
+    TCalendar() {
+      return this.$store.getters.getTCalendar;
     }
   },
   watch: {
@@ -123,6 +163,20 @@ export default {
       d3.select("#testCalendar")
         .selectAll("svg")
         .remove();
+      this.incity = this.$store.getters.getTcalendata.city;
+      this.outprovinces = this.$store.getters.getTcalendata.province;
+      this.cityScale = this.OptScale(this.incity);
+      this.prScale = this.OptScale(this.outprovinces);
+      this.drawchart();
+    },
+    TCalendar: function(newval, oldval) {
+      d3.select("#testCalendar")
+        .selectAll("svg")
+        .remove();
+      this.incity = this.$store.getters.getTCalendar.city;
+      this.outprovinces = this.$store.getters.getTCalendar.province;
+      this.cityScale = this.OptScale(this.incity);
+      this.prScale = this.OptScale(this.outprovinces);
       this.drawchart();
     }
   }
