@@ -538,7 +538,7 @@ export default {
               "icon-image": "hospital",
               "icon-size": 0.04,
               visibility: "none"
-            }
+            },
           });
         });
       });
@@ -738,7 +738,6 @@ export default {
       this.hospitalImageLayout(newval);
     },
     Activity: function(newval, oldval) {
-      console.log(newval);
       if (this.sc_cityData == null) {
         return;
       }
@@ -751,7 +750,6 @@ export default {
           cname = cname + "花";
         }
         var reopt = CActivScale(Cnests.get(cname)[0].value);
-        console.log(reopt);
         this.sc_cityData.features[i].properties["copt"] = reopt;
       }
       this.map.getSource("city_json").setData({

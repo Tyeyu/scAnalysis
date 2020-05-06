@@ -1,6 +1,6 @@
 <template>
   <div id="headers">
-    <h4>四川新冠病毒可视分析系统</h4>
+    <h4>四川新型冠状肺炎疫情可视分析系统</h4>
   </div>
 </template>
 <script>
@@ -15,8 +15,9 @@ export default {};
   height: 5%;
   border: 1px solid white;
   background-color: #30313a;
-  text-align: center;
-  color: #ccc;
+  text-align: center; 
+  font-size: 16pt;  
+  color: white;
 }
 #headers h4 {
   position: absolute;

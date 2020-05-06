@@ -1,8 +1,8 @@
 <template>
   <div>
     <div id="Relation" class="Relationship-angel">
-      <div>
-        <span>病人时间</span>
+      <div id="relatitle">
+        <span>患者时间进展</span>
       </div>
     </div>
     <div id="Rtooltip"></div>
@@ -68,7 +68,40 @@ export default {
       this.chartSvgwidth = document.getElementById("Relation").clientWidth - 10;
       this.chartSVgheight =
         document.getElementById("Relation").clientHeight - 30;
-
+      var colors = ["#FFEC8B", "#DEC494", "#FF7F00", "#FF0E0E", "#9DDC9D"];
+      var texts = ["接触", "发病", "就诊", "确诊", "治愈"];
+      var titlesvg = d3
+        .select("#relatitle")
+        .append("svg")
+        .attr("width", this.chartSvgwidth - 10)
+        .attr("height", 20);
+      titlesvg
+        .selectAll("circle")
+        .data([0, 1, 2, 3, 4])
+        .enter()
+        .append("circle")
+        .attr("r", 3)
+        .attr("fill", function(d) {
+          return colors[d];
+        })
+        .attr("cx", function(d) {
+          return 60 * (d + 1) + 3 * d;
+        })
+        .attr("cy", 10);
+      titlesvg
+        .selectAll("text")
+        .data([0, 1, 2, 3, 4])
+        .enter()
+        .append("text")
+        .attr("x", function(d) {
+          return 65 * (d + 1);
+        })
+        .attr("y", 15)
+        .attr("fill", "white")
+        .attr("font-size", 18)
+        .text(function(d) {
+          return texts[d];
+        });
       // this.data=
     },
     //初始化图表
@@ -449,7 +482,7 @@ export default {
         }
       }
       d3.select("#Relation")
-        .select("svg")
+        .selectAll("svg")
         .remove();
       this.setXaxisdata();
       this.initchartSet();
@@ -535,6 +568,9 @@ export default {
 <style>
 #Relation .axis path {
   stroke: white;
+}
+#relatitle {
+  height: 30px;
 }
 #Relation span {
   color: white;

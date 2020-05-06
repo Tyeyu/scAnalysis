@@ -24,12 +24,13 @@ export default {
       let that = this;
       that.myChart = echarts.init(document.getElementById("Daily"));
       that.option = {
-        color:['#B34F48','#E7E8D1','#57B37D','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
+        color:['#FF0E0E','#E7E8D1','#57B37D','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
         textStyle: {
           color: "#ffffff"
         },
         title: {
-          text: that.cityname + "每日新增",
+          //text: that.cityname + "每日新增趋势",
+          text: "每日新增趋势",
           textStyle: {
           color: "#ffffff"
         },

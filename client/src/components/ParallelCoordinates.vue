@@ -2,6 +2,23 @@
   <div id="Coordinates" class="Coordinates-angel">
     <div>
       <span>相关因素</span>
+      <p>确诊人数排序</p>
+      <div style="transform: translate(120%, 20%); float:left">
+        <el-button
+          size="mini"
+          icon="el-icon-caret-top"
+          circle
+          @click="seriesdata_sort_ascend()"
+          style="background:#212232; color:white; border: 0px"
+        ></el-button>
+        <el-button
+          size="mini"
+          icon="el-icon-caret-bottom"
+          circle
+          @click="seriesdata_sort_desascend()"
+          style="background:#212232; color:white; border: 0px"
+        ></el-button>
+      </div>
     </div>
     <div id="CoorEcharts"></div>
   </div>
@@ -15,11 +32,13 @@ export default {
     return {
       lineStyle: {
         normal: {
-          width: 0.8,
+          width: 2,
           opacity: 1
         }
       },
       seriesdata: null,
+      seriesdataStore: null,
+      sortedNum: 10,
       hospitalmap: null,
       migraComputmap: null,
       mergcomputmap: null,
@@ -163,26 +182,61 @@ export default {
         .map(migrations);
       this.migraComputmap = d3.map();
       var migkeys = migraNetsmap.keys();
-      for (var i = 0; i < migkeys.length; i++) {
+      var cxmax = -1;
+      var rxmax = -1;
+      for (var i = 0; i < parseFloat(migkeys.length); i++) {
         var Inmigration_rate = 0;
         var Outmigration_rate = 0;
         var kdata = migraNetsmap.get(migkeys[i]);
-        for (var j = 0; j < kdata.length; j++) {
+        for (var j = 0; j < parseFloat(kdata.length); j++) {
           Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
           Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
         }
-        if (Inmigration_rate > Outmigration_rate) {
-          var min = Outmigration_rate;
-          var max = Inmigration_rate;
-        } else {
-          var max = Outmigration_rate;
-          var min = Inmigration_rate;
+        Inmigration_rate = parseFloat(
+          parseFloat(Inmigration_rate) / parseFloat(kdata.length)
+        ).toFixed(4);
+        Outmigration_rate = parseFloat(
+          parseFloat(Outmigration_rate) / parseFloat(kdata.length)
+        ).toFixed(4);
+
+        if (parseFloat(Inmigration_rate) > rxmax)
+          rxmax = parseFloat(Inmigration_rate);
+        if (parseFloat(Outmigration_rate) > cxmax)
+          cxmax = parseFloat(Outmigration_rate);
+      }
+
+      for (var i = 0; i < parseFloat(migkeys.length); i++) {
+        var Inmigration_rate = 0;
+        var Outmigration_rate = 0;
+        var kdata = migraNetsmap.get(migkeys[i]);
+        for (var j = 0; j < parseFloat(kdata.length); j++) {
+          Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
+          Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
         }
+        Inmigration_rate = parseFloat(parseFloat(Inmigration_rate).toFixed(4));
+        Outmigration_rate = parseFloat(
+          parseFloat(Outmigration_rate).toFixed(4)
+        );
+
+        var rm;
+        var cm;
+        var rx;
+        var cx;
+        rm = parseFloat(parseFloat(Inmigration_rate) / parseFloat(rxmax));
+        cm = parseFloat(parseFloat(Outmigration_rate) / parseFloat(cxmax));
+
+        rx = parseFloat(100 * parseFloat(parseFloat(cm) / parseFloat(rm)));
+
+        cx = parseFloat(100 * parseFloat(parseFloat(rm) / parseFloat(cm)));
+
         //求平均值，保留4位小数
+
         this.migraComputmap.set(migkeys[i], {
-          allrate:
-            parseFloat(min / kdata.length).toFixed(4) +
-            parseFloat(max / kdata.length).toFixed(4)
+          allrate: parseFloat(
+            (parseFloat(parseFloat(cx).toFixed(4)) +
+              parseFloat(parseFloat(rx).toFixed(4))) /
+              2
+          )
         });
       }
     },
@@ -242,6 +296,7 @@ export default {
           ).toFixed(4)
         });
       }
+      this.citys = [];
       arry = arry.sort(function(a, b) {
         return parseInt(a.Diagnosis) > parseInt(b.Diagnosis) ? 1 : -1;
       });
@@ -253,6 +308,7 @@ export default {
     setserierdata: function() {
       //封装数据
       this.seriesdata = [];
+      this.seriesdataStore = [];
       var citys = this.citys;
       var cActivity = []; //活跃度数据
       for (var i = 0; i < citys.length; i++) {
@@ -277,16 +333,52 @@ export default {
               mergd.Healthrate,
               mergd.Deathrate,
               parseFloat(migrd.allrate),
+
               hospd[0].hospital,
               hospd[0].outpatient,
               popul[0].population
             ]
-          ]
+          ],
+          diagnosis: +mergd.Diagnosis
         };
         this.seriesdata.push(serie);
+        this.seriesdataStore.push(serie);
       }
       this.$store.commit("setcityActivity", cActivity);
-      // console.log(this.seriesdata);
+    },
+    seriesdata_sort_ascend: function() {
+      let that = this;
+      this.seriesdataStore.sort(function(a, b) {
+        return a.diagnosis - b.diagnosis;
+      });
+      this.seriesdata = [];
+      this.seriesdata = this.seriesdataStore
+        .filter(function(d, i) {
+          if (i <= that.sortedNum) {
+            return 1;
+          } else if (i > that.sortedNum) {
+            return 0;
+          }
+        })
+        .reverse();
+      this.initchart();
+    },
+    seriesdata_sort_desascend: function() {
+      let that = this;
+      this.seriesdataStore.sort(function(a, b) {
+        return b.diagnosis - a.diagnosis;
+      });
+      this.seriesdata = [];
+      this.seriesdata = this.seriesdataStore
+        .filter(function(d, i) {
+          if (i <= that.sortedNum) {
+            return 1;
+          } else if (i > that.sortedNum) {
+            return 0;
+          }
+        })
+        .reverse();
+      this.initchart();
     }
   },
   mounted() {},
@@ -310,7 +402,8 @@ export default {
       this.migrationdata(this.$store.getters.getscCoordata);
       this.mergedata();
       this.setserierdata();
-      this.initchart();
+      this.seriesdata_sort_desascend()
+      //this.initchart();
     },
     ScCoordata: function(newval, oldval) {
       this.hospitaldata(newval);
@@ -318,7 +411,8 @@ export default {
       this.populationdata(newval);
       this.mergedata();
       this.setserierdata();
-      this.initchart();
+      this.seriesdata_sort_desascend()
+      //this.initchart();
     }
   }
 };
@@ -327,6 +421,7 @@ export default {
 #Coordinates span {
   color: white;
   font: 18px "Microsoft YaHei";
+  float: left;
 }
 #Coordinates {
   position: absolute;
@@ -336,9 +431,16 @@ export default {
   height: 34%;
   background-color: #30313a;
 }
+#Coordinates p {
+  color: white;
+  font: 12px "Microsoft YaHei";
+  float: left;
+  transform: translate(100%, -10%);
+}
 #CoorEcharts {
   width: 100%;
   height: 90%;
+  padding-top: 5%;
 }
 .Coordinates-angel {
   background: linear-gradient(#00faff, #00faff) left top,
