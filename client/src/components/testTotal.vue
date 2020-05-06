@@ -24,7 +24,9 @@ export default {
           text: "医疗资源",
           textStyle: {
             color: "#ffffff"
-          }
+          },
+            left: "3%",
+            top: "10px"
         },
         tooltip: {
           trigger: "axis"
@@ -33,7 +35,8 @@ export default {
           data: ["现有确诊", "剩余病床", "累计确诊"],
           textStyle: {
             color: "#ffffff"
-          }
+          },
+          top: '10px'
         },
         grid: {
           left: "3%",

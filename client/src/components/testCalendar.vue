@@ -1,7 +1,7 @@
 <template>
   <div id="testCalendar" class="testCalender-angel">
-    <div>
-      <span>关联地区风险</span>
+    <div style="padding-top:1%">
+      <span style="padding-left: 5%">关联地区风险</span>
     </div>
   </div>
 </template>
@@ -40,7 +40,7 @@ export default {
         .attr("fontsize", "8")
         .attr("fill", "white")
         .attr("x", function(d, i) {
-          return height * 2 + (i % 11) * height * 8 + (i % 11) * height;
+          return height * 2 + (i % 11) * height * 8 + (i % 11) * height + 4;
         })
         .attr("y", function(d) {
           return height * 8;
@@ -58,9 +58,9 @@ export default {
         })
         .attr("y", function(d, i) {
           if (i >= 11) {
-            return 18 * height;
+            return 19 * height;
           } else {
-            return 8 * height;
+            return 9 * height;
           }
         })
         .attr("width", height * 8)
@@ -74,7 +74,7 @@ export default {
         .data(this.outprovinces)
         .enter()
         .append("rect")
-        .attr("y", 30 * height)
+        .attr("y", 31 * height)
         .attr("x", function(d, i) {
           return height * 2 + i * height * 8 + i * height;
         })
@@ -91,7 +91,7 @@ export default {
         .attr("fontsize", "8")
         .attr("fill", "white")
         .attr("x", function(d, i) {
-          return height * 2 + i * height * 8 + i * height;
+          return height * 2 + i * height * 8 + i * height + 4;
         })
         .attr("y", function(d) {
           return 30 * height;

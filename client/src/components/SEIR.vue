@@ -128,7 +128,9 @@ export default {
           text: "SEIR",
           textStyle: {
             color: "#ffffff"
-          }
+          },
+          left: "3%",
+          top: "10px"
         },
         tooltip: {
           trigger: "axis"
@@ -137,7 +139,8 @@ export default {
           data: ["潜伏者数", "传染者数", "康复者数"],
           textStyle: {
             color: "#ffffff"
-          }
+          },
+          top: '10px'
         },
         grid: {
           left: "3%",
