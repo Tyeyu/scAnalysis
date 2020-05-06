@@ -393,6 +393,7 @@ export default {
       let toggleableLayerIds = that.toggleableLayerIds;
       let clickedLayer1 = "points_layer";
       let clickedLayer2 = "voronoi-outline";
+      let clickedLayer3 = "voronoi-overlay";
       let stateOfPOA = data.indexOf("POA");
       let stateOfCon = data.indexOf("contours");
       let stateOfVor = data.indexOf("voronoi-outline");
@@ -428,11 +429,15 @@ export default {
             that.map.setLayoutProperty(clickedLayer, "visibility", "none");
           }
         }
-        if (stateOfVor !== -1) {
+         if (stateOfVor !== -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
+          that.map.setLayoutProperty(clickedLayer3, "visibility", "visible");
         } else if (stateOfVor == -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "none");
+          that.map.setLayoutProperty(clickedLayer3, "visibility", "none");
         }
+      
+       
         if (statePopu != -1) {
           that.map.setLayoutProperty("population", "visibility", "visible");
           that.map.setLayoutProperty("city-outline", "visibility", "visible");
@@ -587,6 +592,20 @@ export default {
     },
     vorfeaters: function(newval, oldval) {
       let that = this;
+      var area_arry = [];
+      newval.forEach(d=>{
+        area_arry.push(d.properties.area)
+      })
+      var Ascale = d3
+        .scaleLinear()
+        .domain([
+          d3.min(area_arry),
+          d3.max(area_arry)
+        ])
+        .range([0, 1]);
+      newval.forEach(d=>{
+        d.properties["asc"] = Ascale(d.properties.area);
+      })
       this.map.on("load", function() {
         that.map.addSource("voronoi", {
           type: "geojson",
@@ -609,6 +628,20 @@ export default {
           },
           maxzoom: 10.5
         });
+        that.map.addLayer({
+          id: "voronoi-overlay",
+          type: "fill",
+          source: "voronoi",
+          // layout: {
+          //   visibility: "none"
+          // }, //指渲染位置和可见性
+          paint: {
+            "fill-color": "orange",
+            "fill-opacity": ["get", "asc"]
+          },
+          maxzoom: 8.5
+        })
+
       });
     },
     timeRange: function(newval, oldval) {
