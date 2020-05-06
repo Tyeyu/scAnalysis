@@ -482,7 +482,7 @@ export default {
         }
       }
       d3.select("#Relation")
-        .select("svg")
+        .selectAll("svg")
         .remove();
       this.setXaxisdata();
       this.initchartSet();

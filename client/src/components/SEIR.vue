@@ -42,6 +42,10 @@ export default {
       this.Iarry = [];
       this.Rarry = [];
       for (var i = 0; i < 100; i++) {
+        if (this.I <= 0) this.I = 0;
+        if (this.R <= 0) this.R = 0;
+        if (this.E <= 0) this.E = 0;
+        if (this.S <= 0) this.S = 0;
         this.Earry.push(parseInt(this.E));
         this.Sarry.push(parseInt(this.S));
         this.Iarry.push(parseInt(this.I));
@@ -51,8 +55,19 @@ export default {
         //   this.r = 5;
         //   this.r2 = 5;
         // }
-        this.r = parseInt(this.midu * Math.random() * 0.05);
-        this.r2 = parseInt(this.midu * Math.random() * 0.1);
+        if (this.midu > 1000) {
+          this.r = parseInt(this.midu * Math.random() * 0.05);
+          this.r2 = parseInt(this.midu * Math.random() * 0.1);
+        } else {
+          if (this.midu > 500 && this.midu <= 1000) {
+            this.r = parseInt(this.midu * Math.random() * 0.1);
+            this.r2 = parseInt(this.midu * Math.random() * 0.1);
+          } else {
+            this.r = parseInt(this.midu * Math.random() * 0.5);
+            this.r2 = parseInt(this.midu * Math.random() * 0.5);
+          }
+        }
+
         if (i >= this.controltime) {
           this.r = parseInt(3 * Math.random());
           this.r2 = parseInt(10 * Math.random());
@@ -69,32 +84,29 @@ export default {
           this.R = this.Rarry[i];
         } else {
           this.S = this.Sarry[i] - newDia - newYDia;
-          if (this.S <= 0) this.S = 0;
+
           this.E = this.Earry[i] + newDia - this.a * this.Earry[i] + newYDia;
-          if (this.E <= 0) this.E = 0;
+
           if (i - this.controltime < 10) {
             this.I =
               this.Iarry[i] +
               this.a * this.Earry[i] -
               this.y * 0.1 * this.Iarry[i];
-            if (this.I <= 0) this.I = 0;
+
             this.R = this.Rarry[i] + this.y * 0.1 * this.Iarry[i];
-            if (this.R <= 0) this.R = 0;
           } else {
             if (i - this.controltime >= 10 && i - this.controltime <= 20) {
               this.I =
                 this.Iarry[i] +
                 this.a * this.Earry[i] -
                 this.y * 0.5 * this.Iarry[i];
-              if (this.I <= 0) this.I = 0;
+
               this.R = this.Rarry[i] + this.y * 0.5 * this.Iarry[i];
-              if (this.R <= 0) this.R = 0;
             } else {
               this.I =
                 this.Iarry[i] + this.a * this.Earry[i] - this.y * this.Iarry[i];
-              if (this.I <= 0) this.I = 0;
+
               this.R = this.Rarry[i] + this.y * this.Iarry[i];
-              if (this.R <= 0) this.R = 0;
             }
           }
         }
