@@ -2,11 +2,11 @@
   <div>
     <div id="mapcontrl">
       <el-checkbox-group v-model="checkedcontrls" @change="handleCheckedcontrlsChange">
-              <el-checkbox v-for="cont in contrls1" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
-              <el-divider></el-divider>
-              <el-checkbox v-for="cont in contrls2" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
-              <el-divider></el-divider>
-              <el-checkbox v-for="cont in contrls3" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
+        <el-checkbox v-for="cont in contrls1" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
+        <el-divider></el-divider>
+        <el-checkbox v-for="cont in contrls2" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
+        <el-divider></el-divider>
+        <el-checkbox v-for="cont in contrls3" :label="cont.id" :key="cont.id">{{ cont.name }}</el-checkbox>
       </el-checkbox-group>
     </div>
     <div id="ColorCard"></div>
@@ -21,7 +21,7 @@ export default {
         { name: "累计确诊", id: "contours" },
         { name: "现有确诊", id: "exist" },
         { name: "新增确诊", id: "newAdd" },
-        { name: "病例停留小区", id: "POA" },
+        { name: "病例停留小区", id: "POA" }
       ],
       contrls2: [
         { name: "定点医院", id: "hospitalImage" },
@@ -153,7 +153,7 @@ export default {
   top: 5.5%;
   width: 6%;
   height: 22%;
-  opacity: 80%;
+  opacity: 80% !important;
   /* border: 1px solid white; */
   background-color: #30313a;
   -webkit-font-smoothing: antialiased;
