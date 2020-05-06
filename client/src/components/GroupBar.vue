@@ -453,7 +453,6 @@ export default {
           }
         })
         that.construct_citydaily_data = last_accmulativeDiagnosis
-        console.log('construct_citydaily_data', that.construct_citydaily_data)
       }
 
       //todo fill the stage1, stage2, percent

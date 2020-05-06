@@ -32,7 +32,7 @@ export default {
     return {
       lineStyle: {
         normal: {
-          width: 0.8,
+          width: 2,
           opacity: 1
         }
       },
@@ -345,8 +345,6 @@ export default {
         this.seriesdataStore.push(serie);
       }
       this.$store.commit("setcityActivity", cActivity);
-
-      // console.log(this.seriesdata);
     },
     seriesdata_sort_ascend: function() {
       let that = this;
@@ -404,7 +402,8 @@ export default {
       this.migrationdata(this.$store.getters.getscCoordata);
       this.mergedata();
       this.setserierdata();
-      this.initchart();
+      this.seriesdata_sort_desascend()
+      //this.initchart();
     },
     ScCoordata: function(newval, oldval) {
       this.hospitaldata(newval);
@@ -412,7 +411,8 @@ export default {
       this.populationdata(newval);
       this.mergedata();
       this.setserierdata();
-      this.initchart();
+      this.seriesdata_sort_desascend()
+      //this.initchart();
     }
   }
 };
