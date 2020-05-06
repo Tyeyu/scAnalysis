@@ -15,7 +15,7 @@
         <span class="demonstration">治愈率:</span>
         <el-slider v-model="health" class="myslider" :format-tooltip="formatHeath"></el-slider>
       </div>
-      <div>
+      <div id="hosbedsliedr">
         <span class="demonstration">病床数:</span>
         <el-slider v-model="hospitalbed" class="myslider" v-bind:max="bedmax"></el-slider>
       </div>
@@ -25,7 +25,7 @@
       </div>
       <div>
         <span class="demonstration">管控时间:</span>
-        <el-slider v-model="controltime" class="myslider"></el-slider>
+        <el-slider v-model="controltime" class="myslider" :max="maxTime"></el-slider>
       </div>
       <div id="miduslider">
         <span class="demonstration">人口密度:</span>
@@ -33,10 +33,10 @@
       </div>
     </div>
     <div class="button-angel">
-      <span>开始模拟</span>
-      <el-button id="Pplay" size="medium" v-bind:icon="playicon" circle @click="startclick"></el-button>
+      <!-- <span>开始模拟</span>
+      <el-button id="Pplay" size="medium" v-bind:icon="playicon" circle @click="startclick"></el-button>-->
       <div style="float: right">
-        <el-button class="stopbt" @click="stopclick">结束模拟</el-button>
+        <el-button class="stopbt" @click="startclick">模拟</el-button>
       </div>
     </div>
   </div>
@@ -95,44 +95,46 @@ export default {
       cityname: "成都",
       Beata: 3,
       health: 93,
-      hospitalbed: 30,
+      hospitalbed: 8000,
       activity: 100,
       controltime: 10,
       midu: 1119,
       playicon: "el-icon-video-play",
       playcheck: false,
       listen: null,
-      bedmax: 1000,
+      maxTime: 40,
+      bedmax: 10000,
       Beatamax: 10,
       midumax: 1500,
       stop: true,
-      active: null
+      active: null,
+      hospitalmap: null
     };
   },
   methods: {
     startclick: function() {
       let that = this;
-      if (!this.playcheck) {
-        this.playcheck = true;
-        this.playicon = "el-icon-video-pause"; //切换图标
-        this.stop = false;
-        var SEIRparam = {
-          Beata: this.Beata / 100,
-          hospitalbed: this.hospitalbed,
-          stop: this.stop,
-          play: this.playcheck,
-          controltime: this.controltime,
-          health: this.health / 100,
-          midu: this.midu,
-          controltime: this.controltime,
-          activity: this.activity,
-          cityname: this.cityname
-        };
-        this.$store.commit("settestparam", SEIRparam);
-      } else {
-        this.playicon = "el-icon-video-play";
-        this.playcheck = false;
-      }
+      // if (!this.playcheck) {
+      this.playcheck = true;
+      this.playicon = "el-icon-video-pause"; //切换图标
+      this.stop = false;
+      var SEIRparam = {
+        Beata: this.Beata / 100,
+        hospitalbed: this.hospitalbed,
+        stop: this.stop,
+        play: this.playcheck,
+        controltime: this.controltime,
+        health: this.health / 100,
+        midu: this.midu,
+        controltime: this.controltime,
+        activity: this.activity,
+        cityname: this.cityname
+      };
+      this.$store.commit("settestparam", SEIRparam);
+      // } else {
+      //   this.playicon = "el-icon-video-play";
+      //   this.playcheck = false;
+      // }
     },
     stopclick: function() {
       this.playicon = "el-icon-video-play";
@@ -228,6 +230,9 @@ export default {
   computed: {
     MNactivedata() {
       return this.$store.getters.getMNactivedata;
+    },
+    ScCoordata() {
+      return this.$store.getters.getscCoordata;
     }
   },
   watch: {
@@ -237,10 +242,19 @@ export default {
       this.activedata(this.$store.getters.getMNactivedata);
       this.activenum();
       this.midunum();
+      this.hospitalbed = this.hospitalmap.get(newval)[0].hospital * 400;
     },
     MNactivedata: function(newval, oldval) {
       this.computedData(newval);
       this.activedata(newval);
+    },
+    ScCoordata: function(newval, oldval) {
+      this.hospitalmap = d3
+        .nest()
+        .key(function(d) {
+          return d.city;
+        })
+        .map(newval.hospital);
     }
   }
 };
@@ -261,7 +275,7 @@ export default {
 .stopbt span {
   color: black !important;
 }
-#miduslider .el-slider__bar,
+#hosbedsliedr .el-slider__bar #miduslider .el-slider__bar,
 #activesliedr .el-slider__bar,
 .el-slider__bar {
   left: 1%;
