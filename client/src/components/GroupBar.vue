@@ -615,7 +615,7 @@ export default {
   top: 5.5%;
   left: 0.1%;
   width: 24.8%;
-  height: 56%;
+  height: 55%;
   /* //border: 1px solid #dededd; */
 }
 #groupbar_title{
