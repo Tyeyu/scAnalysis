@@ -14,6 +14,7 @@
 </template>
 <script>
 import echarts from "echarts";
+import * as d3 from "d3";
 export default {
   data() {
     return {
@@ -41,6 +42,7 @@ export default {
   },
   mounted() {
     this.drawColorCard();
+    d3.select("#mapcontrl").style("opacity", 0.8);
   },
   methods: {
     handleCheckedcontrlsChange: function(val) {
@@ -134,12 +136,24 @@ export default {
   computed: {
     maptooldata() {
       return this.$store.getters.getmaptooldata;
+    },
+    tabe() {
+      return this.$store.getters.gettabeselect;
     }
   },
   watch: {
     //监听dailydata数据变化
     maptooldata: function(newval, oldval) {
       // console.log(newval)
+    },
+    tabe: function(newval, oldval) {
+      if (newval == "first") {
+        d3.select("#mapcontrl").style("opacity", 0.8);
+        d3.select("#ColorCard").style("opacity", 1);
+      } else {
+        d3.select("#mapcontrl").style("opacity", 0.1);
+        d3.select("#ColorCard").style("opacity", 0);
+      }
     }
   }
 };
@@ -152,8 +166,8 @@ export default {
   padding-top: 0pt;
   top: 5.5%;
   width: 6%;
-  height: 22%;
-  opacity: 80% !important;
+  height: 23%;
+  /* opacity: 80%; */
   /* border: 1px solid white; */
   background-color: #30313a;
   -webkit-font-smoothing: antialiased;

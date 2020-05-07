@@ -14,7 +14,6 @@
           <PCooordinates />
           <test></test>
 
-          <maptool></maptool>
           <timeline></timeline>
         </el-tab-pane>
         <el-tab-pane label="抗压力沙盒模拟" name="second">
@@ -29,6 +28,7 @@
 
     <!-- <voronoichart></voronoichart> -->
     <mapview></mapview>
+    <maptool></maptool>
   </div>
 </template>
 
