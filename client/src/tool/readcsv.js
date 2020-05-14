@@ -38,6 +38,13 @@ const readcsv = {
       })
       .catch(function(error) {});
   },
+  ReadOutpatient: function() {
+    d3.csv("../../static/发热门诊信息.csv")
+      .then(Outpatients => {
+        store.commit("setOutpatient", Outpatients);
+      })
+      .catch(function(err) {});
+  },
   readCoordata: function() {}
 };
 export default readcsv;

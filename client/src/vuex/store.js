@@ -43,7 +43,8 @@ const store = new Vuex.Store({
     Tcalendata: null,
     TseirCity: null,
     Ttotaldata: null,
-    TCalendar: null
+    TCalendar: null,
+    Outpatient: null
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -123,6 +124,9 @@ const store = new Vuex.Store({
     },
     setTCalendar: function(state, data) {
       state.TCalendar = data;
+    },
+    setOutpatient: function(state, data) {
+      state.Outpatient = data;
     }
   },
   getters: {
@@ -200,6 +204,9 @@ const store = new Vuex.Store({
     },
     getTCalendar: state => {
       return state.TCalendar;
+    },
+    getOutpatient: state => {
+      return state.Outpatient;
     }
   }
 });
