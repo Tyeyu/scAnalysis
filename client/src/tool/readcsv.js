@@ -30,9 +30,12 @@ const readcsv = {
     d3.json("../../static/四川平均迁入率.json")
       .then(inrate => {
         d3.json("../../static/四川平均迁出率.json").then(outrate => {
-          store.commit("setMNactivedata", {
-            inrates: inrate,
-            outrates: outrate
+          d3.csv("../../static/各城市经纬度.csv").then(cityJWD => {
+            store.commit("setMNactivedata", {
+              inrates: inrate,
+              outrates: outrate,
+              cityJWDs: cityJWD
+            });
           });
         });
       })

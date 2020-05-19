@@ -38,7 +38,9 @@ export default {
       sumR: [0],
       sumbed: 0,
       lostI: [0],
-      lostbed: [0]
+      lostbed: [0],
+      citysJWD: null,
+      selectCity: null
     };
   },
   methods: {
@@ -48,6 +50,7 @@ export default {
       this.Iarry = [];
       this.Rarry = [];
       var testCalendar = this.$store.getters.getTcalendata;
+
       var Tcity = null;
       var Tpro = null;
       if (testCalendar != null) {
@@ -204,7 +207,15 @@ export default {
       // this.dayarry.push("100天");
 
       if (testCalendar != null) {
-        var TCalendar = { city: [], province: [] };
+        var TCalendar = { city: [], province: [] }; //关联地区数据
+        var mapQXLinedata = {
+          centercity: {
+            name: this.selectCity,
+            lat: this.citysJWD.get(this.selectCity)[0].lat,
+            lon: this.citysJWD.get(this.selectCity)[0].lon
+          },
+          citys: []
+        };
         for (var k = 0; k < 11; k++) {
           var x = this.citys.city[k];
           var y = this.citys.province[k];
@@ -212,7 +223,21 @@ export default {
           y.value = Tpro.get(y.name)[0].value;
           TCalendar.city.push(x);
           TCalendar.province.push(y);
+          mapQXLinedata.citys.push({
+            name: x.name,
+            lat: this.citysJWD.get(x.name)[0].lat,
+            lon: this.citysJWD.get(x.name)[0].lon,
+            value: Tcity.get(x.name)[0].value
+          });
+          mapQXLinedata.citys.push({
+            name: y.name,
+            lat: this.citysJWD.get(y.name)[0].lat,
+            lon: this.citysJWD.get(y.name)[0].lon,
+            value: Tpro.get(y.name)[0].value
+          });
         }
+        // console.log(mapQXLinedata);
+        this.$store.commit("setTMapLinedata", mapQXLinedata);
         this.$store.commit("setTCalendar", TCalendar);
       }
 
@@ -249,7 +274,7 @@ export default {
           textStyle: {
             color: "#ffffff"
           },
-          top: '10px'
+          top: "10px"
         },
         grid: {
           left: "3%",
@@ -321,9 +346,22 @@ export default {
     },
     testparam() {
       return this.$store.getters.gettestparam;
+    },
+    MNactivedata() {
+      return this.$store.getters.getMNactivedata;
     }
   },
+
   watch: {
+    MNactivedata: function(newval, oldval) {
+      //所有城市的经纬度数据
+      this.citysJWD = d3
+        .nest()
+        .key(function(d) {
+          return d.city;
+        })
+        .map(newval.cityJWDs);
+    },
     tabe: function(newval, oldval) {
       if (!this.tabechange) {
         this.initchart();
@@ -335,10 +373,9 @@ export default {
     },
     TseirCity: function(newval, oldval) {
       this.citys = newval;
-
-      console.log(this.citys);
     },
     testparam: function(newval, oldval) {
+      this.selectCity = newval.cityname;
       this.N =
         parseInt(this.populationmap.get(newval.cityname)[0].population) * 10000;
       // console.log(this.populationmap.get(newval.cityname), this.N);
