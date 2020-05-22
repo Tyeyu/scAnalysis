@@ -6,8 +6,10 @@
 import * as mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import * as d3 from "d3";
+import * as dsv from "d3-dsv";
 import * as d3geoVoronoi from "d3-geo-voronoi";
 import hosImg from "../assets/timg.png";
+import cImg from "../assets/cimg.png";
 let axios = require("axios");
 export default {
   name: "mapview",
@@ -176,6 +178,11 @@ export default {
         this.addArrestPoint(_data);
         this.popUp("points_layer");
       });
+      axios.get("/api/clincInfo.csv").then(clincRes=>{
+        let clinc_data = dsv.csvParse(clincRes.data);
+        this.drawClinc(clinc_data);
+        this.popUp("clincImage");
+      });
     },
     addArrestPoint(data) {
       let drawPoints = [];
@@ -208,9 +215,6 @@ export default {
           id: "points_layer",
           source: "points_source",
           type: "circle",
-          // layout: {
-          //   visibility: "visible"
-          // }, //指渲染位置和可见性
           paint: {
             //指更精细的渲染样式，如不透明度、颜色和翻译等
             "circle-color": ["get", "color"],
@@ -399,6 +403,7 @@ export default {
       let stateOfVor = data.indexOf("voronoi-outline");
       let statePopu = data.indexOf("population");
       let stateOfHos = data.indexOf("hospitalImage");
+      let stateOfClinc = data.indexOf("clincImage");
       let stateOfAct = data.indexOf("Activity");
 
       data.forEach(item => {
@@ -452,6 +457,11 @@ export default {
           that.map.setLayoutProperty("hospitalImage", "visibility", "visible");
         } else if (stateOfHos == -1) {
           that.map.setLayoutProperty("hospitalImage", "visibility", "none");
+        };
+        if (stateOfClinc != -1) {
+          that.map.setLayoutProperty("clincImage", "visibility", "visible");
+        } else if (stateOfClinc == -1) {
+          that.map.setLayoutProperty("clincImage", "visibility", "none");
         }
 
         if (stateOfAct != -1) {
@@ -542,6 +552,46 @@ export default {
         });
       });
       this.popUp("hospitalImage");
+    },
+    //发热门诊
+    drawClinc(data){
+      let that = this;
+      let clincInfo = [];
+      data.forEach(function(d,p,q){
+        d.lng = parseFloat(d.lng);
+        d.lat = parseFloat(d.lat);
+        clincInfo.push({
+          type: "Feature",
+          properties: {
+            description: d["name"]
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [d.lng, d.lat]
+          }
+        })
+      })
+      this.map.loadImage(cImg,function(error, image){
+        if (error) throw error;
+          that.map.addImage("clinc", image);
+          that.map.addSource("clinc_point", {
+            type: "geojson",
+            data: {
+              type: "FeatureCollection",
+              features: clincInfo
+            }
+          });
+          that.map.addLayer({
+            id: "clincImage",
+            type: "symbol",
+            source: "clinc_point",
+            layout: {
+              "icon-image": "clinc",
+              "icon-size": 0.04,
+              "visibility": "none"
+            }
+          });
+      })
     },
     popUp(id) {
       let that = this;

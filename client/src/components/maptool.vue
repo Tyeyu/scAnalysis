@@ -26,7 +26,7 @@ export default {
       ],
       contrls2: [
         { name: "定点医院", id: "hospitalImage" },
-        { name: "发热门诊", id: "clinic" },
+        { name: "发热门诊", id: "clincImage" },
         { name: "医院覆盖范围", id: "voronoi-outline" }
       ],
       contrls3: [
