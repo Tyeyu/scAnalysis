@@ -20,8 +20,8 @@ export default {
     return {
       contrls1: [
         { name: "累计确诊", id: "contours" },
-        { name: "现有确诊", id: "exist" },
-        { name: "新增确诊", id: "newAdd" },
+        // { name: "现有确诊", id: "exist" },
+        // { name: "新增确诊", id: "newAdd" },
         { name: "病例停留小区", id: "POA" }
       ],
       contrls2: [
@@ -49,6 +49,9 @@ export default {
       var pop = val.indexOf("population");
       var con = val.indexOf("contours");
       var cit = val.indexOf("Activity");
+      // var exit=val.indexOf("exist")
+      // var newA=val.indexOf("newAdd")
+
       if (this.lastchoose === "contours") {
         if (pop != -1) {
           val.splice(con, 1);
