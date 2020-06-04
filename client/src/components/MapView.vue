@@ -173,7 +173,7 @@ export default {
         this.addArrestPoint(_data);
         this.popUp("points_layer");
       });
-      axios.get("/api/clincInfo.csv").then(clincRes=>{
+      axios.get("/api/clincInfo.csv").then(clincRes => {
         let clinc_data = dsv.csvParse(clincRes.data);
         this.drawClinc(clinc_data);
         this.popUp("clincImage");
@@ -215,7 +215,7 @@ export default {
             "circle-color": ["get", "color"],
             "circle-opacity": ["get", "opacity"],
             "circle-radius": ["get", "radius"]
-          },
+          }
         });
       });
     },
@@ -235,7 +235,7 @@ export default {
           "fill-color": "#aca",
           "fill-opacity": 0.1
         },
-      
+
         minzoom: 8.5
       });
 
@@ -401,7 +401,7 @@ export default {
       let stateOfHos = data.indexOf("hospitalImage");
       let stateOfClinc = data.indexOf("clincImage");
       let stateOfAct = data.indexOf("Activity");
-      console.log(stateOfCon)
+      // console.log(stateOfCon);
 
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
@@ -417,18 +417,17 @@ export default {
         }
         if (stateOfPOA == 2) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
-          
         } else if (stateOfPOA == -1) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
         }
-        if (stateOfCon == -1) {
-            that.map.setLayoutProperty("city-overlay", "visibility", "visible");
-            console.log("可见")          
-        } else if (stateOfCon == 0) {
-            that.map.setLayoutProperty("city-overlay", "visibility", "none");
-            console.log("不可见") 
+        if (stateOfCon != -1) {
+          that.map.setLayoutProperty("city-overlay", "visibility", "visible");
+          // console.log("可见");
+        } else if (stateOfCon == -1) {
+          that.map.setLayoutProperty("city-overlay", "visibility", "none");
+          // console.log("不可见");
         }
-        if (stateOfVor !== -1) {
+        if (stateOfVor != -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
           that.map.setLayoutProperty(clickedLayer3, "visibility", "visible");
         } else if (stateOfVor == -1) {
@@ -438,12 +437,12 @@ export default {
 
         if (statePopu != -1) {
           that.map.setLayoutProperty("population", "visibility", "visible");
-          that.map.setLayoutProperty("city-outline", "visibility", "visible");
+          // that.map.setLayoutProperty("city-outline", "visibility", "visible");
           that.map.setLayoutProperty("region-label", "visibility", "visible");
         } else if (statePopu == -1) {
           that.map.setLayoutProperty("population", "visibility", "none");
           if (stateOfCon == -1 && stateOfAct == -1) {
-            that.map.setLayoutProperty("city-outline", "visibility", "none");
+            // that.map.setLayoutProperty("city-outline", "visibility", "none");
             that.map.setLayoutProperty("region-label", "visibility", "none");
           }
         }
@@ -451,7 +450,7 @@ export default {
           that.map.setLayoutProperty("hospitalImage", "visibility", "visible");
         } else if (stateOfHos == -1) {
           that.map.setLayoutProperty("hospitalImage", "visibility", "none");
-        };
+        }
         if (stateOfClinc != -1) {
           that.map.setLayoutProperty("clincImage", "visibility", "visible");
         } else if (stateOfClinc == -1) {
@@ -460,12 +459,12 @@ export default {
 
         if (stateOfAct != -1) {
           that.map.setLayoutProperty("Activity", "visibility", "visible");
-          that.map.setLayoutProperty("city-outline", "visibility", "visible");
+          // that.map.setLayoutProperty("city-outline", "visibility", "visible");
           that.map.setLayoutProperty("region-label", "visibility", "visible");
         } else {
           that.map.setLayoutProperty("Activity", "visibility", "none");
           if (stateOfCon == -1 && statePopu == -1) {
-            that.map.setLayoutProperty("city-outline", "visibility", "none");
+            // that.map.setLayoutProperty("city-outline", "visibility", "none");
             that.map.setLayoutProperty("region-label", "visibility", "none");
           }
         }
@@ -548,10 +547,10 @@ export default {
       this.popUp("hospitalImage");
     },
     //发热门诊
-    drawClinc(data){
+    drawClinc(data) {
       let that = this;
       let clincInfo = [];
-      data.forEach(function(d,p,q){
+      data.forEach(function(d, p, q) {
         d.lng = parseFloat(d.lng);
         d.lat = parseFloat(d.lat);
         clincInfo.push({
@@ -563,29 +562,29 @@ export default {
             type: "Point",
             coordinates: [d.lng, d.lat]
           }
-        })
-      })
-      this.map.loadImage(cImg,function(error, image){
+        });
+      });
+      this.map.loadImage(cImg, function(error, image) {
         if (error) throw error;
-          that.map.addImage("clinc", image);
-          that.map.addSource("clinc_point", {
-            type: "geojson",
-            data: {
-              type: "FeatureCollection",
-              features: clincInfo
-            }
-          });
-          that.map.addLayer({
-            id: "clincImage",
-            type: "symbol",
-            source: "clinc_point",
-            layout: {
-              "icon-image": "clinc",
-              "icon-size": 0.04,
-              "visibility": "none"
-            }
-          });
-      })
+        that.map.addImage("clinc", image);
+        that.map.addSource("clinc_point", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: clincInfo
+          }
+        });
+        that.map.addLayer({
+          id: "clincImage",
+          type: "symbol",
+          source: "clinc_point",
+          layout: {
+            "icon-image": "clinc",
+            "icon-size": 0.04,
+            visibility: "none"
+          }
+        });
+      });
     },
     popUp(id) {
       let that = this;

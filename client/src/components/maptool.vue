@@ -33,7 +33,7 @@ export default {
         { name: "人口基数", id: "population" },
         { name: "迁移活跃度", id: "Activity" }
       ],
-      checkedcontrls: ["POA", "test"],
+      checkedcontrls: ["POA", "contours"],
       popuchoose: false,
       citychoose: false,
       lastchoose: "contours",
