@@ -438,12 +438,12 @@ export default {
         if (statePopu != -1) {
           that.map.setLayoutProperty("population", "visibility", "visible");
           // that.map.setLayoutProperty("city-outline", "visibility", "visible");
-          that.map.setLayoutProperty("region-label", "visibility", "visible");
+          // that.map.setLayoutProperty("region-label", "visibility", "visible");
         } else if (statePopu == -1) {
           that.map.setLayoutProperty("population", "visibility", "none");
           if (stateOfCon == -1 && stateOfAct == -1) {
             // that.map.setLayoutProperty("city-outline", "visibility", "none");
-            that.map.setLayoutProperty("region-label", "visibility", "none");
+            // that.map.setLayoutProperty("region-label", "visibility", "none");
           }
         }
         if (stateOfHos != -1) {
@@ -460,12 +460,12 @@ export default {
         if (stateOfAct != -1) {
           that.map.setLayoutProperty("Activity", "visibility", "visible");
           // that.map.setLayoutProperty("city-outline", "visibility", "visible");
-          that.map.setLayoutProperty("region-label", "visibility", "visible");
+          // that.map.setLayoutProperty("region-label", "visibility", "visible");
         } else {
           that.map.setLayoutProperty("Activity", "visibility", "none");
           if (stateOfCon == -1 && statePopu == -1) {
             // that.map.setLayoutProperty("city-outline", "visibility", "none");
-            that.map.setLayoutProperty("region-label", "visibility", "none");
+            // that.map.setLayoutProperty("region-label", "visibility", "none");
           }
         }
       });
