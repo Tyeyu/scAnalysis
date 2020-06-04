@@ -87,11 +87,6 @@ export default {
       toggleableLayerIds: [
         "region-label",
         "city-outline",
-        // "county-outline",
-        // "county-overlay",
-        // "county-label",
-        "city-overlay",
-        "region-label",
         "dstrc-overlay",
         "dstrc-outline",
         "dstrc-label"
@@ -220,7 +215,7 @@ export default {
             "circle-color": ["get", "color"],
             "circle-opacity": ["get", "opacity"],
             "circle-radius": ["get", "radius"]
-          }
+          },
         });
       });
     },
@@ -240,6 +235,7 @@ export default {
           "fill-color": "#aca",
           "fill-opacity": 0.1
         },
+      
         minzoom: 8.5
       });
 
@@ -405,6 +401,7 @@ export default {
       let stateOfHos = data.indexOf("hospitalImage");
       let stateOfClinc = data.indexOf("clincImage");
       let stateOfAct = data.indexOf("Activity");
+      console.log(stateOfCon)
 
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
@@ -418,21 +415,18 @@ export default {
             "visibility"
           );
         }
-        if (stateOfPOA == 0) {
+        if (stateOfPOA == 2) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
+          
         } else if (stateOfPOA == -1) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
         }
-        if (stateOfCon == 0) {
-          for (var i = 0; i < toggleableLayerIds.length; i++) {
-            var clickedLayer = toggleableLayerIds[i];
-            that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
-          }
-        } else if (stateOfCon == -1) {
-          for (var i = 0; i < toggleableLayerIds.length; i++) {
-            var clickedLayer = toggleableLayerIds[i];
-            that.map.setLayoutProperty(clickedLayer, "visibility", "none");
-          }
+        if (stateOfCon == -1) {
+            that.map.setLayoutProperty("city-overlay", "visibility", "visible");
+            console.log("可见")          
+        } else if (stateOfCon == 0) {
+            that.map.setLayoutProperty("city-overlay", "visibility", "none");
+            console.log("不可见") 
         }
         if (stateOfVor !== -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
