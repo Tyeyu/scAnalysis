@@ -33,10 +33,10 @@
       </div>
     </div>
     <div class="button-angel">
-      <!-- <span>开始模拟</span>
-      <el-button id="Pplay" size="medium" v-bind:icon="playicon" circle @click="startclick"></el-button>-->
+      <span>开始模拟</span>
+      <el-button id="Pplay" size="medium" v-bind:icon="playicon" circle @click="startclick"></el-button>
       <div style="float: right">
-        <el-button class="stopbt" @click="startclick">模拟</el-button>
+        <el-button class="stopbt" @click="stopclick">结束</el-button>
       </div>
     </div>
   </div>
@@ -114,10 +114,45 @@ export default {
   methods: {
     startclick: function() {
       let that = this;
-      // if (!this.playcheck) {
-      this.playcheck = true;
-      this.playicon = "el-icon-video-pause"; //切换图标
-      this.stop = false;
+      if (!this.playcheck) {
+        this.playcheck = true;
+        this.playicon = "el-icon-video-pause"; //切换图标
+        this.stop = false;
+        var SEIRparam = {
+          Beata: this.Beata / 100,
+          hospitalbed: this.hospitalbed,
+          stop: this.stop,
+          play: this.playcheck,
+          controltime: this.controltime,
+          health: this.health / 100,
+          midu: this.midu,
+          controltime: this.controltime,
+          activity: this.activity,
+          cityname: this.cityname
+        };
+        this.$store.commit("settestparam", SEIRparam);
+      } else {
+        this.playicon = "el-icon-video-play";
+        this.playcheck = false;
+        var SEIRparams = {
+          Beata: this.Beata / 100,
+          hospitalbed: this.hospitalbed,
+          stop: this.stop,
+          play: this.playcheck,
+          controltime: this.controltime,
+          health: this.health / 100,
+          midu: this.midu,
+          controltime: this.controltime,
+          activity: this.activity,
+          cityname: this.cityname
+        };
+        this.$store.commit("settestparam", SEIRparams);
+      }
+    },
+    stopclick: function() {
+      this.playicon = "el-icon-video-play";
+      this.playcheck = false;
+      this.stop = true;
       var SEIRparam = {
         Beata: this.Beata / 100,
         hospitalbed: this.hospitalbed,
@@ -131,15 +166,6 @@ export default {
         cityname: this.cityname
       };
       this.$store.commit("settestparam", SEIRparam);
-      // } else {
-      //   this.playicon = "el-icon-video-play";
-      //   this.playcheck = false;
-      // }
-    },
-    stopclick: function() {
-      this.playicon = "el-icon-video-play";
-      this.playcheck = false;
-      this.stop = true;
     },
     formatBeata: function(val) {
       return val / 100;
