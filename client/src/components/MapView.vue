@@ -143,7 +143,14 @@ export default {
       });
       let res = axios.get("/api/sichuan_district.json").then(res => {
         that.adddistrict2Map(res.data);
+        console.log(res.data.features)
       });
+      let trackData = axios.get("/api/city_Track.json").then(res=>{
+        console.log("这是输入")
+        console.log(res.data.features);
+        that.addTrack(res.data);
+      })
+      
       // let res3 = axios.get("/api/merge_sichuan.json").then(res => {
       //   that.addtown2Map(res.data);
       // });
@@ -218,6 +225,29 @@ export default {
           }
         });
       });
+    },
+    addTrack(data){
+      this.map.addSource("trac_json",{
+        type:"geojson",
+        data:{
+          type:"FeatureCollection",
+          features:data.features
+        }
+      });
+      this.map.addLayer({
+        id: "track",
+        type: "line",
+        source: "trac_json",
+        paint: {
+          "line-width": 1,
+          "line-color": "#383a30",
+          "line-opacity": 0.5
+        },
+        layout:{
+          "visibility": "none"
+        }
+      });
+
     },
     addtown2Map(features) {
       this.map.addSource("town_json", {
@@ -401,6 +431,7 @@ export default {
       let stateOfHos = data.indexOf("hospitalImage");
       let stateOfClinc = data.indexOf("clincImage");
       let stateOfAct = data.indexOf("Activity");
+      let stateOfTrac = data.indexOf("track");
       // console.log(stateOfCon);
 
       data.forEach(item => {
@@ -456,7 +487,11 @@ export default {
         } else if (stateOfClinc == -1) {
           that.map.setLayoutProperty("clincImage", "visibility", "none");
         }
-
+        if(stateOfTrac !=-1){
+          that.map.setLayoutProperty("track", "visibility", "visible");
+        }else if(stateOfTrac == -1){
+          that.map.setLayoutProperty("track", "visibility", "none");
+        }
         if (stateOfAct != -1) {
           that.map.setLayoutProperty("Activity", "visibility", "visible");
           // that.map.setLayoutProperty("city-outline", "visibility", "visible");
@@ -581,7 +616,7 @@ export default {
           layout: {
             "icon-image": "clinc",
             "icon-size": 0.04,
-            visibility: "none"
+            "visibility": "none"
           }
         });
       });

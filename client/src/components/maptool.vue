@@ -21,8 +21,8 @@ export default {
       contrls1: [
         { name: "累计确诊", id: "contours" },
         // { name: "现有确诊", id: "exist" },
-        // { name: "新增确诊", id: "newAdd" },
-        { name: "病例停留小区", id: "POA" }
+        { name: "病例停留小区", id: "POA" },
+        { name: "病例轨迹", id: "track" },
       ],
       contrls2: [
         { name: "定点医院", id: "hospitalImage" },
@@ -33,7 +33,7 @@ export default {
         { name: "人口基数", id: "population" },
         { name: "迁移活跃度", id: "Activity" }
       ],
-      checkedcontrls: ["POA", "contours"],
+      checkedcontrls: ["POA", "contours","test"],
       popuchoose: false,
       citychoose: false,
       lastchoose: "contours",
