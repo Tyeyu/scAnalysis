@@ -716,6 +716,8 @@ export default {
                 'icon-ignore-placement': true
             }
         },'points_layer')
+
+        that.map.setLayoutProperty("transrouteid", "visibility", "visible");
   
     }
   },

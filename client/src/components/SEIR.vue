@@ -277,43 +277,6 @@ export default {
           total: that.sumI,
           dayarry: that.dayarry
         };
-<<<<<<< HEAD
-        for (var k = 0; k < 11; k++) {
-          var x = this.citys.city[k];
-          var y = this.citys.province[k];
-          x.value = Tcity.get(x.name)[0].value;
-          y.value = Tpro.get(y.name)[0].value;
-          TCalendar.city.push(x);
-          TCalendar.province.push(y);
-          mapQXLinedata.citys.push({
-            name: x.name,
-            lat: this.citysJWD.get(x.name)[0].lat,
-            lon: this.citysJWD.get(x.name)[0].lon,
-            value: Tcity.get(x.name)[0].value
-          });
-          mapQXLinedata.citys.push({
-            name: y.name,
-            lat: this.citysJWD.get(y.name)[0].lat,
-            lon: this.citysJWD.get(y.name)[0].lon,
-            value: Tpro.get(y.name)[0].value
-          });
-        }
-        // console.log(mapQXLinedata);
-        console.log('mapQXLinedata', mapQXLinedata)
-        
-        this.$store.commit("setTMapLinedata", mapQXLinedata);
-        this.$store.commit("setTCalendar", TCalendar);
-      }
-
-      var Tdata = {
-        nowBeds: this.lostbed,
-        total: this.sumI,
-        dayarry: this.dayarry
-      };
-
-      this.$store.commit("setTtotaldata", Tdata);
-      
-=======
 
         that.$store.commit("setTtotaldata", Tdata);
         console.log(that.Earry);
@@ -322,7 +285,6 @@ export default {
           window.clearInterval(that.play);
         }
       }, 2000);
->>>>>>> c572bb8c1a7756972f8dca5f4a1c10be3a6e013c
       // console.log(this.sumI);
       // console.log(this.lostbed);
     },
