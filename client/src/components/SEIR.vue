@@ -38,16 +38,22 @@ export default {
       sumR: [0],
       sumbed: 0,
       lostI: [0],
-      lostbed: [0]
+      lostbed: [0],
+      citysJWD: null,
+      selectCity: null,
+      play: null,
+      i: 0
     };
   },
   methods: {
     initdata: function() {
+      let that = this;
       this.Earry = [];
       this.Sarry = [];
       this.Iarry = [];
       this.Rarry = [];
       var testCalendar = this.$store.getters.getTcalendata;
+
       var Tcity = null;
       var Tpro = null;
       if (testCalendar != null) {
@@ -64,166 +70,221 @@ export default {
           })
           .map(this.$store.getters.getTcalendata.province);
       }
+      this.play = self.setInterval(function() {
+        if (that.i < 40) {
+          if (that.I <= 0) that.I = 0;
+          if (that.R <= 0) that.R = 0;
+          if (that.E <= 0) that.E = 0;
+          if (that.S <= 0) that.S = 0;
+          that.Earry.push(parseInt(that.E));
+          that.Sarry.push(parseInt(that.S));
+          that.Iarry.push(parseInt(that.I));
+          that.Rarry.push(parseInt(that.R));
+          that.dayarry[that.i] = that.i + 1 + "天";
+          if (that.i > 0) {
+            that.sumI[that.i] = that.sumI[that.i - 1] + parseInt(that.I);
+            that.sumR[that.i] = that.sumR[that.i - 1] + parseInt(that.R);
+          }
 
-      for (var i = 0; i < 40; i++) {
-        if (this.I <= 0) this.I = 0;
-        if (this.R <= 0) this.R = 0;
-        if (this.E <= 0) this.E = 0;
-        if (this.S <= 0) this.S = 0;
-        this.Earry.push(parseInt(this.E));
-        this.Sarry.push(parseInt(this.S));
-        this.Iarry.push(parseInt(this.I));
-        this.Rarry.push(parseInt(this.R));
-        this.dayarry[i] = i + 1 + "天";
-        if (i > 0) {
-          this.sumI[i] = this.sumI[i - 1] + parseInt(this.I);
-          this.sumR[i] = this.sumR[i - 1] + parseInt(this.R);
-        }
-
-        if (this.midu > 1000) {
-          this.r = parseInt(this.midu * Math.random() * 0.05);
-          this.r2 = parseInt(this.midu * Math.random() * 0.1);
-        } else {
-          if (this.midu > 500 && this.midu <= 1000) {
-            this.r = parseInt(this.midu * Math.random() * 0.1);
-            this.r2 = parseInt(this.midu * Math.random() * 0.1);
+          if (that.midu > 1000) {
+            that.r = parseInt(that.midu * Math.random() * 0.05);
+            that.r2 = parseInt(that.midu * Math.random() * 0.1);
           } else {
-            this.r = parseInt(this.midu * Math.random() * 0.5);
-            this.r2 = parseInt(this.midu * Math.random() * 0.5);
-          }
-        }
-
-        if (i >= this.controltime) {
-          this.r = parseInt(3 * Math.random());
-          this.r2 = parseInt(10 * Math.random());
-        }
-        var newDia =
-          (this.r * this.Beata * this.Sarry[i] * this.Iarry[i]) / this.N; //发病者感染人数
-        // if (i == 12) break;
-        var newYDia =
-          (this.r2 * this.Beata2 * this.Sarry[i] * this.Earry[i]) / this.N; //潜伏者感染人数
-        if (i < this.controltime) {
-          this.S = this.Sarry[i] - newDia - newYDia;
-          this.E = this.Earry[i] + newDia - this.a * this.Earry[i] + newYDia;
-          this.I = this.Iarry[i] + this.a * this.Earry[i];
-          this.R = this.Rarry[i];
-          this.sumbed += parseInt(this.sumI[i] * 0.01); //自由传播阶段，有较低概率病人住院
-          if (this.hosbednum - this.sumbed < 0) {
-            this.lostbed[i] = 0;
-            this.sumbed = this.hosbednum;
-          } else {
-            this.lostbed[i] = this.hosbednum - this.sumbed;
-          }
-        } else {
-          this.S = this.Sarry[i] - newDia - newYDia;
-
-          this.E = this.Earry[i] + newDia - this.a * this.Earry[i] + newYDia;
-          if (i == this.controltime) {
-            this.sumbed += this.sumI[i] - this.sumbed - this.sumR[i]; //将发病的病人全部转入住院
-            if (this.sumbed < 0) {
-              this.sumbed = 0;
-            }
-          }
-
-          if (i - this.controltime < 10) {
-            this.I =
-              this.Iarry[i] +
-              this.a * this.Earry[i] -
-              this.y * 0.1 * this.Iarry[i];
-            if (this.sumbed < this.hosbednum)
-              this.R = this.Rarry[i] + ((this.y * i) / 1000) * this.Iarry[i];
-            else {
-              this.R = this.Rarry[i] + ((this.y * i) / 10000) * this.Iarry[i];
-            }
-            this.sumbed +=
-              parseInt(this.I * 0.9 * Math.random()) - parseInt(this.R);
-            if (this.sumbed < 0) {
-              this.sumbed = 0;
-            }
-            if (this.hosbednum - this.sumbed < 0) {
-              this.lostbed[i] = 0;
-              this.sumbed = this.hosbednum;
+            if (that.midu > 500 && that.midu <= 1000) {
+              that.r = parseInt(that.midu * Math.random() * 0.1);
+              that.r2 = parseInt(that.midu * Math.random() * 0.1);
             } else {
-              this.lostbed[i] = this.hosbednum - this.sumbed;
+              that.r = parseInt(that.midu * Math.random() * 0.5);
+              that.r2 = parseInt(that.midu * Math.random() * 0.5);
+            }
+          }
+
+          if (that.i >= that.controltime) {
+            that.r = parseInt(3 * Math.random());
+            that.r2 = parseInt(10 * Math.random());
+          }
+          var newDia =
+            (that.r * that.Beata * that.Sarry[that.i] * that.Iarry[that.i]) /
+            that.N; //发病者感染人数
+          // if (i == 12) break;
+          var newYDia =
+            (that.r2 * that.Beata2 * that.Sarry[that.i] * that.Earry[that.i]) /
+            that.N; //潜伏者感染人数
+          if (that.i < that.controltime) {
+            that.S = that.Sarry[that.i] - newDia - newYDia;
+            that.E =
+              that.Earry[that.i] +
+              newDia -
+              that.a * that.Earry[that.i] +
+              newYDia;
+            that.I = that.Iarry[that.i] + that.a * that.Earry[that.i];
+            that.R = that.Rarry[that.i];
+            that.sumbed += parseInt(that.sumI[that.i] * 0.01); //自由传播阶段，有较低概率病人住院
+            if (that.hosbednum - that.sumbed < 0) {
+              that.lostbed[that.i] = 0;
+              that.sumbed = that.hosbednum;
+            } else {
+              that.lostbed[that.i] = that.hosbednum - that.sumbed;
             }
           } else {
-            if (i - this.controltime >= 10 && i - this.controltime <= 20) {
-              this.I =
-                this.Iarry[i] +
-                this.a * this.Earry[i] -
-                this.y * 0.5 * this.Iarry[i];
-              this.R = this.Rarry[i] + ((this.y * i) / 1000) * this.Iarry[i];
+            that.S = that.Sarry[that.i] - newDia - newYDia;
 
-              this.sumbed += parseInt(this.I) - parseInt(this.R);
-              if (this.sumbed < 0) {
-                this.sumbed = 0;
+            that.E =
+              that.Earry[that.i] +
+              newDia -
+              that.a * that.Earry[that.i] +
+              newYDia;
+            if (that.i == that.controltime) {
+              that.sumbed +=
+                that.sumI[that.i] - that.sumbed - that.sumR[that.i]; //将发病的病人全部转入住院
+              if (that.sumbed < 0) {
+                that.sumbed = 0;
               }
-              if (this.hosbednum - this.sumbed < 0) {
-                this.lostbed[i] = 0;
-                this.sumbed = this.hosbednum;
-              } else {
-                this.lostbed[i] = this.hosbednum - this.sumbed;
-              }
-            } else {
-              this.I =
-                this.Iarry[i] + this.a * this.Earry[i] - this.y * this.Iarry[i];
-              if (this.sumbed < this.hosbednum)
-                this.R = this.Rarry[i] + ((this.y * i) / 100) * this.Iarry[i];
+            }
+
+            if (that.i - that.controltime < 10) {
+              that.I =
+                that.Iarry[that.i] +
+                that.a * that.Earry[that.i] -
+                that.y * 0.1 * that.Iarry[that.i];
+              if (that.sumbed < that.hosbednum)
+                that.R =
+                  that.Rarry[that.i] +
+                  ((that.y * that.i) / 1000) * that.Iarry[that.i];
               else {
-                this.R = this.Rarry[i] + ((this.y * i) / 1000) * this.Iarry[i];
+                that.R =
+                  that.Rarry[that.i] +
+                  ((that.y * that.i) / 10000) * that.Iarry[that.i];
               }
-
-              this.sumbed += parseInt(this.I) - parseInt(this.R);
-              if (this.sumbed < 0) {
-                this.sumbed = 0;
+              that.sumbed +=
+                parseInt(that.I * 0.9 * Math.random()) - parseInt(that.R);
+              if (that.sumbed < 0) {
+                that.sumbed = 0;
               }
-              if (this.hosbednum - this.sumbed < 0) {
-                this.lostbed[i] = 0;
-                this.sumbed = this.hosbednum;
+              if (that.hosbednum - that.sumbed < 0) {
+                that.lostbed[that.i] = 0;
+                that.sumbed = that.hosbednum;
               } else {
-                this.lostbed[i] = this.hosbednum - this.sumbed;
+                that.lostbed[that.i] = that.hosbednum - that.sumbed;
+              }
+            } else {
+              if (
+                that.i - that.controltime >= 10 &&
+                that.i - that.controltime <= 20
+              ) {
+                that.I =
+                  that.Iarry[that.i] +
+                  that.a * that.Earry[that.i] -
+                  that.y * 0.5 * that.Iarry[that.i];
+                that.R =
+                  that.Rarry[that.i] +
+                  ((that.y * that.i) / 1000) * that.Iarry[that.i];
+
+                that.sumbed += parseInt(that.I) - parseInt(that.R);
+                if (that.sumbed < 0) {
+                  that.sumbed = 0;
+                }
+                if (that.hosbednum - that.sumbed < 0) {
+                  that.lostbed[that.i] = 0;
+                  that.sumbed = that.hosbednum;
+                } else {
+                  that.lostbed[that.i] = that.hosbednum - that.sumbed;
+                }
+              } else {
+                that.I =
+                  that.Iarry[that.i] +
+                  that.a * that.Earry[that.i] -
+                  that.y * that.Iarry[that.i];
+                if (that.sumbed < that.hosbednum)
+                  that.R =
+                    that.Rarry[that.i] +
+                    ((that.y * that.i) / 100) * that.Iarry[that.i];
+                else {
+                  that.R =
+                    that.Rarry[that.i] +
+                    ((that.y * that.i) / 1000) * that.Iarry[that.i];
+                }
+
+                that.sumbed += parseInt(that.I) - parseInt(that.R);
+                if (that.sumbed < 0) {
+                  that.sumbed = 0;
+                }
+                if (that.hosbednum - that.sumbed < 0) {
+                  that.lostbed[that.i] = 0;
+                  that.sumbed = that.hosbednum;
+                } else {
+                  that.lostbed[that.i] = that.hosbednum - that.sumbed;
+                }
               }
             }
           }
-        }
-        if (testCalendar != null) {
-          for (var j = 0; j < 11; j++) {
-            Tcity.get(this.citys.city[j].name)[0].value += parseInt(
-              (this.I + this.E) * this.citys.city[j].value
-            );
-            Tpro.get(this.citys.province[j].name)[0].value += parseInt(
-              (this.I + this.E) * this.citys.province[j].value
-            );
+          if (testCalendar != null) {
+            for (var j = 0; j < 11; j++) {
+              Tcity.get(that.citys.city[j].name)[0].value += parseInt(
+                ((that.I + that.E) / that.N) * that.citys.city[j].value
+              );
+              Tpro.get(that.citys.province[j].name)[0].value += parseInt(
+                ((that.I + that.E) / that.N) * that.citys.province[j].value
+              );
+            }
           }
+          that.i++;
         }
-      }
-      // this.Earry.push(this.E);
-      // this.Sarry.push(this.S);
-      // this.Iarry.push(this.I);
-      // this.Rarry.push(this.R);
-      // this.dayarry.push("100天");
 
-      if (testCalendar != null) {
-        var TCalendar = { city: [], province: [] };
-        for (var k = 0; k < 11; k++) {
-          var x = this.citys.city[k];
-          var y = this.citys.province[k];
-          x.value = Tcity.get(x.name)[0].value;
-          y.value = Tpro.get(y.name)[0].value;
-          TCalendar.city.push(x);
-          TCalendar.province.push(y);
+        // this.Earry.push(this.E);
+        // this.Sarry.push(this.S);
+        // this.Iarry.push(this.I);
+        // this.Rarry.push(this.R);
+        // this.dayarry.push("100天");
+
+        if (testCalendar != null) {
+          var TCalendar = { city: [], province: [] }; //关联地区数据
+          var mapQXLinedata = {
+            centercity: {
+              name: that.selectCity,
+              lat: that.citysJWD.get(that.selectCity)[0].lat,
+              lon: that.citysJWD.get(that.selectCity)[0].lon
+            },
+            citys: []
+          };
+          for (var k = 0; k < 11; k++) {
+            var x = that.citys.city[k];
+            var y = that.citys.province[k];
+            x.value = Tcity.get(x.name)[0].value;
+            y.value = Tpro.get(y.name)[0].value;
+            TCalendar.city.push(x);
+            TCalendar.province.push(y);
+            mapQXLinedata.citys.push({
+              name: x.name,
+              lat: that.citysJWD.get(x.name)[0].lat,
+              lon: that.citysJWD.get(x.name)[0].lon,
+              value: Tcity.get(x.name)[0].value
+            });
+            mapQXLinedata.citys.push({
+              name: y.name,
+              lat: that.citysJWD.get(y.name)[0].lat,
+              lon: that.citysJWD.get(y.name)[0].lon,
+              value: Tpro.get(y.name)[0].value
+            });
+          }
+          // console.log(mapQXLinedata);
+          that.$store.commit("setTMapLinedata", mapQXLinedata);
+          that.$store.commit("setTCalendar", TCalendar);
         }
-        this.$store.commit("setTCalendar", TCalendar);
-      }
 
-      var Tdata = {
-        nowBeds: this.lostbed,
-        total: this.sumI,
-        dayarry: this.dayarry
-      };
+        var Tdata = {
+          nowBeds: that.lostbed,
+          total: that.sumI,
+          dayarry: that.dayarry
+        };
 
-      this.$store.commit("setTtotaldata", Tdata);
-
+        that.$store.commit("setTtotaldata", Tdata);
+        console.log(that.Earry);
+        that.initchart();
+        if (that.i >= 40) {
+          window.clearInterval(that.play);
+        }
+      }, 2000);
       // console.log(this.sumI);
       // console.log(this.lostbed);
     },
@@ -249,7 +310,7 @@ export default {
           textStyle: {
             color: "#ffffff"
           },
-          top: '10px'
+          top: "10px"
         },
         grid: {
           left: "3%",
@@ -306,7 +367,7 @@ export default {
     }
   },
   mounted() {
-    this.initdata();
+    // this.initdata();
     // this.initchart();
   },
   computed: {
@@ -321,9 +382,22 @@ export default {
     },
     testparam() {
       return this.$store.getters.gettestparam;
+    },
+    MNactivedata() {
+      return this.$store.getters.getMNactivedata;
     }
   },
+
   watch: {
+    MNactivedata: function(newval, oldval) {
+      //所有城市的经纬度数据
+      this.citysJWD = d3
+        .nest()
+        .key(function(d) {
+          return d.city;
+        })
+        .map(newval.cityJWDs);
+    },
     tabe: function(newval, oldval) {
       if (!this.tabechange) {
         this.initchart();
@@ -335,10 +409,9 @@ export default {
     },
     TseirCity: function(newval, oldval) {
       this.citys = newval;
-
-      console.log(this.citys);
     },
     testparam: function(newval, oldval) {
+      this.selectCity = newval.cityname;
       this.N =
         parseInt(this.populationmap.get(newval.cityname)[0].population) * 10000;
       // console.log(this.populationmap.get(newval.cityname), this.N);
@@ -350,9 +423,21 @@ export default {
       this.controltime = newval.controltime;
       this.midu = newval.midu;
       this.hosbednum = newval.hospitalbed;
-      this.initdata();
 
-      this.initchart();
+      if (!newval.stop && newval.play) {
+        this.initdata();
+      } else {
+        if (!newval.stop && !newval.play) {
+          window.clearInterval(this.play);
+        } else {
+          window.clearInterval(this.play);
+          this.i = 0;
+          this.Earry = [];
+          this.Iarry = [];
+          this.Sarry = [];
+          this.Rarry = [];
+        }
+      }
     }
   }
 };

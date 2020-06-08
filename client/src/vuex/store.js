@@ -43,7 +43,10 @@ const store = new Vuex.Store({
     Tcalendata: null,
     TseirCity: null,
     Ttotaldata: null,
-    TCalendar: null
+    TCalendar: null,
+    Outpatient: null,
+    //压力测试地图关联地区传染数据
+    TMapLinedata: null
   },
   mutations: {
     setmapdata: function(state, data) {
@@ -123,6 +126,12 @@ const store = new Vuex.Store({
     },
     setTCalendar: function(state, data) {
       state.TCalendar = data;
+    },
+    setOutpatient: function(state, data) {
+      state.Outpatient = data;
+    },
+    setTMapLinedata: function(state, data) {
+      state.TMapLinedata = data;
     }
   },
   getters: {
@@ -200,6 +209,12 @@ const store = new Vuex.Store({
     },
     getTCalendar: state => {
       return state.TCalendar;
+    },
+    getOutpatient: state => {
+      return state.Outpatient;
+    },
+    getTMapLinedata: state => {
+      return state.TMapLinedata;
     }
   }
 });

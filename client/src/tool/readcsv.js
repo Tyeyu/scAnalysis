@@ -30,13 +30,23 @@ const readcsv = {
     d3.json("../../static/四川平均迁入率.json")
       .then(inrate => {
         d3.json("../../static/四川平均迁出率.json").then(outrate => {
-          store.commit("setMNactivedata", {
-            inrates: inrate,
-            outrates: outrate
+          d3.csv("../../static/各城市经纬度.csv").then(cityJWD => {
+            store.commit("setMNactivedata", {
+              inrates: inrate,
+              outrates: outrate,
+              cityJWDs: cityJWD
+            });
           });
         });
       })
       .catch(function(error) {});
+  },
+  ReadOutpatient: function() {
+    d3.csv("../../static/发热门诊信息.csv")
+      .then(Outpatients => {
+        store.commit("setOutpatient", Outpatients);
+      })
+      .catch(function(err) {});
   },
   readCoordata: function() {}
 };

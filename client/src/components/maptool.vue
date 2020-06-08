@@ -20,20 +20,20 @@ export default {
     return {
       contrls1: [
         { name: "累计确诊", id: "contours" },
-        { name: "现有确诊", id: "exist" },
-        { name: "新增确诊", id: "newAdd" },
-        { name: "病例停留小区", id: "POA" }
+        // { name: "现有确诊", id: "exist" },
+        { name: "病例停留小区", id: "POA" },
+        { name: "病例轨迹", id: "track" },
       ],
       contrls2: [
         { name: "定点医院", id: "hospitalImage" },
-        { name: "发热门诊", id: "clinic" },
+        { name: "发热门诊", id: "clincImage" },
         { name: "医院覆盖范围", id: "voronoi-outline" }
       ],
       contrls3: [
         { name: "人口基数", id: "population" },
         { name: "迁移活跃度", id: "Activity" }
       ],
-      checkedcontrls: ["POA", "contours", "test"],
+      checkedcontrls: ["POA", "contours","test"],
       popuchoose: false,
       citychoose: false,
       lastchoose: "contours",
@@ -49,6 +49,9 @@ export default {
       var pop = val.indexOf("population");
       var con = val.indexOf("contours");
       var cit = val.indexOf("Activity");
+      // var exit=val.indexOf("exist")
+      // var newA=val.indexOf("newAdd")
+
       if (this.lastchoose === "contours") {
         if (pop != -1) {
           val.splice(con, 1);

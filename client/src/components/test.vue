@@ -85,7 +85,6 @@ export default {
             if (posvor[i][j] != null) {
               x.push(posvor[i][j]);
               y.push(posvor[i][j]);
-
             }
           }
           // console.log(x);
@@ -100,7 +99,7 @@ export default {
           } else {
             posvor[i].area = turf.area(poly1 / 1000);
           }
-          console.log("area:",posvor[i].area)
+          // console.log("area:",posvor[i].area)
           //console.log("啊")
 
           var gs = greinerHormann.intersection(scmapdata, x);
@@ -110,7 +109,7 @@ export default {
               properties: {
                 name: posvor[i].data.name,
                 cp: [posvor[i].data[0], posvor[i].data[1]],
-                area:posvor[i].area
+                area: posvor[i].area
               },
               geometry: {
                 type: "Polygon",

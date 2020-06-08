@@ -6,8 +6,12 @@
 import * as mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import * as d3 from "d3";
+import * as dsv from "d3-dsv";
 import * as d3geoVoronoi from "d3-geo-voronoi";
 import hosImg from "../assets/timg.png";
+import cImg from "../assets/cimg.png";
+import * as turf from '@turf/turf';
+import { feature } from '@turf/turf';
 let axios = require("axios");
 export default {
   name: "mapview",
@@ -85,11 +89,6 @@ export default {
       toggleableLayerIds: [
         "region-label",
         "city-outline",
-        // "county-outline",
-        // "county-overlay",
-        // "county-label",
-        "city-overlay",
-        "region-label",
         "dstrc-overlay",
         "dstrc-outline",
         "dstrc-label"
@@ -146,7 +145,14 @@ export default {
       });
       let res = axios.get("/api/sichuan_district.json").then(res => {
         that.adddistrict2Map(res.data);
+        console.log(res.data.features)
       });
+      let trackData = axios.get("/api/city_Track.json").then(res=>{
+        console.log("这是输入")
+        console.log(res.data.features);
+        that.addTrack(res.data);
+      })
+      
       // let res3 = axios.get("/api/merge_sichuan.json").then(res => {
       //   that.addtown2Map(res.data);
       // });
@@ -175,6 +181,11 @@ export default {
         let _data = response.data;
         this.addArrestPoint(_data);
         this.popUp("points_layer");
+      });
+      axios.get("/api/clincInfo.csv").then(clincRes => {
+        let clinc_data = dsv.csvParse(clincRes.data);
+        this.drawClinc(clinc_data);
+        this.popUp("clincImage");
       });
     },
     addArrestPoint(data) {
@@ -208,9 +219,6 @@ export default {
           id: "points_layer",
           source: "points_source",
           type: "circle",
-          // layout: {
-          //   visibility: "visible"
-          // }, //指渲染位置和可见性
           paint: {
             //指更精细的渲染样式，如不透明度、颜色和翻译等
             "circle-color": ["get", "color"],
@@ -219,6 +227,29 @@ export default {
           }
         });
       });
+    },
+    addTrack(data){
+      this.map.addSource("trac_json",{
+        type:"geojson",
+        data:{
+          type:"FeatureCollection",
+          features:data.features
+        }
+      });
+      this.map.addLayer({
+        id: "track",
+        type: "line",
+        source: "trac_json",
+        paint: {
+          "line-width": 1,
+          "line-color": "#383a30",
+          "line-opacity": 0.5
+        },
+        layout:{
+          "visibility": "none"
+        }
+      });
+
     },
     addtown2Map(features) {
       this.map.addSource("town_json", {
@@ -236,6 +267,7 @@ export default {
           "fill-color": "#aca",
           "fill-opacity": 0.1
         },
+
         minzoom: 8.5
       });
 
@@ -399,7 +431,10 @@ export default {
       let stateOfVor = data.indexOf("voronoi-outline");
       let statePopu = data.indexOf("population");
       let stateOfHos = data.indexOf("hospitalImage");
+      let stateOfClinc = data.indexOf("clincImage");
       let stateOfAct = data.indexOf("Activity");
+      let stateOfTrac = data.indexOf("track");
+      // console.log(stateOfCon);
 
       data.forEach(item => {
         var visibility1 = that.map.setLayoutProperty(
@@ -413,23 +448,19 @@ export default {
             "visibility"
           );
         }
-        if (stateOfPOA == 0) {
+        if (stateOfPOA == 2) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "visible"); // 设置指定layer上名为name的layou属性的值
         } else if (stateOfPOA == -1) {
           that.map.setLayoutProperty(clickedLayer1, "visibility", "none");
         }
-        if (stateOfCon == 0) {
-          for (var i = 0; i < toggleableLayerIds.length; i++) {
-            var clickedLayer = toggleableLayerIds[i];
-            that.map.setLayoutProperty(clickedLayer, "visibility", "visible");
-          }
+        if (stateOfCon != -1) {
+          that.map.setLayoutProperty("city-overlay", "visibility", "visible");
+          // console.log("可见");
         } else if (stateOfCon == -1) {
-          for (var i = 0; i < toggleableLayerIds.length; i++) {
-            var clickedLayer = toggleableLayerIds[i];
-            that.map.setLayoutProperty(clickedLayer, "visibility", "none");
-          }
+          that.map.setLayoutProperty("city-overlay", "visibility", "none");
+          // console.log("不可见");
         }
-        if (stateOfVor !== -1) {
+        if (stateOfVor != -1) {
           that.map.setLayoutProperty(clickedLayer2, "visibility", "visible");
           that.map.setLayoutProperty(clickedLayer3, "visibility", "visible");
         } else if (stateOfVor == -1) {
@@ -439,13 +470,13 @@ export default {
 
         if (statePopu != -1) {
           that.map.setLayoutProperty("population", "visibility", "visible");
-          that.map.setLayoutProperty("city-outline", "visibility", "visible");
-          that.map.setLayoutProperty("region-label", "visibility", "visible");
+          // that.map.setLayoutProperty("city-outline", "visibility", "visible");
+          // that.map.setLayoutProperty("region-label", "visibility", "visible");
         } else if (statePopu == -1) {
           that.map.setLayoutProperty("population", "visibility", "none");
           if (stateOfCon == -1 && stateOfAct == -1) {
-            that.map.setLayoutProperty("city-outline", "visibility", "none");
-            that.map.setLayoutProperty("region-label", "visibility", "none");
+            // that.map.setLayoutProperty("city-outline", "visibility", "none");
+            // that.map.setLayoutProperty("region-label", "visibility", "none");
           }
         }
         if (stateOfHos != -1) {
@@ -453,16 +484,25 @@ export default {
         } else if (stateOfHos == -1) {
           that.map.setLayoutProperty("hospitalImage", "visibility", "none");
         }
-
+        if (stateOfClinc != -1) {
+          that.map.setLayoutProperty("clincImage", "visibility", "visible");
+        } else if (stateOfClinc == -1) {
+          that.map.setLayoutProperty("clincImage", "visibility", "none");
+        }
+        if(stateOfTrac !=-1){
+          that.map.setLayoutProperty("track", "visibility", "visible");
+        }else if(stateOfTrac == -1){
+          that.map.setLayoutProperty("track", "visibility", "none");
+        }
         if (stateOfAct != -1) {
           that.map.setLayoutProperty("Activity", "visibility", "visible");
-          that.map.setLayoutProperty("city-outline", "visibility", "visible");
-          that.map.setLayoutProperty("region-label", "visibility", "visible");
+          // that.map.setLayoutProperty("city-outline", "visibility", "visible");
+          // that.map.setLayoutProperty("region-label", "visibility", "visible");
         } else {
           that.map.setLayoutProperty("Activity", "visibility", "none");
           if (stateOfCon == -1 && statePopu == -1) {
-            that.map.setLayoutProperty("city-outline", "visibility", "none");
-            that.map.setLayoutProperty("region-label", "visibility", "none");
+            // that.map.setLayoutProperty("city-outline", "visibility", "none");
+            // that.map.setLayoutProperty("region-label", "visibility", "none");
           }
         }
       });
@@ -543,6 +583,46 @@ export default {
       });
       this.popUp("hospitalImage");
     },
+    //发热门诊
+    drawClinc(data) {
+      let that = this;
+      let clincInfo = [];
+      data.forEach(function(d, p, q) {
+        d.lng = parseFloat(d.lng);
+        d.lat = parseFloat(d.lat);
+        clincInfo.push({
+          type: "Feature",
+          properties: {
+            description: d["name"]
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [d.lng, d.lat]
+          }
+        });
+      });
+      this.map.loadImage(cImg, function(error, image) {
+        if (error) throw error;
+        that.map.addImage("clinc", image);
+        that.map.addSource("clinc_point", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: clincInfo
+          }
+        });
+        that.map.addLayer({
+          id: "clincImage",
+          type: "symbol",
+          source: "clinc_point",
+          layout: {
+            "icon-image": "clinc",
+            "icon-size": 0.04,
+            "visibility": "none"
+          }
+        });
+      });
+    },
     popUp(id) {
       let that = this;
       this.map.on("click", id, function(e) {
@@ -560,6 +640,85 @@ export default {
       this.map.on("mouseleave", id, function() {
         that.map.getCanvas().style.cursor = "";
       });
+    },
+    drawTrajectLine(linedata) {
+      //取消地图浮层，保留地图市区边界线
+      //清空轨迹线
+      
+      //绘制轨迹线
+      //计算轨迹点
+      let that = this,
+        origin = [+linedata.centercity.lon,+linedata.centercity.lat],
+        routes = {
+          'type': 'FeatureCollection',
+          'features': []
+        },
+        points = {
+          'type': 'FeatureCollection',
+          'features': []
+        },
+        get_route_rawfeature = function(ori, des){let a = {'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': [ori, des]}}; return a },
+        get_point_rawfeature = function(p){let a = {'type': 'feature', 'properties': {}, 'geometry': {'type': 'Point', 'coordinates': p}}; return a}
+      
+      linedata.citys.forEach((d,i) => {
+        let destination = null,
+            route_feature = null,
+            lineDistance = null,
+            arc = [],
+            steps = 20
+
+        destination = [+d.lat, +d.lon]
+        
+        routes['features'].push(get_route_rawfeature(origin, destination))
+        points['features'].push(get_point_rawfeature(destination))
+
+        lineDistance = turf.lineDistance(routes['features'][i], {units: 'kilometers'})
+
+        for (var j = 0; j < lineDistance; j += lineDistance / steps) {
+          var segment = turf.along(routes['features'][i], j, {units: 'kilometers'});
+          arc.push(segment.geometry.coordinates);
+          
+        }
+        routes['features'][i].geometry.coordinates = arc; 
+      })
+      
+      //some problem
+
+        that.map.addSource('transroute', {
+          type: 'geojson',
+          data: routes
+        });
+
+        that.map.addSource('transpoint', {
+          type: 'geojson',
+          data: points
+        })
+
+        that.map.addLayer({
+          id: 'transrouteid',
+          source: 'transroute',
+          type: 'line',
+          paint: {
+            'line-width': 2,
+            'line-color': 'white'
+          }
+        },'points_layer')
+
+        that.map.addLayer({
+            id: 'transpointid',
+            source: 'transpoint',
+            type: 'symbol',
+            layout: {
+                'icon-image': 'airport-15',
+                'icon-rotate': ['get', 'bearing'],
+                'icon-rotation-alignment': 'map',
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true
+            }
+        },'points_layer')
+
+        that.map.setLayoutProperty("transrouteid", "visibility", "visible");
+  
     }
   },
   computed: {
@@ -580,6 +739,9 @@ export default {
     },
     Activity() {
       return this.$store.getters.getcityActivity;
+    },
+    mapQXLinedata() {
+      return this.$store.getters.getTMapLinedata;
     }
   },
   watch: {
@@ -602,6 +764,8 @@ export default {
       newval.forEach(d => {
         d.properties["asc"] = Ascale(d.properties.area);
       });
+
+      console.log('vor', newval)
       this.map.on("load", function() {
         that.map.addSource("voronoi", {
           type: "geojson",
@@ -751,6 +915,10 @@ export default {
         type: "FeatureCollection",
         features: this.sc_cityData.features
       });
+    },
+    mapQXLinedata: function(newval, oldval){
+      console.log('this is mapQXLinedata in MapView', newval)
+      this.drawTrajectLine(newval)
     }
   }
 };

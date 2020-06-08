@@ -3,6 +3,7 @@
     <div style="padding-top:1%">
       <span style="padding-left: 5%">关联地区风险</span>
     </div>
+    <div id="TCtooltip"></div>
   </div>
 </template>
 <script>
@@ -79,7 +80,17 @@ export default {
           } else return that.cityScale(d.value);
         })
         .attr("stroke", "#898994")
-        .attr("troke-width", 1);
+        .attr("troke-width", 1)
+        .on("mouseover", function(d) {
+          d3.select("#TCtooltip")
+            .style("display", "inline")
+            .html("感染人数:" + d.value)
+            .style("left", d3.event.pageX / 5 + "px")
+            .style("top", d3.event.pageY / 5 + "px");
+        })
+        .on("mouseout", function(d) {
+          d3.select("#TCtooltip").style("display", "none");
+        });
       var outpg = svg.append("g");
       outpg
         .selectAll("rect")
@@ -105,7 +116,17 @@ export default {
           } else return that.prScale(d.value);
         })
         .attr("stroke", "#898994")
-        .attr("troke-width", 1);
+        .attr("troke-width", 1)
+        .on("mouseover", function(d) {
+          d3.select("#TCtooltip")
+            .style("display", "inline")
+            .html("感染人数:" + d.value)
+            .style("left", d3.event.pageX / 5 + "px")
+            .style("top", d3.event.pageY / 5 + "px");
+        })
+        .on("mouseout", function(d) {
+          d3.select("#TCtooltip").style("display", "none");
+        });
       outpg
         .selectAll("text")
         .data(this.outprovinces)
@@ -211,5 +232,29 @@ export default {
   background-color: rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   margin: 0.1% 0 0 0.1%;
+}
+#TCtooltip {
+  position: absolute;
+  display: none;
+  border-style: solid;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  white-space: nowrap;
+  z-index: 9999999;
+  transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s,
+    top 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  background-color: rgba(50, 50, 50, 0.7);
+  border-width: 0px;
+  border-color: rgb(51, 51, 51);
+  border-radius: 4px;
+  color: rgb(255, 255, 255);
+  font: 14px / 21px "Microsoft YaHei";
+  padding: 5px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
 }
 </style>

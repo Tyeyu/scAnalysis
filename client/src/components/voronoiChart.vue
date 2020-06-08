@@ -25,7 +25,6 @@ export default {
           this.cord_data = corddata;
           this.map_data = mapdata;
           this.hos_data = HosPosition;
-          // console.log(this.hos_data);
           // console.log("features",this.map_data.features);
           this.AddVoronoi(this.map_data, this.hos_data, this.cord_data);
         });
