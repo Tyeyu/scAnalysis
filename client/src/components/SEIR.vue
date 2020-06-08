@@ -237,6 +237,8 @@ export default {
           });
         }
         // console.log(mapQXLinedata);
+        console.log('mapQXLinedata', mapQXLinedata)
+        
         this.$store.commit("setTMapLinedata", mapQXLinedata);
         this.$store.commit("setTCalendar", TCalendar);
       }
@@ -248,7 +250,7 @@ export default {
       };
 
       this.$store.commit("setTtotaldata", Tdata);
-
+      
       // console.log(this.sumI);
       // console.log(this.lostbed);
     },

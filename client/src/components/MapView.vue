@@ -10,6 +10,8 @@ import * as dsv from "d3-dsv";
 import * as d3geoVoronoi from "d3-geo-voronoi";
 import hosImg from "../assets/timg.png";
 import cImg from "../assets/cimg.png";
+import * as turf from '@turf/turf';
+import { feature } from '@turf/turf';
 let axios = require("axios");
 export default {
   name: "mapview",
@@ -610,6 +612,83 @@ export default {
       this.map.on("mouseleave", id, function() {
         that.map.getCanvas().style.cursor = "";
       });
+    },
+    drawTrajectLine(linedata) {
+      //取消地图浮层，保留地图市区边界线
+      //清空轨迹线
+      
+      //绘制轨迹线
+      //计算轨迹点
+      let that = this,
+        origin = [+linedata.centercity.lon,+linedata.centercity.lat],
+        routes = {
+          'type': 'FeatureCollection',
+          'features': []
+        },
+        points = {
+          'type': 'FeatureCollection',
+          'features': []
+        },
+        get_route_rawfeature = function(ori, des){let a = {'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': [ori, des]}}; return a },
+        get_point_rawfeature = function(p){let a = {'type': 'feature', 'properties': {}, 'geometry': {'type': 'Point', 'coordinates': p}}; return a}
+      
+      linedata.citys.forEach((d,i) => {
+        let destination = null,
+            route_feature = null,
+            lineDistance = null,
+            arc = [],
+            steps = 20
+
+        destination = [+d.lat, +d.lon]
+        
+        routes['features'].push(get_route_rawfeature(origin, destination))
+        points['features'].push(get_point_rawfeature(destination))
+
+        lineDistance = turf.lineDistance(routes['features'][i], {units: 'kilometers'})
+
+        for (var j = 0; j < lineDistance; j += lineDistance / steps) {
+          var segment = turf.along(routes['features'][i], j, {units: 'kilometers'});
+          arc.push(segment.geometry.coordinates);
+          
+        }
+        routes['features'][i].geometry.coordinates = arc; 
+      })
+      
+      //some problem
+
+        that.map.addSource('transroute', {
+          type: 'geojson',
+          data: routes
+        });
+
+        that.map.addSource('transpoint', {
+          type: 'geojson',
+          data: points
+        })
+
+        that.map.addLayer({
+          id: 'transrouteid',
+          source: 'transroute',
+          type: 'line',
+          paint: {
+            'line-width': 2,
+            'line-color': 'white'
+          }
+        },'points_layer')
+
+        that.map.addLayer({
+            id: 'transpointid',
+            source: 'transpoint',
+            type: 'symbol',
+            layout: {
+                'icon-image': 'airport-15',
+                'icon-rotate': ['get', 'bearing'],
+                'icon-rotation-alignment': 'map',
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true
+            }
+        },'points_layer')
+  
     }
   },
   computed: {
@@ -630,6 +709,9 @@ export default {
     },
     Activity() {
       return this.$store.getters.getcityActivity;
+    },
+    mapQXLinedata() {
+      return this.$store.getters.getTMapLinedata;
     }
   },
   watch: {
@@ -652,6 +734,8 @@ export default {
       newval.forEach(d => {
         d.properties["asc"] = Ascale(d.properties.area);
       });
+
+      console.log('vor', newval)
       this.map.on("load", function() {
         that.map.addSource("voronoi", {
           type: "geojson",
@@ -801,6 +885,10 @@ export default {
         type: "FeatureCollection",
         features: this.sc_cityData.features
       });
+    },
+    mapQXLinedata: function(newval, oldval){
+      console.log('this is mapQXLinedata in MapView', newval)
+      this.drawTrajectLine(newval)
     }
   }
 };
