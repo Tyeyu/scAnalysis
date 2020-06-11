@@ -6,7 +6,7 @@
     -->
     <div>
       <el-tabs v-model="activeTab" :stretch="true" class="eltabs">
-        <el-tab-pane label="疫情分析" name="first">
+        <el-tab-pane label="疫情分析" name="first" >
           <groupbar style="background-color: #30313a"></groupbar>
           <!--放下面的三幅图-->
           <AddedDaily />
