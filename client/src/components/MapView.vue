@@ -148,8 +148,6 @@ export default {
         console.log(res.data.features)
       });
       let trackData = axios.get("/api/city_Track.json").then(res=>{
-        console.log("这是输入")
-        console.log(res.data.features);
         that.addTrack(res.data);
       })
       
@@ -197,7 +195,7 @@ export default {
         drawPoints.push({
           type: "Feature",
           properties: {
-            color: "cyan",
+            color: "red",
             opacity: 0.5,
             radius: 5,
             description: d.address
@@ -244,7 +242,7 @@ export default {
         source: "trac_json",
         paint: {
           "line-width": 1,
-          "line-color": "#383a30",
+          "line-color": "white",
           "line-opacity": 0.5
         },
         layout:{
@@ -293,7 +291,7 @@ export default {
           "text-size": 10
         },
         paint: {
-          "text-color": "#333"
+          "text-color": "white"
         },
         minzoom: 8.5
       });
@@ -313,7 +311,7 @@ export default {
         type: "fill",
         source: "city_json",
         paint: {
-          "fill-color": "cyan",
+          "fill-color": "red",
           "fill-opacity": ["get", "opt"]
         },
         maxzoom: 8.5
@@ -339,7 +337,7 @@ export default {
           visibility: "none"
         },
         paint: {
-          "fill-color": "#87CEFA",
+          "fill-color": "#77C0F5",
           "fill-opacity": ["get", "copt"]
         },
         maxzoom: 8.5
@@ -350,7 +348,7 @@ export default {
         source: "city_json",
         paint: {
           "line-width": 1,
-          "line-color": "#000",
+          "line-color": "white",
           "line-opacity": 1
         },
         maxzoom: 8.5
@@ -361,10 +359,10 @@ export default {
         source: "city_json",
         layout: {
           "text-field": "{name}",
-          "text-size": 12
+          "text-size": 15
         },
         paint: {
-          "text-color": "#333"
+          "text-color": "white"
         },
         maxzoom: 8.5
       });
@@ -401,7 +399,7 @@ export default {
         source: "dstrc_json",
         paint: {
           "line-width": 1,
-          "line-color": "#000",
+          "line-color": "white",
           "line-opacity": 1
         },
         minzoom: 7,
@@ -416,7 +414,7 @@ export default {
           "text-size": 10
         },
         paint: {
-          "text-color": "#333"
+          "text-color": "white"
         },
         minzoom: 7,
         maxzoom: 8.5
@@ -827,7 +825,7 @@ export default {
           }, //指渲染位置和可见性
           paint: {
             "line-width": 1,
-            "line-color": "#000",
+            "line-color": "white",
             "line-opacity": 1
           },
           maxzoom: 10.5
@@ -840,7 +838,7 @@ export default {
             visibility: "none"
           }, //指渲染位置和可见性
           paint: {
-            "fill-color": "orange",
+            "fill-color": "steelblue",
             "fill-opacity": ["get", "asc"]
           },
           maxzoom: 8.5
