@@ -182,29 +182,37 @@ export default {
         .map(migrations);
       this.migraComputmap = d3.map();
       var migkeys = migraNetsmap.keys();
-      var cxmax = -1;
-      var rxmax = -1;
+      var remax = -1;
+      var remin = 10000;
       for (var i = 0; i < parseFloat(migkeys.length); i++) {
         var Inmigration_rate = 0;
         var Outmigration_rate = 0;
+        var sum = 0;
         var kdata = migraNetsmap.get(migkeys[i]);
         for (var j = 0; j < parseFloat(kdata.length); j++) {
           Inmigration_rate += parseFloat(kdata[j].Inmigration_rate);
           Outmigration_rate += parseFloat(kdata[j].Outmigration_rate);
         }
-        Inmigration_rate = parseFloat(
-          parseFloat(Inmigration_rate) / parseFloat(kdata.length)
-        ).toFixed(4);
+        Inmigration_rate = parseFloat(parseFloat(Inmigration_rate).toFixed(4));
         Outmigration_rate = parseFloat(
+          parseFloat(Outmigration_rate).toFixed(4)
+        );
+        var rm;
+        var cm;
+        rm = parseFloat(
+          parseFloat(Inmigration_rate) / parseFloat(kdata.length)
+        );
+        cm = parseFloat(
           parseFloat(Outmigration_rate) / parseFloat(kdata.length)
-        ).toFixed(4);
-
-        if (parseFloat(Inmigration_rate) > rxmax)
-          rxmax = parseFloat(Inmigration_rate);
-        if (parseFloat(Outmigration_rate) > cxmax)
-          cxmax = parseFloat(Outmigration_rate);
+        );
+        sum = parseFloat(parseFloat(cm + rm).toFixed(4));
+        if (sum < remin) remin = sum;
+        if (sum > remax) remax = sum;
+        console.log(sum);
+        console.log(migkeys[i]);
       }
-
+      console.log(remin);
+      console.log(remax);
       for (var i = 0; i < parseFloat(migkeys.length); i++) {
         var Inmigration_rate = 0;
         var Outmigration_rate = 0;
@@ -217,26 +225,20 @@ export default {
         Outmigration_rate = parseFloat(
           parseFloat(Outmigration_rate).toFixed(4)
         );
-
         var rm;
         var cm;
-        var rx;
-        var cx;
-        rm = parseFloat(parseFloat(Inmigration_rate) / parseFloat(rxmax));
-        cm = parseFloat(parseFloat(Outmigration_rate) / parseFloat(cxmax));
-
-        rx = parseFloat(100 * parseFloat(parseFloat(cm) / parseFloat(rm)));
-
-        cx = parseFloat(100 * parseFloat(parseFloat(rm) / parseFloat(cm)));
-
+        rm = parseFloat(
+          parseFloat(Inmigration_rate) / parseFloat(kdata.length)
+        );
+        cm = parseFloat(
+          parseFloat(Outmigration_rate) / parseFloat(kdata.length)
+        );
+        var sum = 0;
+        sum = parseFloat(parseFloat(cm + rm));
+        sum = parseFloat(parseFloat(sum - 1.83) / parseFloat(remax - 1.83));
         //求平均值，保留4位小数
-
         this.migraComputmap.set(migkeys[i], {
-          allrate: parseFloat(
-            (parseFloat(parseFloat(cx).toFixed(4)) +
-              parseFloat(parseFloat(rx).toFixed(4))) /
-              2
-          )
+          allrate: parseFloat(parseFloat(parseFloat(sum).toFixed(4)) * 100)
         });
       }
     },
@@ -402,7 +404,7 @@ export default {
       this.migrationdata(this.$store.getters.getscCoordata);
       this.mergedata();
       this.setserierdata();
-      this.seriesdata_sort_desascend()
+      this.seriesdata_sort_desascend();
       //this.initchart();
     },
     ScCoordata: function(newval, oldval) {
@@ -411,7 +413,7 @@ export default {
       this.populationdata(newval);
       this.mergedata();
       this.setserierdata();
-      this.seriesdata_sort_desascend()
+      this.seriesdata_sort_desascend();
       //this.initchart();
     }
   }
@@ -422,8 +424,7 @@ export default {
   color: white;
   font: 18px "Microsoft YaHei";
   float: left;
-  transform: translate(10%, 30%)
-
+  transform: translate(10%, 30%);
 }
 #Coordinates {
   position: absolute;
