@@ -701,6 +701,14 @@ export default {
           data: points
         });
 
+        that.map.addSource('source_place', {
+          type: 'geojson',
+          data: {
+            'type': 'Point',
+            'coordinates': origin
+          }
+        })
+
         that.map.addLayer({
           id: 'id_related_traj',
           source: 'related_traj',
@@ -739,17 +747,32 @@ export default {
             source: 'related_place',
             type: 'circle',
             paint: {
-              'circle-color': '#A67023',
+              'circle-color': '#898915',
               'circle-radius': 5,
-              'circle-stroke-color': '#A67023',
+              'circle-stroke-color': '#898915',
               'circle-stroke-opacity': 0.5,
-              'circle-stroke-width': 3
+              'circle-stroke-width': 0
             }
         });
+
+        //source point
+        that.map.addLayer({
+          'id': 'id_source_place',
+          'source': 'source_place',
+          'type': 'circle',
+          'paint': {
+            'circle-color': '#E43337',
+            'circle-radius': 8,
+            'circle-stroke-color': '#E43337',
+            'circle-stroke-opacity': 0.5,
+            'circle-stroke-width': 0
+          }
+        })
 
         that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
         that.map.setLayoutProperty("id_related_place", "visibility", "visible");
 
+        animateSourcePlaceStorkeRadius(0)
       }
 
       /*
@@ -759,7 +782,18 @@ export default {
       }
       */
 
-      //some problem
+      function sourcePlaceStorkeRadius(angle){
+        let radius = 15,
+          size = Math.sin(angle) * radius
+          size = size > 0 ? size : -size;
+        return size
+      }
+
+      function animateSourcePlaceStorkeRadius(timestamp){
+        that.map.setPaintProperty ('id_source_place', 'circle-stroke-width', sourcePlaceStorkeRadius(timestamp / 1000))
+        that.map.setPaintProperty ('id_related_place', 'circle-stroke-width', sourcePlaceStorkeRadius((timestamp + 500) / 1000))
+        requestAnimationFrame(animateSourcePlaceStorkeRadius);
+      }
     }
   },
   computed: {
@@ -970,6 +1004,7 @@ export default {
         if(typeof this.map.getLayer('id_related_traj') !== 'undefined' && typeof this.map.getLayer('id_related_place') !== 'undefined'){
           that.map.setLayoutProperty("id_related_traj", "visibility", "none");
           that.map.setLayoutProperty("id_related_place", "visibility", "none");
+          that.map.setLayoutProperty("id_source_place", "visibility", "none");
         }
       }
       else if(newval == 'second'){
@@ -977,6 +1012,7 @@ export default {
         if(typeof this.map.getLayer('id_related_traj') !== 'undefined' && typeof this.map.getLayer('id_related_place') !== 'undefined'){
           that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
           that.map.setLayoutProperty("id_related_place", "visibility", "visible");
+          that.map.setLayoutProperty("id_source_place", "visibility", "visible");
         }
       }
       
