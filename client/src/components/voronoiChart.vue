@@ -214,11 +214,11 @@ export default {
   width: 50%;
   height: 59%;
   border: 1px solid #ccc;
-  z-index: 1;
+  z-index: 999;
 }
 
 .province {
-  stroke: black;
+  stroke: white;
   stroke-width: 1px;
 }
 

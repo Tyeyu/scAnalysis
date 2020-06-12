@@ -21,11 +21,24 @@ export default {
       r2: 3, //潜伏者接触易感者的人数
       Beata2: 0.03, //潜伏者传染正常人的概率
       y: 0.8, //康复概率
+      P: 0, //疑似被感染但未感染人数
+      r3: 0, //接触的疑似被感染但未感染人数
+      Beata3: 0.08, //疑似接触率
+      x: 0.1, //疑似转移到易感染人数概率
+      QE: 0, //被控制的潜伏者人数
+      deata1: 0.08, //潜伏者被转移到控制概率
+      QI: 0, //被控制的传染者人数
+      deata2: 0.8, //发病者转移到被控制的概率
+      CE: 0,
+      CI: 0,
       Narry: null,
       Sarry: null,
       Iarry: null,
       Earry: null,
       Rarry: null,
+      Parry: null,
+      QEarry: null,
+      QIarry: null,
       dayarry: [],
       tabechange: false,
       hosbednum: 8000,
@@ -42,34 +55,50 @@ export default {
       citysJWD: null,
       selectCity: null,
       play: null,
-      i: 0
+      i: 0,
+      mapQXLinedata: null,
+      TCalendar: null,
+      ZT: false,
+      Tcity: null,
+      Tpro: null,
+      testCalendar: null
     };
   },
   methods: {
     initdata: function() {
       let that = this;
-      this.Earry = [];
-      this.Sarry = [];
-      this.Iarry = [];
-      this.Rarry = [];
-      var testCalendar = this.$store.getters.getTcalendata;
+      if (!this.ZT) {
+        this.Earry = [];
+        this.Sarry = [];
+        this.Iarry = [];
+        this.Rarry = [];
+        this.Parry = [];
+        this.QEarry = [];
+        this.QIarry = [];
+        that.testCalendar = this.$store.getters.getTcalendata;
+        for (var i = 0; i < 11; i++) {
+          that.testCalendar.city[i].value = 0;
+          that.testCalendar.province[i].value = 0;
+        }
 
-      var Tcity = null;
-      var Tpro = null;
-      if (testCalendar != null) {
-        Tcity = d3
-          .nest()
-          .key(function(d) {
-            return d.name;
-          })
-          .map(this.$store.getters.getTcalendata.city);
-        Tpro = d3
-          .nest()
-          .key(function(d) {
-            return d.name;
-          })
-          .map(this.$store.getters.getTcalendata.province);
+        if (that.testCalendar != null) {
+          this.Tcity = d3
+            .nest()
+            .key(function(d) {
+              return d.name;
+            })
+            .map(this.$store.getters.getTcalendata.city);
+          this.Tpro = d3
+            .nest()
+            .key(function(d) {
+              return d.name;
+            })
+            .map(this.$store.getters.getTcalendata.province);
+        }
       }
+      this.ZT = false;
+      var newDia = null;
+      var newYDia = null;
       this.play = self.setInterval(function() {
         if (that.i < 40) {
           if (that.I <= 0) that.I = 0;
@@ -87,27 +116,47 @@ export default {
           }
 
           if (that.midu > 1000) {
-            that.r = parseInt(that.midu * Math.random() * 0.05);
-            that.r2 = parseInt(that.midu * Math.random() * 0.1);
+            that.r = parseInt(that.midu * Math.random() * 0.02);
+            that.r2 = parseInt(that.midu * Math.random() * 0.04);
           } else {
             if (that.midu > 500 && that.midu <= 1000) {
-              that.r = parseInt(that.midu * Math.random() * 0.1);
+              that.r = parseInt(that.midu * Math.random() * 0.05);
               that.r2 = parseInt(that.midu * Math.random() * 0.1);
             } else {
-              that.r = parseInt(that.midu * Math.random() * 0.5);
-              that.r2 = parseInt(that.midu * Math.random() * 0.5);
+              that.r = parseInt(that.midu * Math.random() * 0.1);
+              that.r2 = parseInt(that.midu * Math.random() * 0.2);
             }
           }
+          if (that.i < that.controltime) {
+            that.Parry.push(0);
+            that.QEarry.push(0);
+            that.QIarry.push(0);
+          } else {
+            if (that.P <= 0) that.P = 0;
+            if (that.QE <= 0) that.QE = 0;
+            if (that.QI <= 0) that.QI = 0;
 
-          if (that.i >= that.controltime) {
-            that.r = parseInt(3 * Math.random());
-            that.r2 = parseInt(10 * Math.random());
+            that.Parry.push(parseInt(that.P));
+            that.QEarry.push(parseInt(that.QE));
+            that.QIarry.push(parseInt(that.QI));
+            that.r3 = that.r * 2;
           }
-          var newDia =
+          if (that.i >= that.controltime) {
+            that.r = 0;
+            that.r2 = parseInt(3 * Math.random());
+            that.Beata -= (that.i - that.controltime) / 20;
+            if (that.Beata <= 0) that.Beata = 0;
+            that.Beata2 = that.Beata;
+            if (that.i - that.controltime >= 10) {
+              that.Beata = 0.01 / that.i;
+              that.Beata2 = that.Beata;
+            }
+          }
+          newDia =
             (that.r * that.Beata * that.Sarry[that.i] * that.Iarry[that.i]) /
             that.N; //发病者感染人数
           // if (i == 12) break;
-          var newYDia =
+          newYDia =
             (that.r2 * that.Beata2 * that.Sarry[that.i] * that.Earry[that.i]) /
             that.N; //潜伏者感染人数
           if (that.i < that.controltime) {
@@ -118,6 +167,7 @@ export default {
               that.a * that.Earry[that.i] +
               newYDia;
             that.I = that.Iarry[that.i] + that.a * that.Earry[that.i];
+
             that.R = that.Rarry[that.i];
             that.sumbed += parseInt(that.sumI[that.i] * 0.01); //自由传播阶段，有较低概率病人住院
             if (that.hosbednum - that.sumbed < 0) {
@@ -127,13 +177,29 @@ export default {
               that.lostbed[that.i] = that.hosbednum - that.sumbed;
             }
           } else {
-            that.S = that.Sarry[that.i] - newDia - newYDia;
+            that.S =
+              that.Sarry[that.i] -
+              newDia -
+              newYDia -
+              that.r3 * that.Beata3 * (that.I + that.E) +
+              that.x * that.P;
+            that.P =
+              that.Parry[that.i] +
+              that.r3 * that.Beata3 * (that.I + that.E) -
+              that.x * that.P;
 
+            that.deata1 = 0.2 + (that.i - that.controltime) / 10;
+            that.deata2 = 0.5 + (that.i - that.controltime) / 10;
+
+            if (that.deata1 > 1) that.deata1 = 1;
+            if (that.deata2 > 1) that.deata2 = 1;
             that.E =
               that.Earry[that.i] +
               newDia -
               that.a * that.Earry[that.i] +
-              newYDia;
+              newYDia -
+              that.CE -
+              that.E * that.deata1;
             if (that.i == that.controltime) {
               that.sumbed +=
                 that.sumI[that.i] - that.sumbed - that.sumR[that.i]; //将发病的病人全部转入住院
@@ -142,22 +208,36 @@ export default {
               }
             }
 
-            if (that.i - that.controltime < 10) {
+            if (that.i - that.controltime < 5) {
               that.I =
                 that.Iarry[that.i] +
                 that.a * that.Earry[that.i] -
-                that.y * 0.1 * that.Iarry[that.i];
-              if (that.sumbed < that.hosbednum)
+                that.y * 0.1 * that.Iarry[that.i] -
+                that.CI -
+                that.I * that.deata2;
+              if (that.sumbed < that.hosbednum) {
                 that.R =
                   that.Rarry[that.i] +
-                  ((that.y * that.i) / 1000) * that.Iarry[that.i];
-              else {
+                  ((that.y * that.i) / 40) * that.Iarry[that.i] +
+                  that.QI * ((that.y * that.i) / 40);
+                that.QI =
+                  that.Iarry[that.i] * that.deata2 -
+                  that.QI * ((that.y * that.i) / 40) +
+                  (that.i / 40) * that.QE;
+              } else {
                 that.R =
                   that.Rarry[that.i] +
-                  ((that.y * that.i) / 10000) * that.Iarry[that.i];
+                  ((that.y * that.i) / 1000) * that.Iarry[that.i] +
+                  that.QI * ((that.y * that.i) / 1000);
+                that.QI =
+                  that.Iarry[that.i] * that.deata2 -
+                  that.QI * ((that.y * that.i) / 1000) +
+                  (that.i / 40) * that.QE;
               }
               that.sumbed +=
-                parseInt(that.I * 0.9 * Math.random()) - parseInt(that.R);
+                parseInt(
+                  (((that.QI + that.I) * 0.9 * i) / 40) * Math.random()
+                ) - parseInt(that.R);
               if (that.sumbed < 0) {
                 that.sumbed = 0;
               }
@@ -169,18 +249,25 @@ export default {
               }
             } else {
               if (
-                that.i - that.controltime >= 10 &&
+                that.i - that.controltime >= 5 &&
                 that.i - that.controltime <= 20
               ) {
                 that.I =
                   that.Iarry[that.i] +
                   that.a * that.Earry[that.i] -
-                  that.y * 0.5 * that.Iarry[that.i];
+                  that.y * 0.5 * that.Iarry[that.i] -
+                  that.CI -
+                  that.I * that.deata2;
                 that.R =
                   that.Rarry[that.i] +
-                  ((that.y * that.i) / 1000) * that.Iarry[that.i];
-
-                that.sumbed += parseInt(that.I) - parseInt(that.R);
+                  ((that.y * that.i) / 100) * that.Iarry[that.i] +
+                  that.QI * ((that.y * that.i) / 100);
+                that.QI =
+                  that.Iarry[that.i] * that.deata2 -
+                  that.QI * ((that.y * that.i) / 100) +
+                  (that.i / 100) * that.QE;
+                that.sumbed +=
+                  parseInt(that.QI) + parseInt(that.I) - parseInt(that.R);
                 if (that.sumbed < 0) {
                   that.sumbed = 0;
                 }
@@ -194,18 +281,31 @@ export default {
                 that.I =
                   that.Iarry[that.i] +
                   that.a * that.Earry[that.i] -
-                  that.y * that.Iarry[that.i];
-                if (that.sumbed < that.hosbednum)
+                  that.y * that.Iarry[that.i] -
+                  that.CI -
+                  that.I * that.deata2;
+                if (that.sumbed < that.hosbednum) {
                   that.R =
                     that.Rarry[that.i] +
-                    ((that.y * that.i) / 100) * that.Iarry[that.i];
-                else {
+                    ((that.y * that.i) / 40) * that.Iarry[that.i] +
+                    that.QI * ((that.y * that.i) / 40);
+                  that.QI =
+                    that.Iarry[that.i] * that.deata2 -
+                    that.QI * ((that.y * that.i) / 40) +
+                    (that.i / 40) * that.QE;
+                } else {
                   that.R =
                     that.Rarry[that.i] +
-                    ((that.y * that.i) / 1000) * that.Iarry[that.i];
+                    ((that.y * that.i) / 40) * that.Iarry[that.i] +
+                    that.QI * ((that.y * that.i) / 40);
+                  that.QI =
+                    that.Iarry[that.i] * that.deata2 -
+                    that.QI * ((that.y * that.i) / 40) +
+                    (that.i / 40) * that.QE;
                 }
 
-                that.sumbed += parseInt(that.I) - parseInt(that.R);
+                that.sumbed +=
+                  parseInt(that.QI) + parseInt(that.I) - parseInt(that.R);
                 if (that.sumbed < 0) {
                   that.sumbed = 0;
                 }
@@ -218,16 +318,37 @@ export default {
               }
             }
           }
-          if (testCalendar != null) {
+          that.QE = that.Earry[that.i] * that.deata1 - (that.i / 40) * that.QE;
+
+          that.CE = 0;
+          that.CI = 0;
+          if (that.testCalendar != null) {
             for (var j = 0; j < 11; j++) {
-              Tcity.get(that.citys.city[j].name)[0].value += parseInt(
-                ((that.I + that.E) / that.N) * that.citys.city[j].value
+              var cs =
+                ((that.I + that.E) / that.N) * (that.citys.city[j].value / 100);
+              if (isNaN(cs) || cs < 0) cs = 0;
+              that.Tcity.get(that.citys.city[j].name)[0].value += parseInt(cs);
+              var ps =
+                (((that.I + that.E) / that.N) * that.citys.province[j].value) /
+                100;
+              if (isNaN(ps) || cs < 0) ps = 0;
+              that.Tpro.get(that.citys.province[j].name)[0].value += parseInt(
+                ps
               );
-              Tpro.get(that.citys.province[j].name)[0].value += parseInt(
-                ((that.I + that.E) / that.N) * that.citys.province[j].value
-              );
+              that.CE +=
+                parseInt(((that.E / that.N) * that.citys.city[j].value) / 100) +
+                parseInt(
+                  ((that.E / that.N) * that.citys.province[j].value) / 100
+                );
+              that.CI =
+                parseInt(((that.I / that.N) * that.citys.city[j].value) / 100) +
+                parseInt(
+                  ((that.I / that.N) * that.citys.province[j].value) / 100
+                );
             }
           }
+          if (isNaN(that.CE) || that.CE < 0) that.CE = 0;
+          if (isNaN(that.CI) || that.CI < 0) that.CI = 0;
           that.i++;
         }
 
@@ -237,9 +358,13 @@ export default {
         // this.Rarry.push(this.R);
         // this.dayarry.push("100天");
 
-        if (testCalendar != null) {
-          var TCalendar = { city: [], province: [] }; //关联地区数据
-          var mapQXLinedata = {
+        if (
+          that.testCalendar != null &&
+          that.mapQXLinedata == null &&
+          that.TCalendar == null
+        ) {
+          that.TCalendar = { city: [], province: [] }; //关联地区数据
+          that.mapQXLinedata = {
             centercity: {
               name: that.selectCity,
               lat: that.citysJWD.get(that.selectCity)[0].lat,
@@ -248,28 +373,28 @@ export default {
             citys: []
           };
           for (var k = 0; k < 11; k++) {
-            var x = that.citys.city[k];
-            var y = that.citys.province[k];
-            x.value = Tcity.get(x.name)[0].value;
-            y.value = Tpro.get(y.name)[0].value;
-            TCalendar.city.push(x);
-            TCalendar.province.push(y);
-            mapQXLinedata.citys.push({
-              name: x.name,
-              lat: that.citysJWD.get(x.name)[0].lat,
-              lon: that.citysJWD.get(x.name)[0].lon,
-              value: Tcity.get(x.name)[0].value
+            var xs = that.citys.city[k];
+            var ys = that.citys.province[k];
+            xs.value = that.Tcity.get(xs.name)[0].value;
+            ys.value = that.Tpro.get(ys.name)[0].value;
+            that.TCalendar.city.push(xs);
+            that.TCalendar.province.push(ys);
+            that.mapQXLinedata.citys.push({
+              name: xs.name,
+              lat: that.citysJWD.get(xs.name)[0].lat,
+              lon: that.citysJWD.get(xs.name)[0].lon,
+              value: that.Tcity.get(xs.name)[0].value
             });
-            mapQXLinedata.citys.push({
-              name: y.name,
-              lat: that.citysJWD.get(y.name)[0].lat,
-              lon: that.citysJWD.get(y.name)[0].lon,
-              value: Tpro.get(y.name)[0].value
+            that.mapQXLinedata.citys.push({
+              name: ys.name,
+              lat: that.citysJWD.get(ys.name)[0].lat,
+              lon: that.citysJWD.get(ys.name)[0].lon,
+              value: that.Tpro.get(ys.name)[0].value
             });
           }
           // console.log(mapQXLinedata);
-          that.$store.commit("setTMapLinedata", mapQXLinedata);
-          that.$store.commit("setTCalendar", TCalendar);
+          that.$store.commit("setTMapLinedata", that.mapQXLinedata);
+          that.$store.commit("setTCalendar", that.TCalendar);
         }
 
         var Tdata = {
@@ -279,7 +404,7 @@ export default {
         };
 
         that.$store.commit("setTtotaldata", Tdata);
-        console.log(that.Earry);
+        // console.log(that.Earry);
         that.initchart();
         if (that.i >= 40) {
           window.clearInterval(that.play);
@@ -289,6 +414,14 @@ export default {
       // console.log(this.lostbed);
     },
     initchart: function() {
+      var Iaryys = [];
+      var Earrys = [];
+      for (var k = 0; k < this.i; k++) {
+        Iaryys.push(this.Iarry[k] + this.QIarry[k]);
+      }
+      for (var k = 0; k < this.i; k++) {
+        Earrys.push(this.Earry[k] + this.QEarry[k]);
+      }
       var mychart = echarts.init(document.getElementById("Seir"));
       var option = {
         textStyle: {
@@ -339,13 +472,13 @@ export default {
             name: "潜伏者数",
             type: "line",
             smooth: true,
-            data: this.Earry
+            data: Earrys
           },
           {
             name: "传染者数",
             type: "line",
             smooth: true,
-            data: this.Iarry
+            data: Iaryys
           },
           {
             name: "康复者数",
@@ -411,24 +544,32 @@ export default {
       this.citys = newval;
     },
     testparam: function(newval, oldval) {
-      this.selectCity = newval.cityname;
-      this.N =
-        parseInt(this.populationmap.get(newval.cityname)[0].population) * 10000;
-      // console.log(this.populationmap.get(newval.cityname), this.N);
-      this.Beata = newval.Beata;
-      this.I = 1;
-      this.R = 0;
-      this.S = parseFloat(this.N) - parseFloat(this.I);
-      this.y = newval.health;
-      this.controltime = newval.controltime;
-      this.midu = newval.midu;
-      this.hosbednum = newval.hospitalbed;
-
       if (!newval.stop && newval.play) {
+        if (!this.ZT) {
+          this.I = 1;
+          this.R = 0;
+          this.selectCity = newval.cityname;
+          this.N =
+            parseInt(this.populationmap.get(newval.cityname)[0].population) *
+            10000;
+          // console.log(this.populationmap.get(newval.cityname), this.N);
+          this.Beata = newval.Beata;
+
+          this.S = parseFloat(this.N) - parseFloat(this.I);
+          this.y = newval.health;
+          this.controltime = newval.controltime;
+          this.midu = newval.midu;
+          this.hosbednum = newval.hospitalbed;
+          this.Beata = newval.Beata;
+          this.Beata2 = newval.Beata;
+        }
+
         this.initdata();
       } else {
         if (!newval.stop && !newval.play) {
           window.clearInterval(this.play);
+          this.ZT = true;
+          this.play = null;
         } else {
           window.clearInterval(this.play);
           this.i = 0;
@@ -436,6 +577,23 @@ export default {
           this.Iarry = [];
           this.Sarry = [];
           this.Rarry = [];
+          this.lostI = [0];
+          this.lostbed = [0];
+          this.sumI = [0];
+          this.sumR = [0];
+          this.sumbed = 0;
+          this.dayarry = [];
+          this.I = 1;
+          this.R = 0;
+          this.mapQXLinedata = null;
+          this.TCalendar = null;
+          this.mapQXLinedata = null;
+          this.TCalendar = null;
+          this.ZT = false;
+          this.Tcity = null;
+          this.Tpro = null;
+          this.testCalendar = null;
+          this.play = null;
         }
       }
     }

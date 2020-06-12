@@ -4,21 +4,39 @@
     <div>
       <span class="demonstration" style="padding-left: 10%">城市选择:</span>
       <el-select v-model="cityname" placeholder style="padding-left: 5%">
-        <el-option v-for="(item,i) in citys" :key="i" :label="item" :value="item"></el-option>
+        <el-option
+          v-for="(item, i) in citys"
+          :key="i"
+          :label="item"
+          :value="item"
+        ></el-option>
       </el-select>
     </div>
     <div id="myslider">
       <div>
         <span class="demonstration">传染率:</span>
-        <el-slider v-model="Beata" class="myslider" :max="Beatamax" :format-tooltip="formatBeata"></el-slider>
+        <el-slider
+          v-model="Beata"
+          class="myslider"
+          :max="Beatamax"
+          :format-tooltip="formatBeata"
+        ></el-slider>
       </div>
       <div>
         <span class="demonstration">治愈率:</span>
-        <el-slider v-model="health" class="myslider" :format-tooltip="formatHeath"></el-slider>
+        <el-slider
+          v-model="health"
+          class="myslider"
+          :format-tooltip="formatHeath"
+        ></el-slider>
       </div>
       <div id="hosbedsliedr">
         <span class="demonstration">病床数:</span>
-        <el-slider v-model="hospitalbed" class="myslider" v-bind:max="bedmax"></el-slider>
+        <el-slider
+          v-model="hospitalbed"
+          class="myslider"
+          v-bind:max="bedmax"
+        ></el-slider>
       </div>
       <div id="activesliedr">
         <span class="demonstration">活跃度:</span>
@@ -26,7 +44,11 @@
       </div>
       <div>
         <span class="demonstration">管控时间:</span>
-        <el-slider v-model="controltime" class="myslider" :max="maxTime"></el-slider>
+        <el-slider
+          v-model="controltime"
+          class="myslider"
+          :max="maxTime"
+        ></el-slider>
       </div>
       <div id="miduslider">
         <span class="demonstration">人口密度:</span>
@@ -35,7 +57,13 @@
     </div>
     <div class="button-angel">
       <span class="demonstration">开始模拟</span>
-      <el-button id="Pplay" size="medium" v-bind:icon="playicon" circle @click="startclick"></el-button>
+      <el-button
+        id="Pplay"
+        size="medium"
+        v-bind:icon="playicon"
+        circle
+        @click="startclick"
+      ></el-button>
       <div style="float: right">
         <el-button class="stopbt" @click="stopclick">结束</el-button>
       </div>
@@ -93,8 +121,31 @@ export default {
         { name: "甘孜", value: 8 },
         { name: "凉山", value: 80 }
       ],
+      Beatas: [
+        { name: "成都", value: 0.08 },
+        { name: "自贡", value: 0.1 },
+        { name: "攀枝花", value: 0.17 },
+        { name: "泸州", value: 0.06 },
+        { name: "德阳", value: 0.07 },
+        { name: "绵阳", value: 0.08 },
+        { name: "广元", value: 0.12 },
+        { name: "遂宁", value: 0.11 },
+        { name: "内江", value: 0.07 },
+        { name: "乐山", value: 0.07 },
+        { name: "南充", value: 0.09 },
+        { name: "宜宾", value: 0.07 },
+        { name: "广安", value: 0.06 },
+        { name: "达州", value: 0.05 },
+        { name: "巴中", value: 0.11 },
+        { name: "雅安", value: 0.08 },
+        { name: "眉山", value: 0.08 },
+        { name: "资阳", value: 0.05 },
+        { name: "阿坝", value: 0.05 },
+        { name: "甘孜", value: 0.05 },
+        { name: "凉山", value: 0.09 }
+      ],
       cityname: "成都",
-      Beata: 3,
+      Beata: 8,
       health: 93,
       hospitalbed: 8000,
       activity: 100,
@@ -105,7 +156,7 @@ export default {
       listen: null,
       maxTime: 40,
       bedmax: 10000,
-      Beatamax: 10,
+      Beatamax: 20,
       midumax: 1500,
       stop: true,
       active: null,
@@ -129,7 +180,8 @@ export default {
           midu: this.midu,
           controltime: this.controltime,
           activity: this.activity,
-          cityname: this.cityname
+          cityname: this.cityname,
+          Beata: this.Beata / 100
         };
         this.$store.commit("settestparam", SEIRparam);
       } else {
@@ -145,7 +197,8 @@ export default {
           midu: this.midu,
           controltime: this.controltime,
           activity: this.activity,
-          cityname: this.cityname
+          cityname: this.cityname,
+          Beata: this.Beata / 100
         };
         this.$store.commit("settestparam", SEIRparams);
       }
@@ -164,8 +217,10 @@ export default {
         midu: this.midu,
         controltime: this.controltime,
         activity: this.activity,
-        cityname: this.cityname
+        cityname: this.cityname,
+        Beata: this.Beata / 100
       };
+      // this.computedData(this.$store.getters.getMNactivedata);
       this.$store.commit("settestparam", SEIRparam);
     },
     formatBeata: function(val) {
@@ -252,6 +307,14 @@ export default {
           break;
         }
       }
+    },
+    BeataSelect: function() {
+      for (var i = 0; i < this.miduarry.length; i++) {
+        if (this.Beatas[i].name == this.cityname) {
+          this.Beata = this.Beatas[i].value * 100;
+          break;
+        }
+      }
     }
   },
   computed: {
@@ -269,6 +332,7 @@ export default {
       this.activedata(this.$store.getters.getMNactivedata);
       this.activenum();
       this.midunum();
+      this.BeataSelect();
       this.hospitalbed = this.hospitalmap.get(newval)[0].hospital * 400;
     },
     MNactivedata: function(newval, oldval) {
@@ -286,7 +350,7 @@ export default {
   }
 };
 </script>
-<style >
+<style>
 #Ptool {
   position: absolute;
   top: 5.5%;
@@ -321,11 +385,10 @@ export default {
   /* color: #8492a6; */
   line-height: 44px;
 }
-.Ptool-gap{
+.Ptool-gap {
   height: 10%;
 }
 .Ptool-angel {
-
   z-index: 2;
   background: linear-gradient(#00faff, #00faff) left top,
     linear-gradient(#00faff, #00faff) left top,
@@ -347,8 +410,8 @@ export default {
   font-size: 20px;
 }
 
-#Pplay{
-  transform: translate(75%, 0)
+#Pplay {
+  transform: translate(75%, 0);
 }
 .button-angel {
   width: 80%;
