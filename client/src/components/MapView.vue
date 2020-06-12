@@ -148,8 +148,6 @@ export default {
         console.log(res.data.features)
       });
       let trackData = axios.get("/api/city_Track.json").then(res=>{
-        console.log("这是输入")
-        console.log(res.data.features);
         that.addTrack(res.data);
       })
       
@@ -161,14 +159,16 @@ export default {
   methods: {
     mapInit() {
       mapboxgl.accessToken =
-        "pk.eyJ1IjoiaG9uZ3l1amlhbmciLCJhIjoiY2s3N202NDIxMDhkdzNpcGg3djRtdnN4dCJ9.lysys8PBG25SxeHRF-sPvA";
+        //"pk.eyJ1IjoiaG9uZ3l1amlhbmciLCJhIjoiY2s3N202NDIxMDhkdzNpcGg3djRtdnN4dCJ9.lysys8PBG25SxeHRF-sPvA";
+        "pk.eyJ1Ijoid2VpeGluemhhbyIsImEiOiJjazBqYnFwY3owOGV4M25uMXlnc2tweTcxIn0.7Pk6JhKBB-nogxXiNTGnZQ";
       mapboxgl.setRTLTextPlugin(
         "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.0/mapbox-gl-rtl-text.js"
       );
 
       this.map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v9",
+        //style: "mapbox://styles/mapbox/streets-v9",
+        style: "mapbox://styles/weixinzhao/ckb6f7ox902kc1iml8zf1h4no",
         center: [99.031472, 26.515927],
         zoom: 5
       });
@@ -195,7 +195,7 @@ export default {
         drawPoints.push({
           type: "Feature",
           properties: {
-            color: "cyan",
+            color: "red",
             opacity: 0.5,
             radius: 5,
             description: d.address
@@ -242,7 +242,7 @@ export default {
         source: "trac_json",
         paint: {
           "line-width": 1,
-          "line-color": "#383a30",
+          "line-color": "white",
           "line-opacity": 0.5
         },
         layout:{
@@ -291,7 +291,7 @@ export default {
           "text-size": 10
         },
         paint: {
-          "text-color": "#333"
+          "text-color": "white"
         },
         minzoom: 8.5
       });
@@ -311,7 +311,7 @@ export default {
         type: "fill",
         source: "city_json",
         paint: {
-          "fill-color": "cyan",
+          "fill-color": "red",
           "fill-opacity": ["get", "opt"]
         },
         maxzoom: 8.5
@@ -337,7 +337,7 @@ export default {
           visibility: "none"
         },
         paint: {
-          "fill-color": "#87CEFA",
+          "fill-color": "#77C0F5",
           "fill-opacity": ["get", "copt"]
         },
         maxzoom: 8.5
@@ -348,7 +348,7 @@ export default {
         source: "city_json",
         paint: {
           "line-width": 1,
-          "line-color": "#000",
+          "line-color": "white",
           "line-opacity": 1
         },
         maxzoom: 8.5
@@ -359,10 +359,10 @@ export default {
         source: "city_json",
         layout: {
           "text-field": "{name}",
-          "text-size": 12
+          "text-size": 15
         },
         paint: {
-          "text-color": "#333"
+          "text-color": "white"
         },
         maxzoom: 8.5
       });
@@ -399,7 +399,7 @@ export default {
         source: "dstrc_json",
         paint: {
           "line-width": 1,
-          "line-color": "#000",
+          "line-color": "white",
           "line-opacity": 1
         },
         minzoom: 7,
@@ -414,7 +414,7 @@ export default {
           "text-size": 10
         },
         paint: {
-          "text-color": "#333"
+          "text-color": "white"
         },
         minzoom: 7,
         maxzoom: 8.5
@@ -647,6 +647,8 @@ export default {
       
       //绘制轨迹线
       //计算轨迹点
+
+      
       let that = this,
         origin = [+linedata.centercity.lon,+linedata.centercity.lat],
         routes = {
@@ -658,7 +660,7 @@ export default {
           'features': []
         },
         get_route_rawfeature = function(ori, des){let a = {'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': [ori, des]}}; return a },
-        get_point_rawfeature = function(p){let a = {'type': 'feature', 'properties': {}, 'geometry': {'type': 'Point', 'coordinates': p}}; return a}
+        get_point_rawfeature = function(p){let a = {'type': 'Feature', 'properties': {}, 'geometry': {'type': 'Point', 'coordinates': p}}; return a}
       
       linedata.citys.forEach((d,i) => {
         let destination = null,
@@ -667,7 +669,7 @@ export default {
             arc = [],
             steps = 20
 
-        destination = [+d.lat, +d.lon]
+        destination = [+d.lon, +d.lat]
         
         routes['features'].push(get_route_rawfeature(origin, destination))
         points['features'].push(get_point_rawfeature(destination))
@@ -677,48 +679,85 @@ export default {
         for (var j = 0; j < lineDistance; j += lineDistance / steps) {
           var segment = turf.along(routes['features'][i], j, {units: 'kilometers'});
           arc.push(segment.geometry.coordinates);
-          
         }
+        arc.push(destination)
         routes['features'][i].geometry.coordinates = arc; 
       })
-      
-      //some problem
 
-        that.map.addSource('transroute', {
+      //layer status
+
+      if(typeof this.map.getLayer('id_related_traj') === 'undefined' && typeof this.map.getLayer('id_related_place') === 'undefined') {
+        // Remove map layer & source.
+        that.map.addSource('related_traj', {
           type: 'geojson',
+          lineMetrics: true,
           data: routes
         });
 
-        that.map.addSource('transpoint', {
+        that.map.addSource('related_place', {
           type: 'geojson',
           data: points
-        })
+        });
 
         that.map.addLayer({
-          id: 'transrouteid',
-          source: 'transroute',
+          id: 'id_related_traj',
+          source: 'related_traj',
           type: 'line',
           paint: {
-            'line-width': 2,
-            'line-color': 'white'
+            'line-width': 3,
+            'line-color': '#FCF9BD',
+            'line-gradient': [
+              'interpolate',
+              ['linear'],
+              ['line-progress'],
+              0,
+              '#B78B4B',
+              0.1,
+              '#CBA876',
+              0.3,
+              '#FFFFFF',
+              0.5,
+              '#FFFFFF',
+              0.7,
+              '#FFFFFF',
+              0.9,
+              '#CBA876',
+              1,
+              '#B78B4B'
+            ]
+          },
+          layout: {
+            'line-cap': 'round',
+            'line-join': 'round'
           }
-        },'points_layer')
+        });
 
         that.map.addLayer({
-            id: 'transpointid',
-            source: 'transpoint',
-            type: 'symbol',
-            layout: {
-                'icon-image': 'airport-15',
-                'icon-rotate': ['get', 'bearing'],
-                'icon-rotation-alignment': 'map',
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true
+            id: 'id_related_place',
+            source: 'related_place',
+            type: 'circle',
+            paint: {
+              'circle-color': '#A67023',
+              'circle-radius': 5,
+              'circle-stroke-color': '#A67023',
+              'circle-stroke-opacity': 0.5,
+              'circle-stroke-width': 3
             }
-        },'points_layer')
+        });
 
-        that.map.setLayoutProperty("transrouteid", "visibility", "visible");
-  
+        that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
+        that.map.setLayoutProperty("id_related_place", "visibility", "visible");
+
+      }
+
+      /*
+      if(typeof this.map.getLayer('id_related_place') !== 'undefined') {
+        // Remove map layer & source.
+        this.map.removeLayer('id_related_place').removeSource('related_place');
+      }
+      */
+
+      //some problem
     }
   },
   computed: {
@@ -742,6 +781,9 @@ export default {
     },
     mapQXLinedata() {
       return this.$store.getters.getTMapLinedata;
+    },
+    nowTab() {
+      return this.$store.getters.gettabeselect;
     }
   },
   watch: {
@@ -783,7 +825,7 @@ export default {
           }, //指渲染位置和可见性
           paint: {
             "line-width": 1,
-            "line-color": "#000",
+            "line-color": "white",
             "line-opacity": 1
           },
           maxzoom: 10.5
@@ -796,7 +838,7 @@ export default {
             visibility: "none"
           }, //指渲染位置和可见性
           paint: {
-            "fill-color": "orange",
+            "fill-color": "steelblue",
             "fill-opacity": ["get", "asc"]
           },
           maxzoom: 8.5
@@ -919,6 +961,23 @@ export default {
     mapQXLinedata: function(newval, oldval){
       console.log('this is mapQXLinedata in MapView', newval)
       this.drawTrajectLine(newval)
+    },
+    nowTab: function(newval, oldval){
+      let that = this
+      if(newval == 'first'){
+        if(typeof this.map.getLayer('id_related_traj') !== 'undefined' && typeof this.map.getLayer('id_related_place') !== 'undefined'){
+          that.map.setLayoutProperty("id_related_traj", "visibility", "none");
+          that.map.setLayoutProperty("id_related_place", "visibility", "none");
+        }
+      }
+      else if(newval == 'second'){
+        //设置模拟轨迹为可见
+        if(typeof this.map.getLayer('id_related_traj') !== 'undefined' && typeof this.map.getLayer('id_related_place') !== 'undefined'){
+          that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
+          that.map.setLayoutProperty("id_related_place", "visibility", "visible");
+        }
+      }
+      
     }
   }
 };
@@ -934,9 +993,12 @@ export default {
   height: 94%;
   border: 1px #7a7a7a;
 }
+/*
+map color inverse
 canvas.mapboxgl-canvas {
   filter: invert(1);
 }
+*/
 .mapboxgl-popup {
   max-width: 400px;
   font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;

@@ -6,7 +6,8 @@
     -->
     <div>
       <el-tabs v-model="activeTab" :stretch="true" class="eltabs">
-        <el-tab-pane label="疫情分析" name="first">
+
+        <el-tab-pane label="疫情分析" name="first" >
           <groupbar style="background-color: #30313a"></groupbar>
           <!--放下面的三幅图-->
           <AddedDaily />
@@ -16,12 +17,13 @@
 
           <timeline></timeline>
         </el-tab-pane>
+
         <el-tab-pane label="抗压力沙盒模拟" name="second">
-          抗压力沙盒模拟
           <pressuretool></pressuretool>
           <seir></seir>
           <testTotal></testTotal>
           <testcalen></testcalen>
+
         </el-tab-pane>
       </el-tabs>
     </div>

@@ -1,8 +1,9 @@
 <template>
   <div id="Ptool" class="Ptool-angel">
+    <div class="Ptool-gap"></div>
     <div>
-      <span>城市选择:</span>
-      <el-select v-model="cityname" placeholder>
+      <span class="demonstration" style="padding-left: 10%">城市选择:</span>
+      <el-select v-model="cityname" placeholder style="padding-left: 5%">
         <el-option
           v-for="(item, i) in citys"
           :key="i"
@@ -55,7 +56,7 @@
       </div>
     </div>
     <div class="button-angel">
-      <span>开始模拟</span>
+      <span class="demonstration">开始模拟</span>
       <el-button
         id="Pplay"
         size="medium"
@@ -352,10 +353,10 @@ export default {
 <style>
 #Ptool {
   position: absolute;
-  top: 14.5%;
-  left: 0.5%;
-  width: 20%;
-  height: 32%;
+  top: 5.5%;
+  left: 0.1%;
+  width: 24.8%;
+  height: 55%;
   z-index: 1;
   background-color: #30313a;
 }
@@ -370,6 +371,10 @@ export default {
 .el-slider__bar {
   left: 1%;
 }
+#myslider {
+  width: 80%;
+  padding-left: 10%;
+}
 .myslider {
   position: relative;
   width: 75%;
@@ -379,6 +384,9 @@ export default {
   font-size: 14px;
   /* color: #8492a6; */
   line-height: 44px;
+}
+.Ptool-gap {
+  height: 10%;
 }
 .Ptool-angel {
   z-index: 2;
@@ -401,20 +409,17 @@ export default {
 .el-icon-video-pause {
   font-size: 20px;
 }
+
+#Pplay {
+  transform: translate(75%, 0);
+}
 .button-angel {
+  width: 80%;
+  padding-left: 10%;
   z-index: 2;
-  background: linear-gradient(#00faff, #00faff) left top,
-    linear-gradient(#00faff, #00faff) left top,
-    linear-gradient(#00faff, #00faff) right top,
-    linear-gradient(#00faff, #00faff) right top,
-    linear-gradient(#00faff, #00faff) left bottom,
-    linear-gradient(#00faff, #00faff) left bottom,
-    linear-gradient(#00faff, #00faff) right bottom,
-    linear-gradient(#00faff, #00faff) right bottom;
   background-repeat: no-repeat;
   background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
     0.6rem 0.15rem;
-  background-color: rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   margin: 0.1% 0 0 0.1%;
 }
