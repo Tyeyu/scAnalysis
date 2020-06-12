@@ -421,6 +421,7 @@ export default {
   font: 18px "Microsoft YaHei";
   float: left;
   transform: translate(10%, 30%);
+  font-weight: 700;
 }
 #Coordinates {
   position: absolute;

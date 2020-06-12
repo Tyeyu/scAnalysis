@@ -579,6 +579,7 @@ export default {
   font: 18px "Microsoft YaHei";
   transform: translate(10%, 30%);
   float: left;
+  font-weight: 700;
 }
 #Relation {
   position: absolute;

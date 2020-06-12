@@ -1,7 +1,7 @@
 <template>
   <div id="testCalendar" class="testCalender-angel">
     <div style="padding-top:1%">
-      <span style="padding-left: 5%">关联地区风险</span>
+      <span style="padding-left: 5%; font-weight: 700">关联地区风险</span>
     </div>
     <div id="TCtooltip"></div>
   </div>

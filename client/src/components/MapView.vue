@@ -229,6 +229,125 @@ export default {
       });
     },
     addTrack(data){
+      let that = this,
+        routes = {
+          'type': 'FeatureCollection',
+          'features': []
+        },
+        points = {
+          'type': 'FeatureCollection',
+          'features': []
+        },
+        get_route_rawfeature = function(ori, des){
+          let a = {
+            'type': 'Feature',
+            'geometry': {'type': 'LineString', 'coordinates': [ori, des]}
+            }; 
+          return a 
+          },
+        get_point_rawfeature = function(p){
+          let a = {
+            'type': 'Feature', 
+            'properties': {'description': ''}, 
+            'geometry': {'type': 'Point', 'coordinates': p}
+            }; 
+          return a
+          }
+      
+      data.features.forEach((d,i) => {
+        d.geometry.coordinates.forEach((v,j) => {
+          let traj_length = v.length
+
+          if(v.length > 1){
+            for(let m = 0; m < v.length-1; m++){
+              routes['features'].push(get_route_rawfeature(v[m], v[m+1]))
+            }
+          }
+          v.forEach((l) => {
+            points['features'].push(get_point_rawfeature(l))
+          })
+          
+        })
+      })
+
+      routes['features'].forEach((d,i) => {
+        let arc = [],
+          lineDistance = turf.lineDistance(routes['features'][i], {units: 'kilometers'}),
+          destination = d.geometry.coordinates[d['geometry']['coordinates'].length - 1],
+          steps = 20 
+
+        for (let j = 0; j < lineDistance; j+= lineDistance / steps){
+          let segment = turf.along(routes['features'][i], j, {units: 'kilometers'});
+          arc.push(segment.geometry.coordinates)
+        }
+        arc.push(destination)
+
+        d.geometry.coordinates = arc
+      })
+
+
+      this.map.addSource('trac_json', {
+        type: 'geojson',
+        lineMetrics: true,
+        data: routes
+      })
+
+      that.map.addSource('trac_json_place', {
+        type: 'geojson',
+        data: points
+      })
+
+      that.map.addLayer({
+        'id': 'track',
+        'type': 'line',
+        'source': 'trac_json',
+        'paint': {
+            'line-width': 1,
+            'line-color': '#FCF9BD',
+            'line-gradient': [
+              'interpolate',
+              ['linear'],
+              ['line-progress'],
+              0,
+              '#B78B4B',
+              0.1,
+              '#CBA876',
+              0.3,
+              '#FFFFFF',
+              0.5,
+              '#FFFFFF',
+              0.7,
+              '#FFFFFF',
+              0.9,
+              '#CBA876',
+              1,
+              '#B78B4B'
+            ]
+          },
+          layout: {
+            'line-cap': 'round',
+            'line-join': 'round',
+            "visibility": "none"
+          }
+      })
+
+      that.map.addLayer({
+          id: 'track_place',
+          source: 'trac_json_place',
+          type: 'circle',
+          paint: {
+            'circle-color': '#898915',
+            'circle-radius': 3,
+            'circle-stroke-color': '#898915',
+            'circle-stroke-opacity': 0.5,
+            'circle-stroke-width': 1
+          },
+          layout: {
+            "visibility": "none"
+          }
+      });
+
+      /*
       this.map.addSource("trac_json",{
         type:"geojson",
         data:{
@@ -242,13 +361,15 @@ export default {
         source: "trac_json",
         paint: {
           "line-width": 2,
-          "line-color": "white",
+          "line-color": "red",
           "line-opacity": 0.5
         },
         layout:{
           "visibility": "none"
         }
       });
+
+      */
 
     },
     addtown2Map(features) {
@@ -491,8 +612,10 @@ export default {
         }
         if(stateOfTrac !=-1){
           that.map.setLayoutProperty("track", "visibility", "visible");
+          that.map.setLayoutProperty("track_place", "visibility", "visible");
         }else if(stateOfTrac == -1){
           that.map.setLayoutProperty("track", "visibility", "none");
+          that.map.setLayoutProperty("track_place", "visibility", "none");
         }
         if (stateOfAct != -1) {
           that.map.setLayoutProperty("Activity", "visibility", "visible");
@@ -704,7 +827,7 @@ export default {
         arc.push(destination)
         routes['features'][i].geometry.coordinates = arc;
       })
-
+      
       //layer status
 
       if(typeof this.map.getLayer('id_related_traj') === 'undefined' && typeof this.map.getLayer('id_related_place') === 'undefined') {

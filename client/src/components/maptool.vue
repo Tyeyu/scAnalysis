@@ -41,7 +41,7 @@ export default {
     };
   },
   mounted() {
-    this.drawColorCard();
+    //this.drawColorCard();
     d3.select("#mapcontrl").style("opacity", 0.8);
   },
   methods: {
