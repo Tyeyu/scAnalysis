@@ -95,10 +95,6 @@ export default {
 </script>
 
 <style>
-body {
-  background-color: #13142a;
-  opacity: 0.5;
-}
 #app {
   width: 100%;
   height: 100%;

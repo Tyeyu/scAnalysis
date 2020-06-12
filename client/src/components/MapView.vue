@@ -241,7 +241,7 @@ export default {
         type: "line",
         source: "trac_json",
         paint: {
-          "line-width": 1,
+          "line-width": 2,
           "line-color": "white",
           "line-opacity": 0.5
         },
@@ -648,7 +648,6 @@ export default {
       //绘制轨迹线
       //计算轨迹点
 
-      
       let that = this,
         origin = [+linedata.centercity.lon,+linedata.centercity.lat],
         routes = {
@@ -659,20 +658,41 @@ export default {
           'type': 'FeatureCollection',
           'features': []
         },
-        get_route_rawfeature = function(ori, des){let a = {'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': [ori, des]}}; return a },
-        get_point_rawfeature = function(p){let a = {'type': 'Feature', 'properties': {}, 'geometry': {'type': 'Point', 'coordinates': p}}; return a}
+        sourcePoint = {
+          'type': 'FeatureCollection',
+          'features': []
+        },
+        get_route_rawfeature = function(ori, des){
+          let a = {
+            'type': 'Feature',
+            'geometry': {'type': 'LineString', 'coordinates': [ori, des]}
+            }; 
+          return a 
+          },
+        get_point_rawfeature = function(p, place){
+          let description_text = '<strong>' + place + '</strong>'
+          let a = {
+            'type': 'Feature', 
+            'properties': {'description': description_text}, 
+            'geometry': {'type': 'Point', 'coordinates': p}
+            }; 
+          return a
+          }
+      
+      sourcePoint['features'].push(get_point_rawfeature(origin, linedata.centercity.name))
       
       linedata.citys.forEach((d,i) => {
         let destination = null,
             route_feature = null,
             lineDistance = null,
+            place = d.name,
             arc = [],
             steps = 20
 
         destination = [+d.lon, +d.lat]
         
         routes['features'].push(get_route_rawfeature(origin, destination))
-        points['features'].push(get_point_rawfeature(destination))
+        points['features'].push(get_point_rawfeature(destination, place))
 
         lineDistance = turf.lineDistance(routes['features'][i], {units: 'kilometers'})
 
@@ -680,14 +700,23 @@ export default {
           var segment = turf.along(routes['features'][i], j, {units: 'kilometers'});
           arc.push(segment.geometry.coordinates);
         }
+
         arc.push(destination)
-        routes['features'][i].geometry.coordinates = arc; 
+        routes['features'][i].geometry.coordinates = arc;
       })
 
       //layer status
 
       if(typeof this.map.getLayer('id_related_traj') === 'undefined' && typeof this.map.getLayer('id_related_place') === 'undefined') {
         // Remove map layer & source.
+
+        // add popup
+        let popup = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnClick: false
+          });
+
+
         that.map.addSource('related_traj', {
           type: 'geojson',
           lineMetrics: true,
@@ -701,10 +730,7 @@ export default {
 
         that.map.addSource('source_place', {
           type: 'geojson',
-          data: {
-            'type': 'Point',
-            'coordinates': origin
-          }
+          data: sourcePoint
         })
 
         that.map.addLayer({
@@ -765,6 +791,44 @@ export default {
             'circle-stroke-opacity': 0.5,
             'circle-stroke-width': 0
           }
+        })
+
+        // place popup
+        // destination
+        that.map.on('mouseenter', 'id_related_place', function(e){
+          let coordinates = e.features[0].geometry.coordinates.slice();
+          let description = e.features[0].properties.description;
+
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180){
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+          }
+
+          popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
+        })
+
+        // origin
+        that.map.on('mouseenter', 'id_source_place', function(e){
+          let coordinates = e.features[0].geometry.coordinates.slice();
+          let description = e.features[0].properties.description;
+
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180){
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+          }
+
+          popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
+        })
+
+        // disable popup
+        // destination
+        that.map.on('mouseleave', 'id_related_place', function(){
+          that.map.getCanvas().style.cursor = '';
+          popup.remove()
+        })
+
+        // origin
+        that.map.on('mouseleave', 'id_source_place', function(){
+          that.map.getCanvas().style.cursor = '';
+          popup.remove()
         })
 
         that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
