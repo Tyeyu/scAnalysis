@@ -208,11 +208,7 @@ export default {
         sum = parseFloat(parseFloat(cm + rm).toFixed(4));
         if (sum < remin) remin = sum;
         if (sum > remax) remax = sum;
-        console.log(sum);
-        console.log(migkeys[i]);
       }
-      console.log(remin);
-      console.log(remax);
       for (var i = 0; i < parseFloat(migkeys.length); i++) {
         var Inmigration_rate = 0;
         var Outmigration_rate = 0;
