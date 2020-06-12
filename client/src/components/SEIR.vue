@@ -95,9 +95,10 @@ export default {
             })
             .map(this.$store.getters.getTcalendata.province);
         }
-        console.log("开始");
       }
       this.ZT = false;
+      var newDia = null;
+      var newYDia = null;
       this.play = self.setInterval(function() {
         if (that.i < 40) {
           if (that.I <= 0) that.I = 0;
@@ -143,19 +144,19 @@ export default {
           if (that.i >= that.controltime) {
             that.r = 0;
             that.r2 = parseInt(3 * Math.random());
-            that.Beata -= (i - that.controltime) / 10;
+            that.Beata -= (that.i - that.controltime) / 20;
             if (that.Beata <= 0) that.Beata = 0;
             that.Beata2 = that.Beata;
             if (that.i - that.controltime >= 10) {
-              that.Beata = 0.001;
+              that.Beata = 0.01 / that.i;
               that.Beata2 = that.Beata;
             }
           }
-          var newDia =
+          newDia =
             (that.r * that.Beata * that.Sarry[that.i] * that.Iarry[that.i]) /
             that.N; //发病者感染人数
           // if (i == 12) break;
-          var newYDia =
+          newYDia =
             (that.r2 * that.Beata2 * that.Sarry[that.i] * that.Earry[that.i]) /
             that.N; //潜伏者感染人数
           if (that.i < that.controltime) {
@@ -166,6 +167,7 @@ export default {
               that.a * that.Earry[that.i] +
               newYDia;
             that.I = that.Iarry[that.i] + that.a * that.Earry[that.i];
+
             that.R = that.Rarry[that.i];
             that.sumbed += parseInt(that.sumI[that.i] * 0.01); //自由传播阶段，有较低概率病人住院
             if (that.hosbednum - that.sumbed < 0) {
@@ -185,6 +187,7 @@ export default {
               that.Parry[that.i] +
               that.r3 * that.Beata3 * (that.I + that.E) -
               that.x * that.P;
+
             that.deata1 = 0.2 + (that.i - that.controltime) / 10;
             that.deata2 = 0.5 + (that.i - that.controltime) / 10;
 
@@ -370,23 +373,23 @@ export default {
             citys: []
           };
           for (var k = 0; k < 11; k++) {
-            var x = that.citys.city[k];
-            var y = that.citys.province[k];
-            x.value = that.Tcity.get(x.name)[0].value;
-            y.value = that.Tpro.get(y.name)[0].value;
-            that.TCalendar.city.push(x);
-            that.TCalendar.province.push(y);
+            var xs = that.citys.city[k];
+            var ys = that.citys.province[k];
+            xs.value = that.Tcity.get(xs.name)[0].value;
+            ys.value = that.Tpro.get(ys.name)[0].value;
+            that.TCalendar.city.push(xs);
+            that.TCalendar.province.push(ys);
             that.mapQXLinedata.citys.push({
-              name: x.name,
-              lat: that.citysJWD.get(x.name)[0].lat,
-              lon: that.citysJWD.get(x.name)[0].lon,
-              value: that.Tcity.get(x.name)[0].value
+              name: xs.name,
+              lat: that.citysJWD.get(xs.name)[0].lat,
+              lon: that.citysJWD.get(xs.name)[0].lon,
+              value: that.Tcity.get(xs.name)[0].value
             });
             that.mapQXLinedata.citys.push({
-              name: y.name,
-              lat: that.citysJWD.get(y.name)[0].lat,
-              lon: that.citysJWD.get(y.name)[0].lon,
-              value: that.Tpro.get(y.name)[0].value
+              name: ys.name,
+              lat: that.citysJWD.get(ys.name)[0].lat,
+              lon: that.citysJWD.get(ys.name)[0].lon,
+              value: that.Tpro.get(ys.name)[0].value
             });
           }
           // console.log(mapQXLinedata);
@@ -566,6 +569,7 @@ export default {
         if (!newval.stop && !newval.play) {
           window.clearInterval(this.play);
           this.ZT = true;
+          this.play = null;
         } else {
           window.clearInterval(this.play);
           this.i = 0;
@@ -583,6 +587,13 @@ export default {
           this.R = 0;
           this.mapQXLinedata = null;
           this.TCalendar = null;
+          this.mapQXLinedata = null;
+          this.TCalendar = null;
+          this.ZT = false;
+          this.Tcity = null;
+          this.Tpro = null;
+          this.testCalendar = null;
+          this.play = null;
         }
       }
     }
