@@ -27,18 +27,18 @@ export default {
           textStyle: {
             color: "#ffffff"
           },
-            left: "3%",
-            top: "10px"
+          left: "3%",
+          top: "10px"
         },
         tooltip: {
           trigger: "axis"
         },
         legend: {
-          data: ["剩余病床", "累计确诊"],
+          data: ["剩余病床", "累计发病"],
           textStyle: {
             color: "#ffffff"
           },
-          top: '10px'
+          top: "10px"
         },
         grid: {
           left: "3%",

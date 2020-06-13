@@ -176,7 +176,7 @@ export default {
 
             that.R = that.Rarry[that.i];
             that.R2 = 0;
-            that.sumbed = parseInt(that.sumI[that.i] * 0.01); //自由传播阶段，有较低概率病人住院
+            that.sumbed += parseInt(that.sumI[that.i] * 0.01); //自由传播阶段，有较低概率病人住院
             if (that.hosbednum - that.sumbed < 0) {
               that.lostbed[that.i] = 0;
               that.sumbed = that.hosbednum;
@@ -208,8 +208,7 @@ export default {
               that.CE -
               that.E * that.deata1;
             if (that.i == that.controltime) {
-              that.sumbed +=
-                that.sumI[that.i] - that.sumbed - that.sumR[that.i]; //将发病的病人全部转入住院
+              that.sumbed = that.sumI[that.i] - that.sumbed - that.sumR[that.i]; //将发病的病人全部转入住院
               if (that.sumbed < 0) {
                 that.sumbed = 0;
               }
@@ -234,10 +233,13 @@ export default {
                   that.Iarry[that.i] * that.deata2 -
                   that.QI * ((that.y * that.i) / 100) +
                   (that.i / 40) * that.QE;
-                that.sumbed =
-                  parseInt(
-                    (((that.QI + that.I) * 0.9 * i) / 40) * Math.random()
-                  ) - parseInt(that.R);
+                if (that.i != that.controltime)
+                  that.sumbed += parseInt(
+                    (((that.sumI[that.i] - that.sumR[that.i]) * 0.8 * i) / 40) *
+                      Math.random() -
+                      that.sumR[that.i] +
+                      that.sumR[that.i - 1]
+                  );
               } else {
                 that.R =
                   that.Rarry[that.i] +
@@ -283,8 +285,12 @@ export default {
                   that.Iarry[that.i] * that.deata2 -
                   that.QI * ((that.y * that.i) / 100) +
                   (that.i / 100) * that.QE;
-                that.sumbed =
-                  parseInt(that.QI) + parseInt(that.I) - parseInt(that.R);
+                that.sumbed += parseInt(
+                  (((that.sumI[that.i] - that.sumR[that.i]) * 0.9 * i) / 40) *
+                    Math.random() -
+                    that.sumR[that.i] +
+                    that.sumR[that.i - 1]
+                );
                 if (that.sumbed < 0) {
                   that.sumbed = 0;
                 }
@@ -327,8 +333,12 @@ export default {
                     (that.i / 40) * that.QE;
                 }
 
-                that.sumbed =
-                  parseInt(that.QI) + parseInt(that.I) - parseInt(that.R);
+                that.sumbed += parseInt(
+                  (((that.sumI[that.i] - that.sumR[that.i]) * 0.8 * i) / 40) *
+                    Math.random() -
+                    that.sumR[that.i] +
+                    that.sumR[that.i - 1]
+                );
                 if (that.sumbed < 0) {
                   that.sumbed = 0;
                 }
@@ -465,7 +475,7 @@ export default {
         that.initchart();
         if (that.i >= 40) {
           window.clearInterval(that.play);
-          this.Chongz();
+          that.Chongz();
         }
       }, 3000);
       // console.log(this.sumI);
