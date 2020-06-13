@@ -94,7 +94,9 @@ export default {
         "dstrc-label"
       ],
       counter: 0,
-      sc_cityData: null
+      sc_cityData: null,
+      pointIdList: [],
+      TCalendarDict: {} 
     };
   },
   mounted() {
@@ -785,6 +787,7 @@ export default {
           'type': 'FeatureCollection',
           'features': []
         },
+        points_collection = [],
         get_route_rawfeature = function(ori, des){
           let a = {
             'type': 'Feature',
@@ -796,11 +799,12 @@ export default {
           let description_text = '<strong>' + place + '</strong>'
           let a = {
             'type': 'Feature', 
-            'properties': {'description': description_text}, 
+            'properties': {'description': description_text, 'place': place, 'strokewidth': 0}, 
             'geometry': {'type': 'Point', 'coordinates': p}
             }; 
           return a
-          }
+        },
+        get_point_strokewidth = function(){}
       
       sourcePoint['features'].push(get_point_rawfeature(origin, linedata.centercity.name))
       
@@ -816,6 +820,9 @@ export default {
         
         routes['features'].push(get_route_rawfeature(origin, destination))
         points['features'].push(get_point_rawfeature(destination, place))
+
+        points_collection.push({'place': place, 'feature':  {'type': 'FeatureCollection', 'features': [get_point_rawfeature(destination, place)]}})
+        that.pointIdList.push('related_place_' + i)
 
         lineDistance = turf.lineDistance(routes['features'][i], {units: 'kilometers'})
 
@@ -839,17 +846,16 @@ export default {
           closeOnClick: false
           });
 
-
         that.map.addSource('related_traj', {
           type: 'geojson',
           lineMetrics: true,
           data: routes
         });
 
-        that.map.addSource('related_place', {
-          type: 'geojson',
-          data: points
-        });
+        // that.map.addSource('related_place', {
+        //   type: 'geojson',
+        //   data: points
+        // });
 
         that.map.addSource('source_place', {
           type: 'geojson',
@@ -889,18 +895,18 @@ export default {
           }
         });
 
-        that.map.addLayer({
-            id: 'id_related_place',
-            source: 'related_place',
-            type: 'circle',
-            paint: {
-              'circle-color': '#898915',
-              'circle-radius': 5,
-              'circle-stroke-color': '#898915',
-              'circle-stroke-opacity': 0.5,
-              'circle-stroke-width': 0
-            }
-        });
+        // that.map.addLayer({
+        //     id: 'id_related_place',
+        //     source: 'related_place',
+        //     type: 'circle',
+        //     paint: {
+        //       'circle-color': '#898915',
+        //       'circle-radius': 5,
+        //       'circle-stroke-color': '#898915',
+        //       'circle-stroke-opacity': 0.5,
+        //       'circle-stroke-width': ['get', 'strokewidth']
+        //     }
+        // });
 
         //source point
         that.map.addLayer({
@@ -916,18 +922,60 @@ export default {
           }
         })
 
+        points_collection.forEach((d,i) => {
+          
+          that.map.addSource(that.pointIdList[i], {
+            'type': 'geojson',
+            'data': d['feature'],
+          })
+          that.map.addLayer({
+            'id': that.pointIdList[i] + '_layer',
+            'source': that.pointIdList[i],
+            'type': 'circle',
+            'paint': {
+              'circle-color': '#898915',
+              'circle-radius': 5,
+              'circle-stroke-color': '#898915',
+              'circle-stroke-opacity': 0.5,
+              'circle-stroke-width': ['get', 'strokewidth']
+            },
+            'metadata': {
+              'place': d.place
+            }
+          })
+
+          that.map.on('mouseenter', that.pointIdList[i] + '_layer', function(e){
+            let coordinates = e.features[0].geometry.coordinates.slice();
+            let description = e.features[0].properties.description;
+
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180){
+              coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+            }
+
+            popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
+          })
+
+          that.map.on('mouseleave', that.pointIdList[i] + '_layer', function(){
+            that.map.getCanvas().style.cursor = '';
+            popup.remove()
+          })
+
+          that.map.setLayoutProperty(that.pointIdList[i] + '_layer', "visibility", "visible");
+
+        })
+
         // place popup
         // destination
-        that.map.on('mouseenter', 'id_related_place', function(e){
-          let coordinates = e.features[0].geometry.coordinates.slice();
-          let description = e.features[0].properties.description;
+        // that.map.on('mouseenter', 'id_related_place', function(e){
+        //   let coordinates = e.features[0].geometry.coordinates.slice();
+        //   let description = e.features[0].properties.description;
 
-          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180){
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
-          }
+        //   while (Math.abs(e.lngLat.lng - coordinates[0]) > 180){
+        //     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+        //   }
 
-          popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
-        })
+        //   popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
+        // })
 
         // origin
         that.map.on('mouseenter', 'id_source_place', function(e){
@@ -943,10 +991,10 @@ export default {
 
         // disable popup
         // destination
-        that.map.on('mouseleave', 'id_related_place', function(){
-          that.map.getCanvas().style.cursor = '';
-          popup.remove()
-        })
+        // that.map.on('mouseleave', 'id_related_place', function(){
+        //   that.map.getCanvas().style.cursor = '';
+        //   popup.remove()
+        // })
 
         // origin
         that.map.on('mouseleave', 'id_source_place', function(){
@@ -955,7 +1003,7 @@ export default {
         })
 
         that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
-        that.map.setLayoutProperty("id_related_place", "visibility", "visible");
+        //that.map.setLayoutProperty("id_related_place", "visibility", "visible");
 
         animateSourcePlaceStorkeRadius(0)
       }
@@ -974,9 +1022,23 @@ export default {
         return size
       }
 
+      function sourcePlaceStorkeRadius_dynamic(place, angle){
+        let radius = that.TCalendarDict[place]
+        if(that.TCalendarDict[place] == undefined){
+          radius = 0
+        }
+
+        let size = Math.sin(angle) * Math.sqrt(radius)
+          size = size > 0 ? size : -size;
+        return size
+      }
+
       function animateSourcePlaceStorkeRadius(timestamp){
+        points_collection.forEach((d,i)=>{
+          that.map.setPaintProperty(that.pointIdList[i] + '_layer', 'circle-stroke-width', sourcePlaceStorkeRadius_dynamic(that.map.getLayer( that.pointIdList[i] + '_layer').metadata.place, (timestamp + 500) / 1000))
+        })
         that.map.setPaintProperty ('id_source_place', 'circle-stroke-width', sourcePlaceStorkeRadius(timestamp / 1000))
-        that.map.setPaintProperty ('id_related_place', 'circle-stroke-width', sourcePlaceStorkeRadius((timestamp + 500) / 1000))
+        //that.map.setPaintProperty ('id_related_place', 'circle-stroke-width', sourcePlaceStorkeRadius((timestamp + 500) / 1000))
         requestAnimationFrame(animateSourcePlaceStorkeRadius);
       }
     }
@@ -1005,6 +1067,9 @@ export default {
     },
     nowTab() {
       return this.$store.getters.gettabeselect;
+    },
+    TCalendar() {
+      return this.$store.getters.getTCalendar;
     }
   },
   watch: {
@@ -1180,27 +1245,40 @@ export default {
       });
     },
     mapQXLinedata: function(newval, oldval){
-      console.log('this is mapQXLinedata in MapView', newval)
       this.drawTrajectLine(newval)
     },
     nowTab: function(newval, oldval){
       let that = this
       if(newval == 'first'){
-        if(typeof this.map.getLayer('id_related_traj') !== 'undefined' && typeof this.map.getLayer('id_related_place') !== 'undefined'){
+        if(typeof this.map.getLayer('id_related_traj') !== 'undefined'){
           that.map.setLayoutProperty("id_related_traj", "visibility", "none");
-          that.map.setLayoutProperty("id_related_place", "visibility", "none");
           that.map.setLayoutProperty("id_source_place", "visibility", "none");
+          that.pointIdList.forEach((d,i) => {
+            that.map.setLayoutProperty(d+'_layer', 'visibility', 'none')
+          })
+          
         }
       }
       else if(newval == 'second'){
         //设置模拟轨迹为可见
-        if(typeof this.map.getLayer('id_related_traj') !== 'undefined' && typeof this.map.getLayer('id_related_place') !== 'undefined'){
+        if(typeof this.map.getLayer('id_related_traj') !== 'undefined'){
           that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
-          that.map.setLayoutProperty("id_related_place", "visibility", "visible");
           that.map.setLayoutProperty("id_source_place", "visibility", "visible");
+          that.pointIdList.forEach((d,i) => {
+            that.map.setLayoutProperty(d+'_layer', 'visibility', 'visible')
+          })
         }
       }
       
+    },
+    TCalendar: function(newval, oldval){
+      let that = this
+      newval.city.forEach((d,i) => {
+        that.TCalendarDict[d.name] = d.value
+      })
+      newval.province.forEach((d,i) => {
+        that.TCalendarDict[d.name] = d.value
+      })
     }
   }
 };
