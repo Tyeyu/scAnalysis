@@ -88,7 +88,7 @@ export default {
           return colors[d];
         })
         .attr("cx", function(d) {
-          return 60 * (d + 1) + 3 * d;
+          return 40 * (d + 1) + 3 * d;
         })
         .attr("cy", 10);
       titlesvg
@@ -97,7 +97,7 @@ export default {
         .enter()
         .append("text")
         .attr("x", function(d) {
-          return 65 * (d + 1);
+          return 45 * (d + 1);
         })
         .attr("y", 15)
         .attr("fill", "white")
@@ -578,7 +578,7 @@ export default {
 }
 #Relation span {
   color: white;
-  font: 18px "Microsoft YaHei";
+  font: 16px "Microsoft YaHei";
   transform: translate(10%, 30%);
   float: left;
   font-weight: 700;
