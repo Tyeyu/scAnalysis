@@ -76,7 +76,7 @@ export default {
             data: this.nowBeds
           },
           {
-            name: "累计确诊",
+            name: "累计发病",
             type: "line",
             smooth: true,
             data: this.total
