@@ -97,7 +97,8 @@ export default {
       sc_cityData: null,
       pointIdList: [],
       TCalendarDict: {},
-      sourcePatient: 0 //模拟城市感染人数
+      sourcePatient: 0, //模拟城市感染人数
+      animationFrame: 0
     };
   },
   mounted() {
@@ -840,6 +841,18 @@ export default {
 
           return scale(patient)
       }
+
+      // fly point animation data
+      let flypoint = [],
+        nowCityPatient = {},
+        traj_num = 0
+      
+      that.TCalendar.city.forEach((d,i) => {
+        nowCityPatient[d.name] = d.value
+      })
+      that.TCalendar.province.forEach((d,i) => {
+        nowCityPatient[d.name] = d.value
+      })
       
       linedata.citys.forEach((d,i) => {
         let destination = null,
@@ -850,22 +863,28 @@ export default {
             steps = 20
 
         destination = [+d.lon, +d.lat]
-        
-        routes['features'].push(get_route_rawfeature(origin, destination))
-        points['features'].push(get_point_rawfeature(destination, place))
 
-        points_collection.push({'place': place, 'feature':  {'type': 'FeatureCollection', 'features': [get_point_rawfeature(destination, place)]}})
-        that.pointIdList.push('related_place_' + i)
+        // when has patient draw fly and trajectory
+        if(nowCityPatient[place] > 0){
+          flypoint.push([origin, destination])
 
-        lineDistance = turf.lineDistance(routes['features'][i], {units: 'kilometers'})
+          routes['features'].push(get_route_rawfeature(origin, destination))
+          points['features'].push(get_point_rawfeature(destination, place))
 
-        for (var j = 0; j < lineDistance; j += lineDistance / steps) {
-          var segment = turf.along(routes['features'][i], j, {units: 'kilometers'});
-          arc.push(segment.geometry.coordinates);
+          points_collection.push({'place': place, 'feature':  {'type': 'FeatureCollection', 'features': [get_point_rawfeature(destination, place)]}})
+          that.pointIdList.push('related_place_' + traj_num)
+
+          lineDistance = turf.lineDistance(routes['features'][traj_num], {units: 'kilometers'})
+
+          for (var j = 0; j < lineDistance; j += lineDistance / steps) {
+            var segment = turf.along(routes['features'][traj_num], j, {units: 'kilometers'});
+            arc.push(segment.geometry.coordinates);
+          }
+
+          arc.push(destination)
+          routes['features'][traj_num].geometry.coordinates = arc;
+          traj_num++;
         }
-
-        arc.push(destination)
-        routes['features'][i].geometry.coordinates = arc;
       })
       
       //layer status
@@ -1046,6 +1065,7 @@ export default {
       }
 
       function animateSourcePlaceStorkeRadius(timestamp){
+        
         points_collection.forEach((d,i)=>{
           that.map.setPaintProperty(that.pointIdList[i] + '_layer', 'circle-stroke-width', sourcePlaceStorkeRadius_dynamic(that.map.getLayer( that.pointIdList[i] + '_layer').metadata.place, (timestamp + 500) / 1000))
         })
@@ -1053,8 +1073,135 @@ export default {
         //that.map.setPaintProperty ('id_source_circle_all', 'circle-stroke-width', sourcePlaceStorkeRadius(timestamp / 1000)) //source all person
 
         //that.map.setPaintProperty ('id_related_place', 'circle-stroke-width', sourcePlaceStorkeRadius((timestamp + 500) / 1000))
+        
+        // fly circle animation
+        that.animationFrame++
+        if(that.animationFrame > 60){
+          that.animationFrame = 0
+          // get origin destination list
+          console.log('fly~')
+          flypoint.forEach((d,i) => {
+            let randomTime = Math.random() * 100
+            setTimeout(that.patientMoveAnimate(d[0], d[1]), randomTime);
+          })
+        }
         requestAnimationFrame(animateSourcePlaceStorkeRadius);
       }
+    },
+    patientMoveAnimate(origin, destination){
+      
+      let that = this,
+        source_fly = getUniqueId('source_fly_', origin, destination),
+        source_route = getUniqueId('source_route_', origin, destination),
+        layer_fly = getUniqueId('layer_fly_', origin, destination),
+        layer_route = getUniqueId('layer_route_', origin, destination),
+        point = {
+          'type': 'FeatureCollection',
+          'features': [
+            {
+              'type': 'Feature',
+              'properties': {},
+              'geometry': {
+                'type': 'Point',
+                'coordinates': origin
+              }
+            }
+          ]
+        },
+        route = {
+          'type': 'FeatureCollection',
+          'features': [
+            {
+              'type': 'Feature',
+              'geometry': {
+                'type': 'LineString',
+                'coordinates': [origin, destination]
+              }
+            }
+          ]
+        },
+      lineDistance = turf.lineDistance(route.features[0], {units: 'kilometers'}),
+      arc = [],
+      steps = 60,
+      counter = 0;
+
+      for (let i = 0; i < lineDistance; i += lineDistance / steps) {
+        let segment = turf.along(route.features[0], i, {units: 'kilometers'});
+        arc.push(segment.geometry.coordinates);
+      }
+
+      arc.push(destination)
+      route.features[0].geometry.coordinates = arc;
+
+      this.map.addSource(source_route, {
+        'type': 'geojson',
+        'data': route
+      })
+
+      this.map.addSource(source_fly, {
+        'type': 'geojson',
+        'data': point
+      })
+      
+      this.map.addLayer({
+        'id': layer_fly,
+        'source': source_fly,
+        'type': 'circle',
+        'paint': {
+          'circle-color': '#E80000',
+          'circle-radius': 3,
+          'circle-opacity': 1
+        }
+      });
+
+      function animate(){
+        point.features[0].geometry.coordinates = route.features[0].geometry.coordinates[counter];
+        point.features[0].properties.bearing = turf.bearing(
+          turf.point(
+            route.features[0].geometry.coordinates[
+              counter >= steps ? counter - 1 : counter
+            ]
+          ),
+          turf.point(
+            route.features[0].geometry.coordinates[
+              counter >= steps ? counter : counter + 1
+            ]
+          )
+        );
+        that.map.getSource(source_fly).setData(point);
+        
+        if(counter < steps){
+          requestAnimationFrame(animate)
+        } else if(counter >= steps){
+          let ent_layer_fly = that.map.getLayer(layer_fly),
+            ent_layer_route = that.map.getLayer(layer_route),
+            ent_source_fly = that.map.getSource(layer_route),
+            ent_source_route = that.map.getSource(source_route)
+
+          if(typeof ent_layer_fly !== 'undefined'){
+            that.map.removeLayer(layer_fly)
+          }
+          
+          if(typeof ent_layer_route !== 'undefined'){
+            that.map.removeLayer(layer_route)
+          }
+
+          if(typeof ent_source_fly !== 'undefined'){
+          that.map.removeSource(source_fly)
+          }
+
+          if(typeof ent_source_route !== 'undefined'){
+          that.map.removeSource(source_route)
+          }
+        }
+        counter = counter + 1;
+      }
+
+      function getUniqueId(front, origin, destination){
+        let basic = (origin[0] + origin[1] + destination[0] + destination[1]) * Math.random()
+        return front + String(basic).replace('.', '')
+      }
+      animate(counter);
     }
   },
   computed: {
