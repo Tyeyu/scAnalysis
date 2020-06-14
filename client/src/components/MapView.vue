@@ -1076,7 +1076,7 @@ export default {
         
         // fly circle animation
         that.animationFrame++
-        if(that.animationFrame > 60){
+        if(that.animationFrame > 60 && that.nowTab == 'second'){
           that.animationFrame = 0
           // get origin destination list
           console.log('fly~')
