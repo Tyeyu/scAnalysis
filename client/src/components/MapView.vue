@@ -96,7 +96,8 @@ export default {
       counter: 0,
       sc_cityData: null,
       pointIdList: [],
-      TCalendarDict: {} 
+      TCalendarDict: {},
+      sourcePatient: 0 //模拟城市感染人数
     };
   },
   mounted() {
@@ -783,7 +784,11 @@ export default {
           'type': 'FeatureCollection',
           'features': []
         },
-        sourcePoint = {
+        sourceCircleAll = {
+          'type': 'FeatureCollection',
+          'features': []
+        },
+        sourceCirclePatient = {
           'type': 'FeatureCollection',
           'features': []
         },
@@ -799,14 +804,42 @@ export default {
           let description_text = '<strong>' + place + '</strong>'
           let a = {
             'type': 'Feature', 
-            'properties': {'description': description_text, 'place': place, 'strokewidth': 0}, 
+            'properties': {'description': description_text, 'place': place, 'strokewidth': 0, 'radius': 0}, 
             'geometry': {'type': 'Point', 'coordinates': p}
             }; 
           return a
-        },
-        get_point_strokewidth = function(){}
+        }
       
-      sourcePoint['features'].push(get_point_rawfeature(origin, linedata.centercity.name))
+      sourceCircleAll['features'].push(get_point_rawfeature(origin, linedata.centercity.name))
+      sourceCirclePatient['features'].push(get_point_rawfeature(origin, linedata.centercity.name))
+
+      //adjust source circle radius - all people
+      sourceCircleAll['features'][0]['properties']['radius'] = function(place){
+          //limit radius to 3 - 15
+          let populationDomain = that.populations.map((d,i) => d.population),
+          scale = d3.scaleLinear()
+            .domain([d3.min(populationDomain), d3.max(populationDomain)])
+            .range([3, 20])
+          
+          let population = that.populations.filter((d,i) => {
+            if(d.city == place){return 1}
+            else{return 0}
+          })
+          return scale(population[0].population)
+
+      }(sourceCircleAll['features'][0]['properties']['place']) //place population
+
+      //adjust source circle radius - patient
+      let getPatientCircle = function(city, patient){
+        //pow function
+          let populationDomain = that.populations.map((d,i) => d.population * 10000),
+          scale = d3.scalePow()
+            .domain([d3.min(populationDomain), d3.max(populationDomain)])
+            .range([3, 20])
+            .exponent(3)
+
+          return scale(patient)
+      }
       
       linedata.citys.forEach((d,i) => {
         let destination = null,
@@ -852,14 +885,14 @@ export default {
           data: routes
         });
 
-        // that.map.addSource('related_place', {
-        //   type: 'geojson',
-        //   data: points
-        // });
-
-        that.map.addSource('source_place', {
+        that.map.addSource('source_circle_all', {
           type: 'geojson',
-          data: sourcePoint
+          data: sourceCircleAll
+        })
+
+        that.map.addSource('source_circle_patient', {
+          type: 'geojson',
+          data: sourceCirclePatient
         })
 
         that.map.addLayer({
@@ -895,32 +928,35 @@ export default {
           }
         });
 
-        // that.map.addLayer({
-        //     id: 'id_related_place',
-        //     source: 'related_place',
-        //     type: 'circle',
-        //     paint: {
-        //       'circle-color': '#898915',
-        //       'circle-radius': 5,
-        //       'circle-stroke-color': '#898915',
-        //       'circle-stroke-opacity': 0.5,
-        //       'circle-stroke-width': ['get', 'strokewidth']
-        //     }
-        // });
-
-        //source point
+        //source point all people
         that.map.addLayer({
-          'id': 'id_source_place',
-          'source': 'source_place',
+          'id': 'id_source_circle_all',
+          'source': 'source_circle_all',
           'type': 'circle',
           'paint': {
-            'circle-color': '#E43337',
-            'circle-radius': 8,
-            'circle-stroke-color': '#E43337',
+            'circle-color': '#4682B4',
+            'circle-radius': ['get', 'radius'],
+            'circle-opacity': 0.8,
+            'circle-stroke-color': '#4682B4',
             'circle-stroke-opacity': 0.5,
             'circle-stroke-width': 0
           }
         })
+
+        //source point patient
+        
+        that.map.addLayer({
+          'id': 'id_source_circle_patient',
+          'source': 'source_circle_patient',
+          'type': 'circle',
+          'paint': {
+            'circle-color': 'red',
+            'circle-radius': 0,
+            'circle-opacity': 0.7
+          }
+        })
+
+        //that.map.setPaintProperty('id_source_circle_all', 'circle-radius', sourceCircleAll['features'][0]['properties']['radius'])
 
         points_collection.forEach((d,i) => {
           
@@ -964,21 +1000,8 @@ export default {
 
         })
 
-        // place popup
-        // destination
-        // that.map.on('mouseenter', 'id_related_place', function(e){
-        //   let coordinates = e.features[0].geometry.coordinates.slice();
-        //   let description = e.features[0].properties.description;
-
-        //   while (Math.abs(e.lngLat.lng - coordinates[0]) > 180){
-        //     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
-        //   }
-
-        //   popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
-        // })
-
         // origin
-        that.map.on('mouseenter', 'id_source_place', function(e){
+        that.map.on('mouseenter', 'id_source_circle_all', function(e){
           let coordinates = e.features[0].geometry.coordinates.slice();
           let description = e.features[0].properties.description;
 
@@ -989,31 +1012,20 @@ export default {
           popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
         })
 
-        // disable popup
-        // destination
-        // that.map.on('mouseleave', 'id_related_place', function(){
-        //   that.map.getCanvas().style.cursor = '';
-        //   popup.remove()
-        // })
 
         // origin
-        that.map.on('mouseleave', 'id_source_place', function(){
+        that.map.on('mouseleave', 'id_source_circle_all', function(){
           that.map.getCanvas().style.cursor = '';
           popup.remove()
         })
 
         that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
-        //that.map.setLayoutProperty("id_related_place", "visibility", "visible");
+        that.map.setLayoutProperty('id_source_circle_all', 'visibility', 'visible');
+        that.map.setLayoutProperty('id_source_circle_patient', 'visibility', 'visible');
 
         animateSourcePlaceStorkeRadius(0)
       }
 
-      /*
-      if(typeof this.map.getLayer('id_related_place') !== 'undefined') {
-        // Remove map layer & source.
-        this.map.removeLayer('id_related_place').removeSource('related_place');
-      }
-      */
 
       function sourcePlaceStorkeRadius(angle){
         let radius = 15,
@@ -1037,7 +1049,9 @@ export default {
         points_collection.forEach((d,i)=>{
           that.map.setPaintProperty(that.pointIdList[i] + '_layer', 'circle-stroke-width', sourcePlaceStorkeRadius_dynamic(that.map.getLayer( that.pointIdList[i] + '_layer').metadata.place, (timestamp + 500) / 1000))
         })
-        that.map.setPaintProperty ('id_source_place', 'circle-stroke-width', sourcePlaceStorkeRadius(timestamp / 1000))
+        that.map.setPaintProperty('id_source_circle_patient', 'circle-radius', getPatientCircle(linedata.centercity.name, that.sourcePatient))
+        //that.map.setPaintProperty ('id_source_circle_all', 'circle-stroke-width', sourcePlaceStorkeRadius(timestamp / 1000)) //source all person
+
         //that.map.setPaintProperty ('id_related_place', 'circle-stroke-width', sourcePlaceStorkeRadius((timestamp + 500) / 1000))
         requestAnimationFrame(animateSourcePlaceStorkeRadius);
       }
@@ -1070,6 +1084,9 @@ export default {
     },
     TCalendar() {
       return this.$store.getters.getTCalendar;
+    },
+    Ttotaldata() {
+      return this.$store.getters.getTtotaldata;
     }
   },
   watch: {
@@ -1093,7 +1110,6 @@ export default {
         d.properties["asc"] = Ascale(d.properties.area);
       });
 
-      console.log('vor', newval)
       this.map.on("load", function() {
         that.map.addSource("voronoi", {
           type: "geojson",
@@ -1252,7 +1268,8 @@ export default {
       if(newval == 'first'){
         if(typeof this.map.getLayer('id_related_traj') !== 'undefined'){
           that.map.setLayoutProperty("id_related_traj", "visibility", "none");
-          that.map.setLayoutProperty("id_source_place", "visibility", "none");
+          that.map.setLayoutProperty("id_source_circle_all", "visibility", "none");
+          that.map.setLayoutProperty('id_source_circle_patient', 'visibility', 'none');
           that.pointIdList.forEach((d,i) => {
             that.map.setLayoutProperty(d+'_layer', 'visibility', 'none')
           })
@@ -1263,13 +1280,13 @@ export default {
         //设置模拟轨迹为可见
         if(typeof this.map.getLayer('id_related_traj') !== 'undefined'){
           that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
-          that.map.setLayoutProperty("id_source_place", "visibility", "visible");
+          that.map.setLayoutProperty("id_source_circle_all", "visibility", "visible");
+          that.map.setLayoutProperty('id_source_circle_patient', 'visibility', 'visible');
           that.pointIdList.forEach((d,i) => {
             that.map.setLayoutProperty(d+'_layer', 'visibility', 'visible')
           })
         }
       }
-      
     },
     TCalendar: function(newval, oldval){
       let that = this
@@ -1279,6 +1296,9 @@ export default {
       newval.province.forEach((d,i) => {
         that.TCalendarDict[d.name] = d.value
       })
+    },
+    Ttotaldata: function(newval, oldval){
+      this.sourcePatient = newval.total[newval['total'].length-1]
     }
   }
 };

@@ -12,7 +12,7 @@ export default {
     return {
       N: 2119 * 10000, //人口总数
       E: 0, //潜伏者数
-      I: 1, //传染者数
+      I: 1, //感染者数
       S: 2119 * 10000 - 1, //易感数
       R: 0, //康复者数
       r: 20, //感染者接触易感人数
@@ -507,7 +507,7 @@ export default {
           trigger: "axis"
         },
         legend: {
-          data: ["潜伏者数", "传染者数", "康复者数"],
+          data: ["潜伏者数", "感染者数", "康复者数"],
           textStyle: {
             color: "#ffffff"
           },
@@ -544,7 +544,7 @@ export default {
             itemStyle: { normal: { color: "yellow" } }
           },
           {
-            name: "传染者数",
+            name: "感染者数",
             type: "line",
             smooth: true,
             data: Iaryys
