@@ -127,7 +127,7 @@ export default {
           })
         ])
         .range([this.chartSVgheight - 30, 1]);
-      // console.log(that.chartdata[0].value);
+      // console.log(that.chartdata);
       // console.log(chartYscal(10));
       var chartXaxies = d3.axisBottom(chartXscale).ticks(5);
       var chartYaxies = d3.axisLeft(chartYscal).ticks(5);
@@ -460,6 +460,9 @@ export default {
         if (data[i].onsetTime != "") {
           sdate = new Date(sdate);
         }
+        // else {
+        //   continue;
+        // }
         var edate = new Date(data[i].diagnosisTime);
 
         if (sdate == "" || edate.getTime() <= timeRange[1].getTime()) {
