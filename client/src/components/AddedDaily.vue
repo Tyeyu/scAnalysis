@@ -15,7 +15,7 @@ export default {
       deathData: null,
       myChart: null,
       option: null,
-      cityname: "四川省"
+      cityname: ""
     };
   },
   mounted() {},
@@ -24,27 +24,40 @@ export default {
       let that = this;
       that.myChart = echarts.init(document.getElementById("Daily"));
       that.option = {
-        color:['#FF0E0E','#E7E8D1','#57B37D','#8DC1A9','#EA7E53','#EEDD78','#73A373','#759AA0','#7289AB','#91CA8C','#F49F42','#FFFFFF'],
+        color: [
+          "#FF0E0E",
+          "#E7E8D1",
+          "#57B37D",
+          "#8DC1A9",
+          "#EA7E53",
+          "#EEDD78",
+          "#73A373",
+          "#759AA0",
+          "#7289AB",
+          "#91CA8C",
+          "#F49F42",
+          "#FFFFFF"
+        ],
         textStyle: {
           color: "#ffffff"
         },
         title: {
-          //text: that.cityname + "每日新增趋势",
-          text: "每日新增趋势",
+          text: that.cityname + "每日新增趋势",
+          // text: "每日新增趋势",
           textStyle: {
-          color: "#ffffff"
+            color: "#ffffff"
           },
-            left: "7%",
-            top: "10px"
-          },
+          left: "7%",
+          top: "10px"
+        },
         tooltip: {
           trigger: "axis"
         },
         legend: {
           data: ["确诊", "治愈", "死亡"],
           textStyle: {
-          color: "#ffffff"
-        },
+            color: "#ffffff"
+          },
           right: "9%",
           top: "30px"
         },
@@ -174,7 +187,7 @@ export default {
     },
     Cityname: function(newval, oldval) {
       if (newval == "") {
-        this.cityname = "四川省";
+        this.cityname = "";
       } else {
         this.cityname = newval;
       }
@@ -192,19 +205,18 @@ export default {
   height: 34%;
   background-color: #30313a;
 }
-.Daily-angel{
-
+.Daily-angel {
   background: linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) left top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) right top,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) left bottom,
-  linear-gradient(#00faff, #00faff) right bottom,
-  linear-gradient(#00faff, #00faff) right bottom;
+    linear-gradient(#00faff, #00faff) left top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) right top,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) left bottom,
+    linear-gradient(#00faff, #00faff) right bottom,
+    linear-gradient(#00faff, #00faff) right bottom;
   background-repeat: no-repeat;
   background-size: 0.15rem 0.6rem, 0.6rem 0.15rem, 0.15rem 0.6rem,
-  0.6rem 0.15rem;
+    0.6rem 0.15rem;
   background-color: rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   /* border:3px solid #ffffff; */

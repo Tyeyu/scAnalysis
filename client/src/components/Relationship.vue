@@ -2,7 +2,7 @@
   <div>
     <div id="Relation" class="Relationship-angel">
       <div id="relatitle">
-        <span>患者时间进展</span>
+        <span>{{cityname}}患者时间进展</span>
       </div>
     </div>
     <div id="Rtooltip"></div>
@@ -18,11 +18,12 @@ export default {
       chartdata: null,
       chartSvgwidth: null,
       chartSvgheight: null,
-      xaxiesdata: null
+      xaxiesdata: null,
       // chartXscale: null,
       // chartYscal: null,
       // chartXaxies: null,
       // chartYaxies: null
+      cityname: ""
     };
   },
   methods: {
@@ -75,7 +76,7 @@ export default {
         .append("svg")
         .attr("width", this.chartSvgwidth - 10)
         .attr("height", 20)
-        .style('transform', 'translate(10%, 30%)')
+        .style("transform", "translate(10%, 30%)");
 
       titlesvg
         .selectAll("circle")
@@ -522,6 +523,7 @@ export default {
     },
     //监听选中的城市
     selectCity: function(newval, oldval) {
+      this.cityname = newval;
       this.redrawchart();
     },
     timeRange: function(newval, oldval) {
