@@ -459,9 +459,10 @@ export default {
         sdate = data[i].onsetTime;
         if (data[i].onsetTime != "") {
           sdate = new Date(sdate);
-        } else {
-          continue;
         }
+        // else {
+        //   continue;
+        // }
         var edate = new Date(data[i].diagnosisTime);
 
         if (sdate == "" || edate.getTime() <= timeRange[1].getTime()) {
