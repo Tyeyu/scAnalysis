@@ -540,7 +540,8 @@ export default {
             name: "潜伏者数",
             type: "line",
             smooth: true,
-            data: Earrys
+            data: Earrys,
+            itemStyle: { normal: { color: "yellow" } }
           },
           {
             name: "传染者数",
@@ -552,7 +553,8 @@ export default {
             name: "康复者数",
             type: "line",
             smooth: true,
-            data: this.sumR
+            data: this.sumR,
+            itemStyle: { normal: { color: "#61A0A8" } }
           }
         ]
       };
