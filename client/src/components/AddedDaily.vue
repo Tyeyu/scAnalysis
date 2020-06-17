@@ -76,22 +76,22 @@ export default {
             smooth: true,
             name: "确诊",
             type: "line",
-            data: that.diagnosisData,
-            symbol: "none"
+            data: that.diagnosisData
+            // symbol: "none"
           },
           {
             smooth: true,
             name: "死亡",
             type: "line",
-            data: that.deathData,
-            symbol: "none"
+            data: that.deathData
+            // symbol: "none"
           },
           {
             smooth: true,
             name: "治愈",
             type: "line",
-            data: that.heathData,
-            symbol: "none"
+            data: that.heathData
+            // symbol: "none"
           }
         ]
       };

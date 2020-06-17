@@ -10,8 +10,8 @@ import * as dsv from "d3-dsv";
 import * as d3geoVoronoi from "d3-geo-voronoi";
 import hosImg from "../assets/timg.png";
 import cImg from "../assets/cimg.png";
-import * as turf from '@turf/turf';
-import { feature } from '@turf/turf';
+import * as turf from "@turf/turf";
+import { feature } from "@turf/turf";
 let axios = require("axios");
 export default {
   name: "mapview",
@@ -149,12 +149,12 @@ export default {
       });
       let res = axios.get("/api/sichuan_district.json").then(res => {
         that.adddistrict2Map(res.data);
-        console.log(res.data.features)
+        console.log(res.data.features);
       });
-      let trackData = axios.get("/api/city_Track.json").then(res=>{
+      let trackData = axios.get("/api/city_Track.json").then(res => {
         that.addTrack(res.data);
-      })
-      
+      });
+
       // let res3 = axios.get("/api/merge_sichuan.json").then(res => {
       //   that.addtown2Map(res.data);
       // });
@@ -232,123 +232,126 @@ export default {
         });
       });
     },
-    addTrack(data){
+    addTrack(data) {
       let that = this,
         routes = {
-          'type': 'FeatureCollection',
-          'features': []
+          type: "FeatureCollection",
+          features: []
         },
         points = {
-          'type': 'FeatureCollection',
-          'features': []
+          type: "FeatureCollection",
+          features: []
         },
-        get_route_rawfeature = function(ori, des){
+        get_route_rawfeature = function(ori, des) {
           let a = {
-            'type': 'Feature',
-            'geometry': {'type': 'LineString', 'coordinates': [ori, des]}
-            }; 
-          return a 
-          },
-        get_point_rawfeature = function(p){
+            type: "Feature",
+            geometry: { type: "LineString", coordinates: [ori, des] }
+          };
+          return a;
+        },
+        get_point_rawfeature = function(p) {
           let a = {
-            'type': 'Feature', 
-            'properties': {'description': ''}, 
-            'geometry': {'type': 'Point', 'coordinates': p}
-            }; 
-          return a
-          }
-      
-      data.features.forEach((d,i) => {
-        d.geometry.coordinates.forEach((v,j) => {
-          let traj_length = v.length
+            type: "Feature",
+            properties: { description: "" },
+            geometry: { type: "Point", coordinates: p }
+          };
+          return a;
+        };
 
-          if(v.length > 1){
-            for(let m = 0; m < v.length-1; m++){
-              routes['features'].push(get_route_rawfeature(v[m], v[m+1]))
+      data.features.forEach((d, i) => {
+        d.geometry.coordinates.forEach((v, j) => {
+          let traj_length = v.length;
+
+          if (v.length > 1) {
+            for (let m = 0; m < v.length - 1; m++) {
+              routes["features"].push(get_route_rawfeature(v[m], v[m + 1]));
             }
           }
-          v.forEach((l) => {
-            points['features'].push(get_point_rawfeature(l))
-          })
-          
-        })
-      })
+          v.forEach(l => {
+            points["features"].push(get_point_rawfeature(l));
+          });
+        });
+      });
 
-      routes['features'].forEach((d,i) => {
+      routes["features"].forEach((d, i) => {
         let arc = [],
-          lineDistance = turf.lineDistance(routes['features'][i], {units: 'kilometers'}),
-          destination = d.geometry.coordinates[d['geometry']['coordinates'].length - 1],
-          steps = 20 
+          lineDistance = turf.lineDistance(routes["features"][i], {
+            units: "kilometers"
+          }),
+          destination =
+            d.geometry.coordinates[d["geometry"]["coordinates"].length - 1],
+          steps = 20;
 
-        for (let j = 0; j < lineDistance; j+= lineDistance / steps){
-          let segment = turf.along(routes['features'][i], j, {units: 'kilometers'});
-          arc.push(segment.geometry.coordinates)
+        for (let j = 0; j < lineDistance; j += lineDistance / steps) {
+          let segment = turf.along(routes["features"][i], j, {
+            units: "kilometers"
+          });
+          arc.push(segment.geometry.coordinates);
         }
-        arc.push(destination)
+        arc.push(destination);
 
-        d.geometry.coordinates = arc
-      })
+        d.geometry.coordinates = arc;
+      });
 
-
-      this.map.addSource('trac_json', {
-        type: 'geojson',
+      this.map.addSource("trac_json", {
+        type: "geojson",
         lineMetrics: true,
         data: routes
-      })
+      });
 
-      that.map.addSource('trac_json_place', {
-        type: 'geojson',
+      that.map.addSource("trac_json_place", {
+        type: "geojson",
         data: points
-      })
+      });
 
       that.map.addLayer({
-        'id': 'track',
-        'type': 'line',
-        'source': 'trac_json',
-        'paint': {
-            'line-width': 1,
-            'line-color': '#FCF9BD',
-            'line-gradient': [
-              'interpolate',
-              ['linear'],
-              ['line-progress'],
-              0,
-              '#B78B4B',
-              0.1,
-              '#CBA876',
-              0.3,
-              '#FFFFFF',
-              0.5,
-              '#FFFFFF',
-              0.7,
-              '#FFFFFF',
-              0.9,
-              '#CBA876',
-              1,
-              '#B78B4B'
-            ]
-          },
-          layout: {
-            'line-cap': 'round',
-            'line-join': 'round',
-            "visibility": "none"
-          }
-      })
+        id: "track",
+        type: "line",
+        source: "trac_json",
+        paint: {
+          "line-width": 1,
+          "line-color": "#FCF9BD",
+          "line-gradient": [
+            "interpolate",
+            ["linear"],
+            ["line-progress"],
+            0,
+            "#B78B4B",
+            0.1,
+            "#CBA876",
+            0.3,
+            "#FFFFFF",
+            0.5,
+            "#FFFFFF",
+            0.7,
+            "#FFFFFF",
+            0.9,
+            "#CBA876",
+            1,
+            "#B78B4B"
+          ]
+        },
+        layout: {
+          "line-cap": "round",
+          "line-join": "round",
+          visibility: "none"
+        }
+      });
 
       that.map.addLayer({
-          id: 'track_place',
-          source: 'trac_json_place',
-          type: 'circle',
-          paint: {
-            'circle-color': '#898915',
-            'circle-radius': 3,
-            'circle-stroke-color': '#898915',
-            'circle-stroke-opacity': 0.5,
-            'circle-stroke-width': 1
-          },
-          layout: {
-            "visibility": "none"
-          }
+        id: "track_place",
+        source: "trac_json_place",
+        type: "circle",
+        paint: {
+          "circle-color": "#898915",
+          "circle-radius": 3,
+          "circle-stroke-color": "#898915",
+          "circle-stroke-opacity": 0.5,
+          "circle-stroke-width": 1
+        },
+        layout: {
+          visibility: "none"
+        }
       });
 
       /*
@@ -374,7 +377,6 @@ export default {
       });
 
       */
-
     },
     addtown2Map(features) {
       this.map.addSource("town_json", {
@@ -614,10 +616,10 @@ export default {
         } else if (stateOfClinc == -1) {
           that.map.setLayoutProperty("clincImage", "visibility", "none");
         }
-        if(stateOfTrac !=-1){
+        if (stateOfTrac != -1) {
           that.map.setLayoutProperty("track", "visibility", "visible");
           that.map.setLayoutProperty("track_place", "visibility", "visible");
-        }else if(stateOfTrac == -1){
+        } else if (stateOfTrac == -1) {
           that.map.setLayoutProperty("track", "visibility", "none");
           that.map.setLayoutProperty("track_place", "visibility", "none");
         }
@@ -745,7 +747,7 @@ export default {
           layout: {
             "icon-image": "clinc",
             "icon-size": 0.04,
-            "visibility": "none"
+            visibility: "none"
           }
         });
       });
@@ -771,391 +773,449 @@ export default {
     drawTrajectLine(linedata) {
       //取消地图浮层，保留地图市区边界线
       //清空轨迹线
-      
+
       //绘制轨迹线
       //计算轨迹点
 
       let that = this,
-        origin = [+linedata.centercity.lon,+linedata.centercity.lat],
+        origin = [+linedata.centercity.lon, +linedata.centercity.lat],
         routes = {
-          'type': 'FeatureCollection',
-          'features': []
+          type: "FeatureCollection",
+          features: []
         },
         points = {
-          'type': 'FeatureCollection',
-          'features': []
+          type: "FeatureCollection",
+          features: []
         },
         sourceCircleAll = {
-          'type': 'FeatureCollection',
-          'features': []
+          type: "FeatureCollection",
+          features: []
         },
         sourceCirclePatient = {
-          'type': 'FeatureCollection',
-          'features': []
+          type: "FeatureCollection",
+          features: []
         },
         points_collection = [],
-        get_route_rawfeature = function(ori, des){
+        get_route_rawfeature = function(ori, des) {
           let a = {
-            'type': 'Feature',
-            'geometry': {'type': 'LineString', 'coordinates': [ori, des]}
-            }; 
-          return a 
-          },
-        get_point_rawfeature = function(p, place){
-          let description_text = '<strong>' + place + '</strong>'
+            type: "Feature",
+            geometry: { type: "LineString", coordinates: [ori, des] }
+          };
+          return a;
+        },
+        get_point_rawfeature = function(p, place) {
+          let description_text = "<strong>" + place + "</strong>";
           let a = {
-            'type': 'Feature', 
-            'properties': {'description': description_text, 'place': place, 'strokewidth': 0, 'radius': 0}, 
-            'geometry': {'type': 'Point', 'coordinates': p}
-            }; 
-          return a
-        }
-      
-      sourceCircleAll['features'].push(get_point_rawfeature(origin, linedata.centercity.name))
-      sourceCirclePatient['features'].push(get_point_rawfeature(origin, linedata.centercity.name))
+            type: "Feature",
+            properties: {
+              description: description_text,
+              place: place,
+              strokewidth: 0,
+              radius: 0
+            },
+            geometry: { type: "Point", coordinates: p }
+          };
+          return a;
+        };
+
+      sourceCircleAll["features"].push(
+        get_point_rawfeature(origin, linedata.centercity.name)
+      );
+      sourceCirclePatient["features"].push(
+        get_point_rawfeature(origin, linedata.centercity.name)
+      );
 
       //adjust source circle radius - all people
-      sourceCircleAll['features'][0]['properties']['radius'] = function(place){
-          //limit radius to 3 - 15
-          let populationDomain = that.populations.map((d,i) => d.population),
-          scale = d3.scaleLinear()
+      sourceCircleAll["features"][0]["properties"]["radius"] = (function(
+        place
+      ) {
+        //limit radius to 3 - 15
+        let populationDomain = that.populations.map((d, i) => d.population),
+          scale = d3
+            .scaleLinear()
             .domain([d3.min(populationDomain), d3.max(populationDomain)])
-            .range([3, 20])
-          
-          let population = that.populations.filter((d,i) => {
-            if(d.city == place){return 1}
-            else{return 0}
-          })
-          return scale(population[0].population)
+            .range([3, 20]);
 
-      }(sourceCircleAll['features'][0]['properties']['place']) //place population
+        let population = that.populations.filter((d, i) => {
+          if (d.city == place) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+        return scale(population[0].population);
+      })(sourceCircleAll["features"][0]["properties"]["place"]); //place population
 
       //adjust source circle radius - patient
-      let getPatientCircle = function(city, patient){
+      let getPatientCircle = function(city, patient) {
         //pow function
-          let populationDomain = that.populations.map((d,i) => d.population * 10000),
-          scale = d3.scalePow()
+        let populationDomain = that.populations.map(
+            (d, i) => d.population * 10000
+          ),
+          scale = d3
+            .scalePow()
             .domain([d3.min(populationDomain), d3.max(populationDomain)])
             .range([3, 20])
-            .exponent(3)
+            .exponent(3);
 
-          return scale(patient)
-      }
+        return scale(patient);
+      };
 
       // fly point animation data
       let flypoint = [],
         nowCityPatient = {},
-        traj_num = 0
-      
-      that.TCalendar.city.forEach((d,i) => {
-        nowCityPatient[d.name] = d.value
-      })
-      that.TCalendar.province.forEach((d,i) => {
-        nowCityPatient[d.name] = d.value
-      })
-      
-      linedata.citys.forEach((d,i) => {
-        let destination = null,
-            route_feature = null,
-            lineDistance = null,
-            place = d.name,
-            arc = [],
-            steps = 20
+        traj_num = 0;
 
-        destination = [+d.lon, +d.lat]
+      that.TCalendar.city.forEach((d, i) => {
+        nowCityPatient[d.name] = d.value;
+      });
+      that.TCalendar.province.forEach((d, i) => {
+        nowCityPatient[d.name] = d.value;
+      });
+
+      linedata.citys.forEach((d, i) => {
+        let destination = null,
+          route_feature = null,
+          lineDistance = null,
+          place = d.name,
+          arc = [],
+          steps = 20;
+
+        destination = [+d.lon, +d.lat];
 
         // when has patient draw fly and trajectory
-        if(nowCityPatient[place] > 0){
-          flypoint.push([origin, destination])
+        if (nowCityPatient[place] > 0) {
+          flypoint.push([origin, destination]);
 
-          routes['features'].push(get_route_rawfeature(origin, destination))
-          points['features'].push(get_point_rawfeature(destination, place))
+          routes["features"].push(get_route_rawfeature(origin, destination));
+          points["features"].push(get_point_rawfeature(destination, place));
 
-          points_collection.push({'place': place, 'feature':  {'type': 'FeatureCollection', 'features': [get_point_rawfeature(destination, place)]}})
-          that.pointIdList.push('related_place_' + traj_num)
+          points_collection.push({
+            place: place,
+            feature: {
+              type: "FeatureCollection",
+              features: [get_point_rawfeature(destination, place)]
+            }
+          });
+          that.pointIdList.push("related_place_" + traj_num);
 
-          lineDistance = turf.lineDistance(routes['features'][traj_num], {units: 'kilometers'})
+          lineDistance = turf.lineDistance(routes["features"][traj_num], {
+            units: "kilometers"
+          });
 
           for (var j = 0; j < lineDistance; j += lineDistance / steps) {
-            var segment = turf.along(routes['features'][traj_num], j, {units: 'kilometers'});
+            var segment = turf.along(routes["features"][traj_num], j, {
+              units: "kilometers"
+            });
             arc.push(segment.geometry.coordinates);
           }
 
-          arc.push(destination)
-          routes['features'][traj_num].geometry.coordinates = arc;
+          arc.push(destination);
+          routes["features"][traj_num].geometry.coordinates = arc;
           traj_num++;
         }
-      })
-      
+      });
+
       //layer status
 
-      if(typeof this.map.getLayer('id_related_traj') === 'undefined' && typeof this.map.getLayer('id_related_place') === 'undefined') {
+      if (
+        typeof this.map.getLayer("id_related_traj") === "undefined" &&
+        typeof this.map.getLayer("id_related_place") === "undefined"
+      ) {
         // Remove map layer & source.
 
         // add popup
         let popup = new mapboxgl.Popup({
           closeButton: false,
           closeOnClick: false
-          });
+        });
 
-        that.map.addSource('related_traj', {
-          type: 'geojson',
+        that.map.addSource("related_traj", {
+          type: "geojson",
           lineMetrics: true,
           data: routes
         });
 
-        that.map.addSource('source_circle_all', {
-          type: 'geojson',
+        that.map.addSource("source_circle_all", {
+          type: "geojson",
           data: sourceCircleAll
-        })
+        });
 
-        that.map.addSource('source_circle_patient', {
-          type: 'geojson',
+        that.map.addSource("source_circle_patient", {
+          type: "geojson",
           data: sourceCirclePatient
-        })
+        });
 
         that.map.addLayer({
-          id: 'id_related_traj',
-          source: 'related_traj',
-          type: 'line',
+          id: "id_related_traj",
+          source: "related_traj",
+          type: "line",
           paint: {
-            'line-width': 3,
-            'line-color': '#FCF9BD',
-            'line-gradient': [
-              'interpolate',
-              ['linear'],
-              ['line-progress'],
+            "line-width": 3,
+            "line-color": "#FCF9BD",
+            "line-gradient": [
+              "interpolate",
+              ["linear"],
+              ["line-progress"],
               0,
-              '#B78B4B',
+              "#B78B4B",
               0.1,
-              '#CBA876',
+              "#CBA876",
               0.3,
-              '#FFFFFF',
+              "#FFFFFF",
               0.5,
-              '#FFFFFF',
+              "#FFFFFF",
               0.7,
-              '#FFFFFF',
+              "#FFFFFF",
               0.9,
-              '#CBA876',
+              "#CBA876",
               1,
-              '#B78B4B'
+              "#B78B4B"
             ]
           },
           layout: {
-            'line-cap': 'round',
-            'line-join': 'round'
+            "line-cap": "round",
+            "line-join": "round"
           }
         });
 
         //source point all people
         that.map.addLayer({
-          'id': 'id_source_circle_all',
-          'source': 'source_circle_all',
-          'type': 'circle',
-          'paint': {
-            'circle-color': '#4682B4',
-            'circle-radius': ['get', 'radius'],
-            'circle-opacity': 0.8,
-            'circle-stroke-color': '#4682B4',
-            'circle-stroke-opacity': 0.5,
-            'circle-stroke-width': 0
+          id: "id_source_circle_all",
+          source: "source_circle_all",
+          type: "circle",
+          paint: {
+            "circle-color": "#4682B4",
+            "circle-radius": ["get", "radius"],
+            "circle-opacity": 0.8,
+            "circle-stroke-color": "#4682B4",
+            "circle-stroke-opacity": 0.5,
+            "circle-stroke-width": 0
           }
-        })
+        });
 
         //source point patient
-        
+
         that.map.addLayer({
-          'id': 'id_source_circle_patient',
-          'source': 'source_circle_patient',
-          'type': 'circle',
-          'paint': {
-            'circle-color': 'red',
-            'circle-radius': 0,
-            'circle-opacity': 0.7
+          id: "id_source_circle_patient",
+          source: "source_circle_patient",
+          type: "circle",
+          paint: {
+            "circle-color": "red",
+            "circle-radius": 0,
+            "circle-opacity": 0.7
           }
-        })
+        });
 
         //that.map.setPaintProperty('id_source_circle_all', 'circle-radius', sourceCircleAll['features'][0]['properties']['radius'])
 
-        points_collection.forEach((d,i) => {
-          
+        points_collection.forEach((d, i) => {
           that.map.addSource(that.pointIdList[i], {
-            'type': 'geojson',
-            'data': d['feature'],
-          })
+            type: "geojson",
+            data: d["feature"]
+          });
           that.map.addLayer({
-            'id': that.pointIdList[i] + '_layer',
-            'source': that.pointIdList[i],
-            'type': 'circle',
-            'paint': {
-              'circle-color': '#898915',
-              'circle-radius': 5,
-              'circle-stroke-color': '#898915',
-              'circle-stroke-opacity': 0.5,
-              'circle-stroke-width': ['get', 'strokewidth']
+            id: that.pointIdList[i] + "_layer",
+            source: that.pointIdList[i],
+            type: "circle",
+            paint: {
+              "circle-color": "#898915",
+              "circle-radius": 5,
+              "circle-stroke-color": "#898915",
+              "circle-stroke-opacity": 0.5,
+              "circle-stroke-width": ["get", "strokewidth"]
             },
-            'metadata': {
-              'place': d.place
+            metadata: {
+              place: d.place
             }
-          })
+          });
 
-          that.map.on('mouseenter', that.pointIdList[i] + '_layer', function(e){
+          that.map.on("mouseenter", that.pointIdList[i] + "_layer", function(
+            e
+          ) {
             let coordinates = e.features[0].geometry.coordinates.slice();
             let description = e.features[0].properties.description;
 
-            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180){
-              coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+              coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
 
-            popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
-          })
+            popup
+              .setLngLat(coordinates)
+              .setHTML(description)
+              .addTo(that.map);
+          });
 
-          that.map.on('mouseleave', that.pointIdList[i] + '_layer', function(){
-            that.map.getCanvas().style.cursor = '';
-            popup.remove()
-          })
+          that.map.on("mouseleave", that.pointIdList[i] + "_layer", function() {
+            that.map.getCanvas().style.cursor = "";
+            popup.remove();
+          });
 
-          that.map.setLayoutProperty(that.pointIdList[i] + '_layer', "visibility", "visible");
-
-        })
+          that.map.setLayoutProperty(
+            that.pointIdList[i] + "_layer",
+            "visibility",
+            "visible"
+          );
+        });
 
         // origin
-        that.map.on('mouseenter', 'id_source_circle_all', function(e){
+        that.map.on("mouseenter", "id_source_circle_all", function(e) {
           let coordinates = e.features[0].geometry.coordinates.slice();
           let description = e.features[0].properties.description;
 
-          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180){
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
           }
 
-          popup.setLngLat(coordinates).setHTML(description).addTo(that.map)
-        })
-
+          popup
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(that.map);
+        });
 
         // origin
-        that.map.on('mouseleave', 'id_source_circle_all', function(){
-          that.map.getCanvas().style.cursor = '';
-          popup.remove()
-        })
+        that.map.on("mouseleave", "id_source_circle_all", function() {
+          that.map.getCanvas().style.cursor = "";
+          popup.remove();
+        });
 
         that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
-        that.map.setLayoutProperty('id_source_circle_all', 'visibility', 'visible');
-        that.map.setLayoutProperty('id_source_circle_patient', 'visibility', 'visible');
+        that.map.setLayoutProperty(
+          "id_source_circle_all",
+          "visibility",
+          "visible"
+        );
+        that.map.setLayoutProperty(
+          "id_source_circle_patient",
+          "visibility",
+          "visible"
+        );
 
-        animateSourcePlaceStorkeRadius(0)
+        animateSourcePlaceStorkeRadius(0);
       }
 
-
-      function sourcePlaceStorkeRadius(angle){
+      function sourcePlaceStorkeRadius(angle) {
         let radius = 15,
-          size = Math.sin(angle) * radius
-          size = size > 0 ? size : -size;
-        return size
+          size = Math.sin(angle) * radius;
+        size = size > 0 ? size : -size;
+        return size;
       }
 
-      function sourcePlaceStorkeRadius_dynamic(place, angle){
-        let radius = that.TCalendarDict[place]
-        if(that.TCalendarDict[place] == undefined){
-          radius = 0
+      function sourcePlaceStorkeRadius_dynamic(place, angle) {
+        let radius = that.TCalendarDict[place];
+        if (that.TCalendarDict[place] == undefined) {
+          radius = 0;
         }
 
-        let size = Math.sin(angle) * Math.sqrt(radius)
-          size = size > 0 ? size : -size;
-        return size
+        let size = Math.sin(angle) * Math.sqrt(radius);
+        size = size > 0 ? size : -size;
+        return size;
       }
 
-      function animateSourcePlaceStorkeRadius(timestamp){
-        
-        points_collection.forEach((d,i)=>{
-          that.map.setPaintProperty(that.pointIdList[i] + '_layer', 'circle-stroke-width', sourcePlaceStorkeRadius_dynamic(that.map.getLayer( that.pointIdList[i] + '_layer').metadata.place, (timestamp + 500) / 1000))
-        })
-        that.map.setPaintProperty('id_source_circle_patient', 'circle-radius', getPatientCircle(linedata.centercity.name, that.sourcePatient))
+      function animateSourcePlaceStorkeRadius(timestamp) {
+        points_collection.forEach((d, i) => {
+          that.map.setPaintProperty(
+            that.pointIdList[i] + "_layer",
+            "circle-stroke-width",
+            sourcePlaceStorkeRadius_dynamic(
+              that.map.getLayer(that.pointIdList[i] + "_layer").metadata.place,
+              (timestamp + 500) / 1000
+            )
+          );
+        });
+        that.map.setPaintProperty(
+          "id_source_circle_patient",
+          "circle-radius",
+          getPatientCircle(linedata.centercity.name, that.sourcePatient)
+        );
         //that.map.setPaintProperty ('id_source_circle_all', 'circle-stroke-width', sourcePlaceStorkeRadius(timestamp / 1000)) //source all person
 
         //that.map.setPaintProperty ('id_related_place', 'circle-stroke-width', sourcePlaceStorkeRadius((timestamp + 500) / 1000))
-        
+
         // fly circle animation
-        that.animationFrame++
-        if(that.animationFrame > 60 && that.nowTab == 'second'){
-          that.animationFrame = 0
+        that.animationFrame++;
+        if (that.animationFrame > 60 && that.nowTab == "second") {
+          that.animationFrame = 0;
           // get origin destination list
-          console.log('fly~')
-          flypoint.forEach((d,i) => {
-            let randomTime = Math.random() * 100
+          console.log("fly~");
+          flypoint.forEach((d, i) => {
+            let randomTime = Math.random() * 100;
             setTimeout(that.patientMoveAnimate(d[0], d[1]), randomTime);
-          })
+          });
         }
         requestAnimationFrame(animateSourcePlaceStorkeRadius);
       }
     },
-    patientMoveAnimate(origin, destination){
-      
+    patientMoveAnimate(origin, destination) {
       let that = this,
-        source_fly = getUniqueId('source_fly_', origin, destination),
-        source_route = getUniqueId('source_route_', origin, destination),
-        layer_fly = getUniqueId('layer_fly_', origin, destination),
-        layer_route = getUniqueId('layer_route_', origin, destination),
+        source_fly = getUniqueId("source_fly_", origin, destination),
+        source_route = getUniqueId("source_route_", origin, destination),
+        layer_fly = getUniqueId("layer_fly_", origin, destination),
+        layer_route = getUniqueId("layer_route_", origin, destination),
         point = {
-          'type': 'FeatureCollection',
-          'features': [
+          type: "FeatureCollection",
+          features: [
             {
-              'type': 'Feature',
-              'properties': {},
-              'geometry': {
-                'type': 'Point',
-                'coordinates': origin
+              type: "Feature",
+              properties: {},
+              geometry: {
+                type: "Point",
+                coordinates: origin
               }
             }
           ]
         },
         route = {
-          'type': 'FeatureCollection',
-          'features': [
+          type: "FeatureCollection",
+          features: [
             {
-              'type': 'Feature',
-              'geometry': {
-                'type': 'LineString',
-                'coordinates': [origin, destination]
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: [origin, destination]
               }
             }
           ]
         },
-      lineDistance = turf.lineDistance(route.features[0], {units: 'kilometers'}),
-      arc = [],
-      steps = 60,
-      counter = 0;
+        lineDistance = turf.lineDistance(route.features[0], {
+          units: "kilometers"
+        }),
+        arc = [],
+        steps = 60,
+        counter = 0;
 
       for (let i = 0; i < lineDistance; i += lineDistance / steps) {
-        let segment = turf.along(route.features[0], i, {units: 'kilometers'});
+        let segment = turf.along(route.features[0], i, { units: "kilometers" });
         arc.push(segment.geometry.coordinates);
       }
 
-      arc.push(destination)
+      arc.push(destination);
       route.features[0].geometry.coordinates = arc;
 
       this.map.addSource(source_route, {
-        'type': 'geojson',
-        'data': route
-      })
+        type: "geojson",
+        data: route
+      });
 
       this.map.addSource(source_fly, {
-        'type': 'geojson',
-        'data': point
-      })
-      
+        type: "geojson",
+        data: point
+      });
+
       this.map.addLayer({
-        'id': layer_fly,
-        'source': source_fly,
-        'type': 'circle',
-        'paint': {
-          'circle-color': '#E80000',
-          'circle-radius': 3,
-          'circle-opacity': 1
+        id: layer_fly,
+        source: source_fly,
+        type: "circle",
+        paint: {
+          "circle-color": "#E80000",
+          "circle-radius": 3,
+          "circle-opacity": 1
         }
       });
 
-      function animate(){
-        point.features[0].geometry.coordinates = route.features[0].geometry.coordinates[counter];
+      function animate() {
+        point.features[0].geometry.coordinates =
+          route.features[0].geometry.coordinates[counter];
         point.features[0].properties.bearing = turf.bearing(
           turf.point(
             route.features[0].geometry.coordinates[
@@ -1169,37 +1229,39 @@ export default {
           )
         );
         that.map.getSource(source_fly).setData(point);
-        
-        if(counter < steps){
-          requestAnimationFrame(animate)
-        } else if(counter >= steps){
+
+        if (counter < steps) {
+          requestAnimationFrame(animate);
+        } else if (counter >= steps) {
           let ent_layer_fly = that.map.getLayer(layer_fly),
             ent_layer_route = that.map.getLayer(layer_route),
             ent_source_fly = that.map.getSource(layer_route),
-            ent_source_route = that.map.getSource(source_route)
+            ent_source_route = that.map.getSource(source_route);
 
-          if(typeof ent_layer_fly !== 'undefined'){
-            that.map.removeLayer(layer_fly)
-          }
-          
-          if(typeof ent_layer_route !== 'undefined'){
-            that.map.removeLayer(layer_route)
+          if (typeof ent_layer_fly !== "undefined") {
+            that.map.removeLayer(layer_fly);
           }
 
-          if(typeof ent_source_fly !== 'undefined'){
-          that.map.removeSource(source_fly)
+          if (typeof ent_layer_route !== "undefined") {
+            that.map.removeLayer(layer_route);
           }
 
-          if(typeof ent_source_route !== 'undefined'){
-          that.map.removeSource(source_route)
+          if (typeof ent_source_fly !== "undefined") {
+            that.map.removeSource(source_fly);
+          }
+
+          if (typeof ent_source_route !== "undefined") {
+            that.map.removeSource(source_route);
           }
         }
         counter = counter + 1;
       }
 
-      function getUniqueId(front, origin, destination){
-        let basic = (origin[0] + origin[1] + destination[0] + destination[1]) * Math.random()
-        return front + String(basic).replace('.', '')
+      function getUniqueId(front, origin, destination) {
+        let basic =
+          (origin[0] + origin[1] + destination[0] + destination[1]) *
+          Math.random();
+        return front + String(basic).replace(".", "");
       }
       animate(counter);
     }
@@ -1288,6 +1350,7 @@ export default {
           }, //指渲染位置和可见性
           paint: {
             "fill-color": "steelblue",
+            // "fill-color": "#FF9933",
             "fill-opacity": ["get", "asc"]
           },
           maxzoom: 8.5
@@ -1407,45 +1470,63 @@ export default {
         features: this.sc_cityData.features
       });
     },
-    mapQXLinedata: function(newval, oldval){
-      this.drawTrajectLine(newval)
+    mapQXLinedata: function(newval, oldval) {
+      this.drawTrajectLine(newval);
     },
-    nowTab: function(newval, oldval){
-      let that = this
-      if(newval == 'first'){
-        if(typeof this.map.getLayer('id_related_traj') !== 'undefined'){
+    nowTab: function(newval, oldval) {
+      let that = this;
+      if (newval == "first") {
+        if (typeof this.map.getLayer("id_related_traj") !== "undefined") {
           that.map.setLayoutProperty("id_related_traj", "visibility", "none");
-          that.map.setLayoutProperty("id_source_circle_all", "visibility", "none");
-          that.map.setLayoutProperty('id_source_circle_patient', 'visibility', 'none');
-          that.pointIdList.forEach((d,i) => {
-            that.map.setLayoutProperty(d+'_layer', 'visibility', 'none')
-          })
-          
+          that.map.setLayoutProperty(
+            "id_source_circle_all",
+            "visibility",
+            "none"
+          );
+          that.map.setLayoutProperty(
+            "id_source_circle_patient",
+            "visibility",
+            "none"
+          );
+          that.pointIdList.forEach((d, i) => {
+            that.map.setLayoutProperty(d + "_layer", "visibility", "none");
+          });
         }
-      }
-      else if(newval == 'second'){
+      } else if (newval == "second") {
         //设置模拟轨迹为可见
-        if(typeof this.map.getLayer('id_related_traj') !== 'undefined'){
-          that.map.setLayoutProperty("id_related_traj", "visibility", "visible");
-          that.map.setLayoutProperty("id_source_circle_all", "visibility", "visible");
-          that.map.setLayoutProperty('id_source_circle_patient', 'visibility', 'visible');
-          that.pointIdList.forEach((d,i) => {
-            that.map.setLayoutProperty(d+'_layer', 'visibility', 'visible')
-          })
+        if (typeof this.map.getLayer("id_related_traj") !== "undefined") {
+          that.map.setLayoutProperty(
+            "id_related_traj",
+            "visibility",
+            "visible"
+          );
+          that.map.setLayoutProperty(
+            "id_source_circle_all",
+            "visibility",
+            "visible"
+          );
+          that.map.setLayoutProperty(
+            "id_source_circle_patient",
+            "visibility",
+            "visible"
+          );
+          that.pointIdList.forEach((d, i) => {
+            that.map.setLayoutProperty(d + "_layer", "visibility", "visible");
+          });
         }
       }
     },
-    TCalendar: function(newval, oldval){
-      let that = this
-      newval.city.forEach((d,i) => {
-        that.TCalendarDict[d.name] = d.value
-      })
-      newval.province.forEach((d,i) => {
-        that.TCalendarDict[d.name] = d.value
-      })
+    TCalendar: function(newval, oldval) {
+      let that = this;
+      newval.city.forEach((d, i) => {
+        that.TCalendarDict[d.name] = d.value;
+      });
+      newval.province.forEach((d, i) => {
+        that.TCalendarDict[d.name] = d.value;
+      });
     },
-    Ttotaldata: function(newval, oldval){
-      this.sourcePatient = newval.total[newval['total'].length-1]
+    Ttotaldata: function(newval, oldval) {
+      this.sourcePatient = newval.total[newval["total"].length - 1];
     }
   }
 };
