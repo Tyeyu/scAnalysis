@@ -496,7 +496,7 @@ export default {
           color: "#ffffff"
         },
         title: {
-          text: "SEIR",
+          text: "M-SEIR",
           textStyle: {
             color: "#ffffff"
           },
