@@ -14,7 +14,7 @@
     "@antv/g2": "^3.5.13",
     "@mapbox/mapbox-gl-language": "^0.10.1",
     "@turf/turf": "^5.1.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "d3": "^5.15.0",
     "d3-geo-voronoi": "^1.6.0",
     "d3.js": "0.0.2-security",
